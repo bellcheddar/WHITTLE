@@ -278,3 +278,11 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:16 tm_model: features (650, 1466) built in 8.2 minutes (one-hot 106, VHSE 80, ESM 1280)
 - 2026-11-13 17:16 tm_model: grouped 5-fold x 3, split on CDR3 clusters
 - 2026-11-13 17:16 make_favicons: 9 files into app/static/: icon-16.png (16px), icon-32.png (32px), icon-48.png (48px), icon-180.png (180px), apple-touch-icon.png (180px), icon-192.png (192px), icon-512.png (512px), favicon.ico (16, 32, 48), site.webmanifest
+- 2026-11-13 17:17 build-db: EGFR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:17 build-db: GLP1R bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:17 build-db: PRLR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:17 build-db: TL1A bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:17 build-db: TNFa bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:17 build-db: 15 bundles, 2471 kB total
+- 2026-11-13 17:19 tm_model: grouped CV  R2 0.390  RMSE 8.40  MAE 6.21  Spearman 0.646
+- 2026-11-13 17:19 tm_model: row-wise 5-fold x 3, for contrast only

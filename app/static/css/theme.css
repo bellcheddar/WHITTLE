@@ -583,8 +583,21 @@ main {
 }
 .reftable th { color: var(--ink-3); font-weight: 600; font-size: 11px; white-space: nowrap; }
 .reftable td.wrap { white-space: normal; }
-.diagram { max-width: 100%; overflow-x: auto; }
-.diagram svg { max-width: 100%; height: auto; }
+/* The workflow diagram is a figure, not prose: let it use the full card width
+   rather than being squeezed into the 760px reading measure. */
+.diagram {
+  max-width: min(1100px, 100%);
+  width: min(1100px, 100%);
+  overflow-x: auto;
+  margin: 8px 0 18px;
+}
+.diagram svg { width: 100%; max-width: 1100px; height: auto; display: block; }
+@media (max-width: 900px) {
+  /* At phone width the diagram scrolls inside its own box rather than forcing
+     the page sideways (DESIGN 6). */
+  .diagram { overflow-x: auto; }
+  .diagram svg { width: 820px; max-width: none; }
+}
 
 /* --------------------------------------------------------- 6. responsive */
 
