@@ -113,6 +113,7 @@ qc-vacuous = "python tools/vacuous_tests.py"
 space = "python tools/space_check.py"
 secrets = "python tools/secret_scan.py"
 status = "bash tools/status.sh"
+refresh = "bash tools/refresh.sh"
 findings = "python tools/findings.py"
 test = "pytest pipeline/tests -q"
 

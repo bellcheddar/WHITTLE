@@ -103,6 +103,9 @@ pixi run antigens
 
 pixi run qc && pixi run qc-pareto && pixi run qc-vacuous
 bash deploy/deploy.sh
+
+./tools/refresh.sh                 # mid-queue: pull finished co-folds onto the
+                                   # live site without a full deploy
 ```
 
 Every stage writes `data/manifests/<stage>.jsonl` and skips what is already done, because
