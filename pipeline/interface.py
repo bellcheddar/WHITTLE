@@ -54,30 +54,45 @@ def read_complex(path: Path) -> dict[str, list[tuple]]:
     return dict(chains)
 
 
-def confidence(run_dir: Path) -> dict:
-    """boltz's own confidence numbers, averaged over the diffusion samples."""
-    files = sorted(run_dir.rglob("confidence_*.json"))
-    if not files:
+CONFIDENCE_KEYS = ("confidence_score", "ptm", "iptm", "complex_plddt",
+                   "complex_iplddt", "complex_pde", "complex_ipde",
+                   "ligand_iptm", "protein_iptm")
+
+
+def confidence_for(model_path: Path) -> dict:
+    """The confidence numbers for **this** diffusion sample, not an average.
+
+    boltz writes `<stem>_model_<n>.pdb` beside
+    `confidence_<stem>_model_<n>.json`, so each sample has its own numbers.
+    Averaging them across samples and storing the same value on every row
+    would throw away precisely the sampling variability the five samples exist
+    to show, and the spread between samples is itself a confidence statement.
+    """
+    path = model_path.with_name(f"confidence_{model_path.stem}.json")
+    if not path.exists():
         return {}
-    values: dict[str, list[float]] = defaultdict(list)
-    for path in files:
-        try:
-            payload = json.loads(path.read_text())
-        except json.JSONDecodeError:
-            continue
-        for key in ("confidence_score", "ptm", "iptm", "complex_plddt",
-                    "complex_iplddt", "complex_pde", "complex_ipde",
-                    "ligand_iptm", "protein_iptm"):
-            if isinstance(payload.get(key), (int, float)):
-                values[key].append(float(payload[key]))
-    out = {k: round(sum(v) / len(v), 4) for k, v in values.items() if v}
-    out["n_samples"] = len(files)
+    try:
+        payload = json.loads(path.read_text())
+    except json.JSONDecodeError:
+        return {}
+    out = {k: round(float(payload[k]), 4) for k in CONFIDENCE_KEYS
+           if isinstance(payload.get(k), (int, float))}
+    # Per-chain and pairwise interface confidences, which is what the spec
+    # means by "the per-interface confidences".
+    pair = payload.get("pair_chains_iptm") or {}
+    try:
+        values = [float(v) for row in pair.values() for k, v in row.items()
+                  if k != list(pair).index]
+        out["pair_iptm_min"] = round(min(values), 4) if values else None
+    except Exception:
+        pass
     return out
 
 
 def structures(run_dir: Path) -> list[Path]:
-    return sorted(p for p in run_dir.rglob("*.pdb")
-                  if "pre_affinity" not in p.name)
+    return sorted((p for p in run_dir.rglob("*_model_*.pdb")
+                   if "pre_affinity" not in p.name),
+                  key=lambda p: int(p.stem.rsplit("_", 1)[-1]))
 
 
 # ------------------------------------------------------------------- metrics
@@ -241,13 +256,13 @@ def main() -> int:
             run_dir = Path(run["path"])
             if not run_dir.exists():
                 continue
-            conf = confidence(run_dir)
             models = structures(run_dir)
             if not models:
                 manifest_write("interface", {"id": cid, "target": target,
                                              "status": "failed:no structure"})
                 continue
             for sample, model in enumerate(models):
+                conf = confidence_for(model)
                 chains = read_complex(model)
                 iface = interface_residues(chains, antigen_chains)
                 areas = buried_area(model, antigen_chains)

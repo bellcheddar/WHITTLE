@@ -371,3 +371,40 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:40 neighbours: 200/2500, 0 with an experimental badge, 200 with a TM-score, 200 superposed, 859 per minute
 - 2026-11-13 17:40 neighbours: 300/2500, 0 with an experimental badge, 300 with a TM-score, 300 superposed, 867 per minute
 - 2026-11-13 17:40 neighbours: 400/2500, 0 with an experimental badge, 400 with a TM-score, 400 superposed, 878 per minute
+- 2026-11-13 17:40 neighbours: 500/2500, 0 with an experimental badge, 500 with a TM-score, 500 superposed, 883 per minute
+- 2026-11-13 17:40 neighbours: 600/2500, 0 with an experimental badge, 600 with a TM-score, 600 superposed, 890 per minute
+- 2026-11-13 17:40 neighbours: 700/2500, 0 with an experimental badge, 700 with a TM-score, 700 superposed, 894 per minute
+- 2026-11-13 17:40 neighbours: 800/2500, 0 with an experimental badge, 800 with a TM-score, 800 superposed, 898 per minute
+- 2026-11-13 17:41 neighbours: 900/2500, 0 with an experimental badge, 900 with a TM-score, 900 superposed, 903 per minute
+- 2026-11-13 17:41 neighbours: 1000/2500, 0 with an experimental badge, 1000 with a TM-score, 1000 superposed, 904 per minute
+- 2026-11-13 17:41 tm_model: ESM-2 embedded 248/249
+- 2026-11-13 17:41 tm_predict: 1000/2500
+- 2026-11-13 17:41 neighbours: 1100/2500, 0 with an experimental badge, 1100 with a TM-score, 1100 superposed, 908 per minute
+- 2026-11-13 17:41 neighbours: 1200/2500, 0 with an experimental badge, 1200 with a TM-score, 1200 superposed, 918 per minute
+- 2026-11-13 17:41 neighbours: 1300/2500, 0 with an experimental badge, 1300 with a TM-score, 1300 superposed, 927 per minute
+- 2026-11-13 17:41 neighbours: 1400/2500, 0 with an experimental badge, 1400 with a TM-score, 1400 superposed, 934 per minute
+- 2026-11-13 17:41 tm_model: 6 embeddings cached, 244 to compute
+- 2026-11-13 17:41 neighbours: 1500/2500, 0 with an experimental badge, 1500 with a TM-score, 1500 superposed, 940 per minute
+- 2026-11-13 17:41 tm_model: ESM-2 embedded 8/244
+- 2026-11-13 17:41 neighbours: 1600/2500, 0 with an experimental badge, 1600 with a TM-score, 1600 superposed, 939 per minute
+- 2026-11-13 17:41 neighbours: 1700/2500, 0 with an experimental badge, 1700 with a TM-score, 1700 superposed, 938 per minute
+- 2026-11-13 17:41 neighbours: 1800/2500, 0 with an experimental badge, 1800 with a TM-score, 1800 superposed, 939 per minute
+- 2026-11-13 17:42 neighbours: 1900/2500, 0 with an experimental badge, 1900 with a TM-score, 1900 superposed, 939 per minute
+- 2026-11-13 17:42 neighbours: 2000/2500, 0 with an experimental badge, 2000 with a TM-score, 2000 superposed, 939 per minute
+- 2026-11-13 17:42 nativeness: 240/2500, 22 per minute, about 103 minutes left
+- 2026-11-13 17:42 neighbours: 2100/2500, 0 with an experimental badge, 2100 with a TM-score, 2100 superposed, 940 per minute
+- 2026-11-13 17:42 neighbours: 2200/2500, 0 with an experimental badge, 2200 with a TM-score, 2200 superposed, 939 per minute
+- 2026-11-13 17:42 neighbours: 2300/2500, 0 with an experimental badge, 2300 with a TM-score, 2300 superposed, 938 per minute
+- 2026-11-13 17:42 cofold: smoke test ok in 9.3 minutes
+- 2026-11-13 17:42 cofold: GLP1R projected at about 3.1 hours for 20 complexes (227 aa each)
+- 2026-11-13 17:42 cofold: PRLR projected at about 6.2 hours for 20 complexes (321 aa each)
+- 2026-11-13 17:42 cofold: TNFa projected at about 20.4 hours for 20 complexes (582 aa each)
+- 2026-11-13 17:42 cofold: TL1A projected at about 25.5 hours for 20 complexes (651 aa each)
+- 2026-11-13 17:42 cofold: EGFR projected at about 32.3 hours for 20 complexes (732 aa each)
+- 2026-11-13 17:42 neighbours: 2400/2500, 0 with an experimental badge, 2400 with a TM-score, 2400 superposed, 937 per minute
+- 2026-11-13 17:42 neighbours: 2500/2500, 2 with an experimental badge, 2499 with a TM-score, 2499 superposed, 938 per minute
+- 2026-11-13 17:42 neighbours: complete. 2 candidates carry an experimental badge, 1 have a target-matched reference, 2499 have a TM-score and 2499 have a superposed model written for the drawer
+- 2026-11-13 17:42 tm_model: ESM-2 embedded 88/244
+- 2026-11-13 17:42 interface: GLP1R 5 samples across 1 candidates, 1 epitope bins
+- 2026-11-13 17:43 interface: GLP1R 5 samples across 1 candidates, 1 epitope bins
+- 2026-11-13 17:43 tm_model: ESM-2 embedded 168/244
