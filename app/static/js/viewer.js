@@ -62,7 +62,7 @@
   }
 
   /* Load one or two structures into the single instance.
-     `entries`: [{url, format, label}] — the model first, then the experimental
+     `entries`: [{url, format, label}]: the model first, then the experimental
      neighbour for the superposition panel. */
   async function show(container, entries) {
     const placeholder = container.querySelector('.placeholder');

@@ -307,3 +307,13 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:23 cofold: building the TL1A antigen MSA once (180 aa, reused across every candidate)
 - 2026-11-13 17:24 cofold: TL1A antigen MSA cached, 2037 sequences deep
 - 2026-11-13 17:24 cofold: building the EGFR antigen MSA once (621 aa, reused across every candidate)
+- 2026-11-13 17:24 tm_model: error bars calibrated; they cover 90.5 percent of the out-of-fold residuals
+- 2026-11-13 17:24 tm_model: 0 embeddings cached, 77 to compute
+- 2026-11-13 17:25 tm_model: ESM-2 embedded 8/77
+- 2026-11-13 17:25 schema: added 1 missing column(s) to the existing database: structures.model_note
+- 2026-11-13 17:25 schema: whittle.sqlite has 12 tables (candidates, cofolds, controls, liabilities, provenance, qc, ranks, references, scores, structures, targets, thermostability)
+- 2026-11-13 17:26 tm_model: external set R2 -0.058 RMSE 9.16 over 77 held-out sequences; error bars cover 82 percent
+- 2026-11-13 17:26 tm_model: written to /Users/dellboy/Documents/Vibe_Coding/WHITTLE/models/whittle_tm_v1
+- 2026-11-13 17:26 tm_predict: 2500 sequences, ESM-2 esm2_t33_650M_UR50D
+- 2026-11-13 17:27 tm_model: 0 embeddings cached, 250 to compute
+- 2026-11-13 17:27 tm_model: ESM-2 embedded 8/250

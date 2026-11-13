@@ -130,6 +130,23 @@ def main() -> int:
             nb = neighbours.get(cid, {})
             path = STRUCTURES / target / f"{cid}.pdb.gz"
             status = fold.get("status", "not_run")
+            # A handful of candidates carry a framework-1 N-terminal heptad
+            # ANARCI cannot number, so those seven residues were modelled as
+            # the VHH germline to get coordinates at all. The sequence axes
+            # still use the real sequence; say so in the drawer rather than
+            # leaving it in a manifest nobody reads.
+            germline = int(fold.get("n_term_germline") or 0)
+            note = None
+            if germline:
+                note = (f"The first {germline} framework residues were modelled "
+                        f"as the VHH germline: this candidate's own N-terminal "
+                        f"heptad could not be numbered, so no structure "
+                        f"predictor would close the domain. Every sequence-level "
+                        f"value on this page uses the real sequence.")
+            elif str(status).startswith("failed:"):
+                note = ("No predicted model: this candidate's J region carries "
+                        "no framework-4 motif, so no numbering scheme can close "
+                        "the domain. Its sequence axes are unaffected.")
             records.append({
                 "candidate_id": cid,
                 "path": str(path.relative_to(ROOT)) if path.exists() else None,
@@ -159,6 +176,7 @@ def main() -> int:
                 "nearest_identity_fw": nb.get("identity_fw"),
                 "nearest_identity_cdr": nb.get("identity_cdr"),
                 "has_experimental_badge": nb.get("badge", 0),
+                "model_note": note,
                 "status": status,
             })
         columns = list(records[0])

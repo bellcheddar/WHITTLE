@@ -158,9 +158,13 @@
       data: multi,
       layout: 'fitDataStretch',
       height: '320px',
+      groupBy: (row) => String(row.id).split('-').slice(0, 2).join('-'),
+      groupHeader: (value, count) => `${W.escape(value)} `
+        + `<span style="color:var(--ink-3);font-weight:400">`
+        + `&middot; the same sequence against ${count} targets</span>`,
       columns: [
-        { title: 'Sequence', field: 'id', frozen: true, width: 160 },
-        { title: 'Targets', field: 'target', cssClass: '' },
+        { title: 'Row', field: 'id', frozen: true, width: 190 },
+        { title: 'Target', field: 'target', cssClass: '' },
         { title: 'Affinity', field: 'predicted_affinity', cssClass: 'num',
           formatter: (c) => W.pctCell(c.getValue()) },
         { title: 'Specificity', field: 'predicted_specificity', cssClass: 'num',
@@ -172,9 +176,13 @@
         { title: 'Reading', field: 'notes', cssClass: '', minWidth: 240 },
       ],
     });
-    el('promisccaption').textContent = `${multi.length} rows. Percentiles are `
-      + `within each row's own target, so a sequence high in two columns is high `
-      + `against two unrelated antigens.`;
+    const sequences = new Set(multi.map(
+      (r) => String(r.id).split('-').slice(0, 2).join('-')));
+    el('promisccaption').textContent = `${multi.length} rows across `
+      + `${sequences.size} sequences. Each row is that sequence's percentile `
+      + `against its own target's candidates, so two rows of one sequence can `
+      + `be compared directly: a sequence high in both is high against two `
+      + `unrelated antigens.`;
   }
 
   async function init() {

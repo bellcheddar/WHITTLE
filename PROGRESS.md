@@ -9,7 +9,7 @@ tiers below them.
 
 ---
 
-## Phase 1: foundation, ingest, Tier 0, app skeleton live — 100 percent
+## Phase 1: foundation, ingest, Tier 0, app skeleton live: 100 percent
 
 - [x] Hardware confirmed, `config/hardware.toml` written (M2 Ultra Studio, 128 GB)
 - [x] `.gitignore` before `git init`; public repo created and pushed
@@ -24,7 +24,7 @@ tiers below them.
 - [x] Droplet provisioned on port 8021, nginx, systemd, TLS
 - [x] **Live** with a provisional banner; smoke test 34/34 against the live host
 
-## Phase 2: Tier 1, the Tm model, four axes, Pareto fronts — about 75 percent
+## Phase 2: Tier 1, the Tm model, four axes, Pareto fronts: about 75 percent
 
 - [x] NanoBodyBuilder2 across all 2,500: 2,499 models in 21 minutes
 - [x] The 56 refusals diagnosed and 55 recovered with a germline N-terminus
@@ -41,7 +41,7 @@ tiers below them.
 - [ ] `pipeline.tm_predict` over the candidates
 - [ ] Rescore, rebuild, deploy, push
 
-## Phase 3: Tier 2 co-folding and the control set — machinery done, compute pending
+## Phase 3: Tier 2 co-folding and the control set: machinery done, compute pending
 
 - [x] boltz-community 2.13 installed in its own environment, MPS available
 - [x] The macOS libomp conflict resolved with the fork's own fix
@@ -59,7 +59,7 @@ tiers below them.
 - [ ] Controls run blind through the same pipeline
 - [ ] Full QC pass
 
-## Phase 4: about, provenance, polish, public release — about 70 percent
+## Phase 4: about, provenance, polish, public release: about 70 percent
 
 - [x] `config/references.yaml` resolved through Crossref; 25 of 25 DOIs verified
 - [x] Three seed DOIs found resolving to the wrong paper and corrected

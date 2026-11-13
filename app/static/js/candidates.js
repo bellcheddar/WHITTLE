@@ -456,6 +456,7 @@
     el('vcapright').textContent = d.cdr1 ? 'CDR1 / 2 / 3' : '';
 
     const notes = [];
+    if (d.model_note) notes.push(d.model_note);
     notes.push('Percentiles are within this target only and are not comparable '
       + 'between targets.');
     if (d.axis_affinity === null || d.axis_affinity_provisional) {

@@ -33,13 +33,54 @@ ANTIGEN_CHAINS = ["A", "B", "C"]
 NANOBODY_CHAIN = "N"
 
 
-def antigen_sequence(target: str) -> str:
+def antigen_sequence(target: str, apply_subscope: bool = True) -> str:
+    """The cached construct, optionally narrowed to a Tier 2 sub-scope.
+
+    Spec 5.2 names one documented cut: if Tier 2 wall-clock exceeds four days,
+    scope EGFR to domain III, the usual nanobody epitope. Setting
+    `tier2_subscope: [start, end]` on a target in `config/targets.yaml` takes
+    that cut. The positions are 1-based and inclusive, in the construct's own
+    numbering (so position 1 is the first residue of the construct, not of the
+    UniProt precursor), and `subscope_note` records why.
+
+    Taking the cut is a decision, not a default: no target carries the key
+    unless someone puts it there, and `describe()` surfaces it so the app can
+    label the affected rows.
+    """
     path = ANTIGENS / f"{target}.fasta"
     if not path.exists():
         raise FileNotFoundError(
             f"no antigen construct for {target}; run pipeline.antigens first")
-    return "".join(line.strip() for line in path.read_text().splitlines()
-                   if not line.startswith(">"))
+    sequence = "".join(line.strip() for line in path.read_text().splitlines()
+                       if not line.startswith(">"))
+    if not apply_subscope:
+        return sequence
+    scope = (targets_config()["targets"][target] or {}).get("tier2_subscope")
+    if scope:
+        start, end = int(scope[0]), int(scope[1])
+        if not (1 <= start < end <= len(sequence)):
+            raise ValueError(
+                f"{target} tier2_subscope {scope} does not fit a "
+                f"{len(sequence)} aa construct")
+        return sequence[start - 1:end]
+    return sequence
+
+
+def subscope(target: str) -> dict | None:
+    """The Tier 2 sub-scope in force for a target, or None."""
+    spec = targets_config()["targets"][target] or {}
+    scope = spec.get("tier2_subscope")
+    if not scope:
+        return None
+    full = len(antigen_sequence(target, apply_subscope=False))
+    return {
+        "range": [int(scope[0]), int(scope[1])],
+        "length": int(scope[1]) - int(scope[0]) + 1,
+        "full_construct_length": full,
+        "note": spec.get("subscope_note",
+                         "Tier 2 was scoped to part of the construct to keep "
+                         "the queue inside its wall-clock budget."),
+    }
 
 
 def antigen_msa(target: str) -> str | None:
@@ -114,4 +155,5 @@ def describe(target: str) -> dict:
         "msa_cached": antigen_msa(target) is not None,
         "trimer": stoich > 1,
         "ecd_scoped": spec["construct"] == "ecd_only",
+        "tier2_subscope": subscope(target),
     }

@@ -124,6 +124,7 @@ CREATE TABLE IF NOT EXISTS structures (
     nearest_identity_fw  REAL,
     nearest_identity_cdr REAL,
     has_experimental_badge INTEGER DEFAULT 0,
+    model_note           TEXT,   -- e.g. an N-terminus modelled as germline
     status               TEXT
 );
 

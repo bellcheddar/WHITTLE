@@ -145,7 +145,7 @@ def api_candidate(cid: str):
                st.charged_patch_area, st.sasa_total, st.nativeness_ppl,
                st.oasis_humanness, st.nearest_pdb, st.nearest_tm,
                st.nearest_identity_fw, st.nearest_identity_cdr,
-               st.has_experimental_badge,
+               st.has_experimental_badge, st.model_note,
                t.tm_pred, t.tm_err, t.train_nn_distance, t.temstapro,
                t.thermompnn_ddg, t.model_version
         FROM candidates c

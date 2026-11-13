@@ -159,25 +159,39 @@ def build_known_binders(conn) -> list[dict]:
 
 
 def build_multi_target(conn) -> list[dict]:
+    """One row per (sequence, target) occurrence, not one per sequence.
+
+    The point of this panel is to compare the *same* sequence against two or
+    three unrelated antigens, so each occurrence needs its own target's
+    percentiles. Collapsing them to one row per sequence would show whichever
+    target happened to be written last and quietly answer a different question.
+    """
     rows = []
-    shared = conn.execute(
-        "SELECT seq_md5, GROUP_CONCAT(id) AS ids, GROUP_CONCAT(target) AS targets, "
-        "MIN(sequence) AS sequence FROM candidates WHERE multi_target = 1 "
-        "GROUP BY seq_md5 ORDER BY seq_md5").fetchall()
-    for i, row in enumerate(shared, 1):
-        rows.append({
-            "id": f"MULTI-{i:02d}",
-            "target": row["targets"],
-            "name": row["ids"],
-            "sequence": row["sequence"],
-            "kind": "multi_target",
-            "blind": 0,
-            "notes": "This exact sequence was submitted against more than one "
-                     "target. Scoring well against two unrelated antigens is "
-                     "either polyreactivity or evidence that the scoring is not "
-                     "target-aware.",
-            "assertion": "no assertion; this row is a reading, not a test",
-        })
+    groups = conn.execute(
+        "SELECT seq_md5, COUNT(*) AS n, GROUP_CONCAT(target) AS targets "
+        "FROM candidates WHERE multi_target = 1 GROUP BY seq_md5 "
+        "ORDER BY seq_md5").fetchall()
+    for i, group in enumerate(groups, 1):
+        members = conn.execute(
+            "SELECT id, target, sequence FROM candidates WHERE seq_md5 = ? "
+            "ORDER BY target", (group["seq_md5"],)).fetchall()
+        shared = group["targets"]
+        for member in members:
+            rows.append({
+                "id": f"MULTI-{i:02d}-{member['target']}",
+                "target": member["target"],
+                "name": f"MULTI-{i:02d} as {member['id']}",
+                "sequence": member["sequence"],
+                "kind": "multi_target",
+                "blind": 0,
+                "notes": f"The same sequence was also submitted against "
+                         f"{shared}. Each row here is its percentile against "
+                         f"its own target's candidates, so the rows can be "
+                         f"compared with one another.",
+                "assertion": "no assertion; scoring well against two unrelated "
+                             "antigens is either polyreactivity or evidence "
+                             "that the scoring is not target-aware",
+            })
     return rows
 
 

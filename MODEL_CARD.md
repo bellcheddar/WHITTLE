@@ -2,7 +2,7 @@
 
 An **estimate of apparent melting temperature**, not a measurement. Apparent Tm depends on the method, the buffer and the protein concentration, and nothing on this site was measured in a laboratory.
 
-Built 2026-11-13 17:05.
+Built 2026-11-13 17:26.
 
 ## Training set
 
@@ -36,9 +36,19 @@ One base Gaussian Process and one Support Vector regressor per block, stacked un
 
 The grouped figure is the one to quote. The row-wise figure is +0.307 R squared higher, and that gap is the near-duplicate leak a row-wise split hides: it is reported here rather than used.
 
+### The external set ranks well and is not calibrated in degrees
+
+This is the most important line in this card. On the 77 held-out sequences the model reaches a Spearman of 0.673 and a Pearson of 0.674, so it **orders** them well. Its R squared is -0.058, which is no better than predicting a constant, so it does **not** place them correctly on the temperature scale: the predictions are compressed towards the training mean and carry an offset between measurement regimes.
+
+What follows from that, and is enforced in the app:
+
+- The thermostability **axis** is a within-target percentile, which depends only on the ordering. That is the part this model supports.
+- The **absolute predicted Tm** is shown with its error bar and described as an estimate. Two candidates three degrees apart on this scale are not meaningfully different.
+- Comparing a predicted Tm here against a Tm measured elsewhere, under a different method, buffer and concentration, is not a comparison this model can carry.
+
 ## Error estimate
 
-Per row, from the cosine distance to the nearest training neighbour in the ESM-2 block. Linear fit of the median absolute residual against the cosine distance to the nearest training neighbour, with a floor at the 2.4 degree c mean disagreement between repeat measurements reported for this label set. The quoted interval covers 76.0 percent of the out-of-fold residuals and 66 percent of the external-set residuals
+Per row, from the cosine distance to the nearest training neighbour in the ESM-2 block. The median absolute residual is fitted linearly against the cosine distance to the nearest training neighbour and floored at the 2.4 degree c mean disagreement between repeat measurements of the same nanobody; the width is then scaled by 2.95, the smallest multiplier that covers 90% of the out-of-fold residuals. The quoted interval covers 90.5 percent of the out-of-fold residuals and 82 percent of the external-set residuals
 .
 
 A candidate far from the training manifold gets a wide bar, not a crisp number, and the app draws the bar rather than only the number.
