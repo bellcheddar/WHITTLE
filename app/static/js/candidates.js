@@ -893,13 +893,36 @@
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && !el('drawer').hidden) closeDrawer();
     });
-    window.addEventListener('popstate', () => {
-      const previous = W.state.target;
+    /* A shared deep link pasted into an open tab, and the back button, both
+       arrive here. An earlier version switched target and stopped, so
+       #/t/TNFa/nb/TNFa-0002 arriving while EGFR was selected changed the
+       target and silently left the drawer shut: the half of the link that
+       names a candidate was dropped. Handle both parts, in order, every time.
+       hashchange is listened for as well as popstate because a hash assignment
+       does not always produce a popstate. */
+    const applyUrl = async () => {
+      const previousTarget = W.state.target;
+      const previousId = W.state.id;
       W.parseUrl();
-      if (W.state.target !== previous) selectTarget(W.state.target, false);
-      else if (W.state.id) openDrawer(W.state.id);
-      else closeDrawer();
-    });
+      if (W.state.target && W.state.target !== previousTarget) {
+        await selectTarget(W.state.target, false);
+      }
+      if (W.state.id) {
+        if (W.state.id !== previousId || el('drawer').hidden) {
+          await openDrawer(W.state.id);
+        }
+      } else if (!el('drawer').hidden) {
+        closeDrawer();
+      }
+    };
+    let applying = false;
+    const onUrlChange = async () => {
+      if (applying) return;   // popstate and hashchange can both fire
+      applying = true;
+      try { await applyUrl(); } finally { applying = false; }
+    };
+    window.addEventListener('popstate', onUrlChange);
+    window.addEventListener('hashchange', onUrlChange);
 
     await selectTarget(W.state.target, true);
     if (W.state.id) openDrawer(W.state.id);
