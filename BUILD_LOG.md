@@ -579,3 +579,29 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 18:09 build-db: TNFa bundle, 500 rows, 31 columns with data, 9 pending
 - 2026-11-13 18:09 build-db: 15 bundles, 2511 kB total
 - 2026-11-13 18:11 nativeness: 960/2500, 24 per minute, about 64 minutes left
+- 2026-11-13 18:13 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 18:13 vacuous_tests: PASS EGFR specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS EGFR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS EGFR expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 18:13 vacuous_tests: PASS GLP1R specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS GLP1R thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS GLP1R expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 18:13 vacuous_tests: PASS PRLR specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS PRLR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS PRLR expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 18:13 vacuous_tests: PASS TL1A specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS TL1A thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS TL1A expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 18:13 vacuous_tests: PASS TNFa specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS TNFa thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 vacuous_tests: PASS TNFa expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 18:13 findings: FINDINGS.md written, 88 lines
+- 2026-11-13 18:14 nativeness: 1040/2500, 24 per minute, about 60 minutes left
+- 2026-11-13 18:10 Phase 2 deployed. Three bugs found by looking at the deployed site rather than the deploy log, which reported success each time. First, the JSON data bundles were served under the one-year immutable Cache-Control the rest of /static/ carries: they are data, not versioned assets, so the browser was showing a year-cached table. They now have their own nginx block with no-cache, and the app stamps its data fetches with the build timestamp as well. Second, re-provisioning silently removed HTTPS, because certbot writes its TLS block into the vhost provision.sh regenerates and the guard asked whether a certificate existed rather than whether the server block did. Third, the Mol* viewer held two WebGL contexts and rendered nothing in the Neighbours panel.
+- 2026-11-13 18:09 Spec 10 item 7 passes on measurement: 30 consecutive drawer opens, peak 1 live WebGL context, 31 created and 31 disposed, and the viewer still renders on reopening. Spec 10 item 8 too: no horizontal page scroll at a 500px viewport and nothing overflowing outside a box that scrolls on its own.
+- 2026-11-13 18:06 With Tier 1 in, no axis pair correlates above 0.26 in any target. The Tier 0 warning of 0.80 between expression and specificity on TL1A is gone, because those axes now draw on genuinely distinct evidence rather than both leaning on liability counts. The independent Pareto implementation agrees with the fast one on all five targets.
+- 2026-11-13 18:13 Nearest-neighbour statistics over all 2,500: framework identity median 93.4 percent, TM-score median 0.918, CDR identity median 60.0 percent. The first two are near-constant across the whole library because every VHH has the same fold, which is exactly why the spec asks for per-region identity. Only 2 of 2,500 candidates are within 95 percent whole-chain identity of a solved structure.

@@ -26,12 +26,28 @@ Recomputed IMGT CDR histidine totals agree with the upstream columns for 90.9 pe
 
 The upstream column spans 71.2 to 101.1 degrees C, with 38 candidates above 95 degrees C. An apparent Tm above 100 degrees C is not a value a DSF run gives a VHH in solution, so the column is treated as uncalibrated throughout.
 
+This build's own model predicts 58.8 to 91.1 degrees C over the same 2,500 candidates, with 0 above 95 degrees C. The two columns correlate at r = 0.135, so they are not measuring the same thing; both are shown and neither is blended into the other.
+
 ### The rest of the upstream block
 
 - `cdr_novelty` and `cdr_identity` are empty in all five source files: 2,500 of 2,500 rows carry neither. Both are ingested as null and this build computes its own equivalents.
 - `target_cdr_identity` and `s_his` exist only for EGFR and TNFa, the two targets with known nanobodies. They are left null for the other three rather than fabricated.
 - 10 sequences appear under more than one target. They are not deduplicated; they are internal promiscuity controls.
 - The upstream composite `score` blends four terms for EGFR and TNFa and three for the others, so its ranges are not on one scale. It is kept for comparison and the whole table is never sorted by it.
+
+## Framework identity tells you nothing; CDR identity does
+
+Against 2,500 candidates and their nearest experimental neighbour in SAbDab-nano:
+
+| Measure | Median | Range |
+|---|---|---|
+| Framework identity | 93.4% | 74% to 100% |
+| CDR identity | 60.0% | 17% to 100% |
+| TM-score | 0.918 | 0.70 to 0.98 |
+
+This is why the spec asks for per-region identity rather than a whole-chain number. Framework identity sits near 93 percent and the TM-score near 0.92 for essentially every candidate, because every VHH has the same fold. Neither separates anything. The CDR identity does.
+
+**Only 2 of 2,500 candidates reach the 95 percent whole-chain identity that earns an experimental-structure badge.** The library is almost entirely novel relative to solved structures. The badge is a positive signal only: its absence here says nothing about whether these sequences express, and nothing in the scoring reads it.
 
 ## What the control set showed
 
@@ -54,9 +70,7 @@ This is the control that matters most (spec Section 9 item 5). Published benchma
 
 ## Axis independence and double counting
 
-Hydrophobic patch area feeds non-specificity, aggregation and expression, so the axes are not independent by construction. These pairs correlate above 0.8 and the app states it beside the ranking rather than leaving it implicit:
-
-- **TL1A**: expression and specificity correlate at r = 0.8006
+No axis pair correlates above 0.8 in any target for this run.
 
 ### Can each axis fail?
 
