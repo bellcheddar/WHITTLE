@@ -252,8 +252,21 @@ def gather(conn, target: str) -> list[dict]:
     return out
 
 
+# A row scored from only a light subset of an axis's components is not on the
+# same footing as one scored from all of them: the weighted mean of fewer
+# standardised terms has the same expected value but a wider spread, so those
+# rows drift to both extremes and look more decisive than they are. A row that
+# is missing components carrying more than half the axis weight gets no value
+# for that axis at all, which the app shows as pending.
+MIN_WEIGHT_FRACTION = 0.5
+
+
 def axis_values(records: list[dict], axis: str) -> tuple[list[float | None], list[Component]]:
-    """The axis as a weighted mean of available component z-scores."""
+    """The axis as a weighted mean of available component z-scores.
+
+    A row is scored only where the components it does have carry at least
+    `MIN_WEIGHT_FRACTION` of the weight the axis could use: see the note above.
+    """
     used: list[Component] = []
     zs: list[list[float | None]] = []
     for comp in AXIS_COMPONENTS[axis]:
@@ -267,6 +280,8 @@ def axis_values(records: list[dict], axis: str) -> tuple[list[float | None], lis
         zs.append(z)
     if not used:
         return [None] * len(records), []
+    available_weight = sum(c.weight for c in used)
+    floor = MIN_WEIGHT_FRACTION * available_weight
     out: list[float | None] = []
     for i in range(len(records)):
         num = 0.0
@@ -276,7 +291,7 @@ def axis_values(records: list[dict], axis: str) -> tuple[list[float | None], lis
                 continue
             num += comp.weight * z[i]
             den += comp.weight
-        out.append(num / den if den else None)
+        out.append(num / den if den >= floor and den > 0 else None)
     return out, used
 
 
@@ -322,6 +337,8 @@ def score_external(conn, target: str, external: list[dict]) -> dict[str, dict]:
         if not used:
             continue
 
+        floor = MIN_WEIGHT_FRACTION * sum(c.weight for c in used)
+
         def combine(source: dict) -> float | None:
             num = den = 0.0
             for comp, mean, sd in stats:
@@ -330,7 +347,9 @@ def score_external(conn, target: str, external: list[dict]) -> dict[str, dict]:
                     continue
                 num += comp.weight * ((float(value) * comp.sign) - mean) / sd
                 den += comp.weight
-            return num / den if den else None
+            # The same rule the candidates are held to, so a control is never
+            # scored on terms a candidate would have been refused.
+            return num / den if den >= floor and den > 0 else None
 
         candidate_values = [combine(r) for r in records]
         reference = sorted(v for v in candidate_values if v is not None)
@@ -374,6 +393,14 @@ def main() -> int:
         native_raw = [None if r.get("nativeness_ppl") is None
                       else -float(r["nativeness_ppl"]) for r in records]
         pct["nativeness"] = percentiles(native_raw)
+
+        withheld = {axis: sum(1 for v in pct[axis] if v is None)
+                    for axis in RANK_AXES
+                    if axis_tiers.get(axis, {}).get("available")}
+        withheld = {k: v for k, v in withheld.items() if v}
+        if withheld:
+            log(f"score: {target} withheld an axis value from rows missing more "
+                f"than half the axis weight: {withheld} of {len(records)}")
 
         points = [{axis: pct[axis][i] for axis in RANK_AXES}
                   for i in range(len(records))]

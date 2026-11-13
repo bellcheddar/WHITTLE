@@ -319,3 +319,19 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:27 tm_model: ESM-2 embedded 8/250
 - 2026-11-13 17:28 tm_model: ESM-2 embedded 88/250
 - 2026-11-13 17:30 tm_model: ESM-2 embedded 168/250
+- 2026-11-13 17:30 tnp: TNFa complete, 459 of 500 sequences profiled in 9.8 minutes
+- 2026-11-13 17:30 tnp: 2325 candidates profiled in total
+- 2026-11-13 17:31 tm_model: ESM-2 embedded 248/250
+- 2026-11-13 17:31 tm_predict: 250/2500
+- 2026-11-13 17:31 nativeness: AbLang2 pseudo-perplexity for 2500 sequences, 3 workers x 4 threads, batches of 16
+- 2026-11-13 17:31 tm_model: 0 embeddings cached, 250 to compute
+- 2026-11-13 17:31 tm_model: ESM-2 embedded 8/250
+- 2026-11-13 17:31 cofold: EGFR antigen MSA cached, 3597 sequences deep
+- 2026-11-13 17:32 tm_model: ESM-2 embedded 88/250
+- 2026-11-13 17:33 tm_model: ESM-2 embedded 168/250
+- 2026-11-13 17:33 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 17:33 cofold: smoke test on GLP1R-0478, the cheapest complex (227 aa)
+- 2026-11-13 17:34 tm_model: ESM-2 embedded 248/250
+- 2026-11-13 17:34 tm_predict: 500/2500
+- 2026-11-13 17:34 tm_model: 0 embeddings cached, 250 to compute
+- 2026-11-13 17:34 tm_model: ESM-2 embedded 8/250

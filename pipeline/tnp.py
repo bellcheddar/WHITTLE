@@ -35,6 +35,11 @@ from pathlib import Path
 from pipeline.common import (DATA, TARGETS, connect, log, manifest_read,
                              manifest_write, tuning)
 
+# Framework 1, IMGT 1 to 9, of the camelid VHH germline. Used only to give
+# NanoBodyBuilder2 an alignable N-terminus for candidates whose own first few
+# residues ANARCI cannot number; see `padded_jobs`.
+GERMLINE_NTERM = "QVQLVESGG"
+
 TNP_DIR = DATA / "tnp"
 
 # Thresholds from TNP's own `thresholds.py`, recorded here only so the About
@@ -119,10 +124,88 @@ def ingest(target: str, results_path: Path) -> int:
     return written
 
 
+def padded_jobs(conn) -> list[tuple[str, str, str, int]]:
+    """Candidates TNP skipped, with a germline N-terminus so it can model them.
+
+    TNP's log for every skipped row says the same thing: ANARCI numbered the
+    sequence but NanoBodyBuilder2 would not model it. The cause is the same one
+    the folding stage hit, a framework-1 N-terminus ANARCI starts numbering
+    part-way through, and the same fix applies. Those residues sit at the
+    opposite end of the domain from the CDRs, and PSH, PPC and PNC are CDR
+    patch metrics, so the substitution does not touch what is being measured.
+
+    Returns (id, target, padded sequence, residues replaced). Rows whose
+    numbering already starts at the top are a different fault and are left out.
+    """
+    from pipeline import numbering as nb
+
+    done = {r["id"] for r in manifest_read("tnp") if r.get("status") == "ok"}
+    out: list[tuple[str, str, str, int]] = []
+    for row in conn.execute(
+            "SELECT id, target, sequence FROM candidates ORDER BY id"):
+        if row["id"] in done:
+            continue
+        numbered = nb.by_anarci(row["sequence"])
+        if numbered is None or not numbered.numbered:
+            continue
+        if numbered.numbered[0][0] <= 1:
+            continue
+        domain = "".join(aa for _p, _i, aa in numbered.numbered)
+        offset = row["sequence"].find(domain[:12])
+        if offset <= 0 or offset > len(GERMLINE_NTERM):
+            continue
+        out.append((row["id"], row["target"],
+                    GERMLINE_NTERM[:offset] + row["sequence"][offset:], offset))
+    return out
+
+
+def run_padded(conn, ncores: int) -> int:
+    jobs = padded_jobs(conn)
+    if not jobs:
+        log("tnp: no skipped candidate can be recovered by padding")
+        return 0
+    log(f"tnp: retrying {len(jobs)} skipped candidates with a germline "
+        f"N-terminus so NanoBodyBuilder2 will model them")
+    fasta = TNP_DIR / "padded.fasta"
+    fasta.parent.mkdir(parents=True, exist_ok=True)
+    fasta.write_text("".join(f">{cid}\n{seq}\n" for cid, _t, seq, _o in jobs))
+    out_dir = TNP_DIR / "padded"
+    record = run_target("padded", fasta, out_dir, ncores)
+    if record["status"] != "ok":
+        log(f"tnp: the padded retry failed: {record['status']}")
+        manifest_write("tnp_target", record)
+        return 0
+    payload = json.loads(Path(record["results"]).read_text())
+    targets = {cid: target for cid, target, _s, _o in jobs}
+    offsets = {cid: offset for cid, _t, _s, offset in jobs}
+    written = 0
+    for cid, rec in payload.items():
+        flags = rec.get("Flags", {}) or {}
+        manifest_write("tnp", {
+            "id": cid, "target": targets.get(cid), "status": "ok",
+            "psh": rec.get("PSH"), "ppc": rec.get("PPC"), "pnc": rec.get("PNC"),
+            "total_cdr_length": rec.get("Total CDR Length"),
+            "cdr3_length": rec.get("CDR3 Length"),
+            "cdr3_compactness": rec.get("CDR3 Compactness"),
+            "flags": sum(1 for v in flags.values() if v in ("amber", "red")),
+            "flag_detail": flags,
+            "n_red": sum(1 for v in flags.values() if v == "red"),
+            "n_grey": sum(1 for v in flags.values() if v == "grey"),
+            "n_term_germline": offsets.get(cid, 0),
+            "version": tnp_version(),
+        })
+        written += 1
+    log(f"tnp: recovered {written} of {len(jobs)} skipped candidates")
+    return written
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", action="append", default=None)
     parser.add_argument("--ncores", type=int, default=None)
+    parser.add_argument("--retry-padded", action="store_true",
+                        help="retry the candidates TNP skipped, with a germline "
+                             "N-terminus so NanoBodyBuilder2 will model them")
     args = parser.parse_args()
 
     targets = args.target or TARGETS
@@ -130,6 +213,12 @@ def main() -> int:
     done = {r["id"] for r in manifest_read("tnp_target") if r.get("status") == "ok"}
 
     conn = connect()
+    if args.retry_padded:
+        run_padded(conn, ncores)
+        conn.close()
+        rows = [r for r in manifest_read("tnp") if r.get("status") == "ok"]
+        log(f"tnp: {len({r['id'] for r in rows})} candidates profiled in total")
+        return 0
     for target in targets:
         if target in done:
             log(f"tnp: {target} already done, skipping")
