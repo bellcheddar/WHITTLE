@@ -506,3 +506,76 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 18:03 neighbours: 1500/2500, 0 with an experimental badge, 1500 with a TM-score, 1500 superposed, 1037 per minute
 - 2026-11-13 18:03 neighbours: 1600/2500, 0 with an experimental badge, 1600 with a TM-score, 1600 superposed, 1041 per minute
 - 2026-11-13 18:03 neighbours: 1700/2500, 0 with an experimental badge, 1700 with a TM-score, 1700 superposed, 1044 per minute
+- 2026-11-13 18:03 neighbours: 1800/2500, 0 with an experimental badge, 1800 with a TM-score, 1800 superposed, 1047 per minute
+- 2026-11-13 18:03 neighbours: 1900/2500, 0 with an experimental badge, 1900 with a TM-score, 1900 superposed, 1051 per minute
+- 2026-11-13 18:03 neighbours: 2000/2500, 0 with an experimental badge, 2000 with a TM-score, 2000 superposed, 1053 per minute
+- 2026-11-13 18:03 neighbours: 2100/2500, 0 with an experimental badge, 2100 with a TM-score, 2100 superposed, 1056 per minute
+- 2026-11-13 18:04 neighbours: 2200/2500, 0 with an experimental badge, 2200 with a TM-score, 2200 superposed, 1058 per minute
+- 2026-11-13 18:04 neighbours: 2300/2500, 0 with an experimental badge, 2300 with a TM-score, 2300 superposed, 1058 per minute
+- 2026-11-13 18:04 neighbours: 2400/2500, 0 with an experimental badge, 2400 with a TM-score, 2400 superposed, 1060 per minute
+- 2026-11-13 18:04 neighbours: 2500/2500, 2 with an experimental badge, 2499 with a TM-score, 2499 superposed, 1062 per minute
+- 2026-11-13 18:04 neighbours: complete. 2 candidates carry an experimental badge, 1 have a target-matched reference, 2499 have a TM-score and 2499 have a superposed model written for the drawer
+- 2026-11-13 17:42 Tier 2 smoke co-fold: 9.3 minutes for the cheapest complex (GLP1R, 227 aa, five diffusion samples). The whole chain works end to end: PRODIGY interface energies of -8.8 to -10.9 kcal/mol, buried areas of 773 to 1,069 square angstroms, one subunit contacted for a monomeric ECD, and an epitope bin. Projected queue: GLP1R 3.1 h, PRLR 6.2 h, TNFa 20.4 h, TL1A 25.5 h, EGFR 32.3 h, 3.65 days in total. That is inside the four-day budget spec 5.2 sets, so the EGFR domain-III cut is not taken; it is implemented as a one-line config change and the projection is re-checked against real wall-clock as each target completes.
+- 2026-11-13 17:43 The interface stage was averaging boltz's confidence files across diffusion samples and writing the same ipTM, pTM and pLDDT onto every row. Each sample has its own file. Paired correctly, one complex spreads from ipTM 0.54 to 0.76 across its five samples, which is itself a confidence statement about the interface and is exactly what the five samples exist to reveal.
+- 2026-11-13 17:45 Tier 1 complete: 2,500 structure rows, 2,499 with a model and surface patches. The drawer's nearest-neighbour superposition is real: TM-align's transform is applied to every atom at build time, verified to drop the centroid separation from 256.1 to 1.19 angstroms with the end-to-end distance preserved to three decimal places.
+- 2026-11-13 17:47 The superposition panel was loading the whole PDB entry from RCSB, a dozen chains for a cryo-EM structure with the nanobody lost among them. The single matching chain is now extracted once per unique neighbour and served from here, so the viewer loads two local files and makes no third-party request.
+- 2026-11-13 18:01 Tm predictions for all 2,500: 58.8 to 91.1 degrees C, mean error bar 14.7 degrees. Spec 9 item 3 passes with none above 95 degrees C, against 38 in the upstream column reaching 101.1. The control was written for that failure and this build's own model does not commit it.
+- 2026-11-13 18:02 A shadowing bug of my own making killed the neighbour run after two candidates: write_reference_chain's result was assigned to a name that already held the SAbDab entry list, so the next iteration indexed into a string. Renamed and re-run at about 1,000 candidates a minute.
+- 2026-11-13 18:04 tier1: surface patches for 2499 models on 4 workers
+- 2026-11-13 18:04 tier1: patches 250/2499, 7748 per minute
+- 2026-11-13 18:04 tier1: patches 500/2499, 8039 per minute
+- 2026-11-13 18:04 tier1: patches 750/2499, 8157 per minute
+- 2026-11-13 18:04 tier1: patches 1000/2499, 8301 per minute
+- 2026-11-13 18:04 tier1: patches 1250/2499, 8333 per minute
+- 2026-11-13 18:04 tier1: patches 1500/2499, 8487 per minute
+- 2026-11-13 18:04 tier1: patches 1750/2499, 8496 per minute
+- 2026-11-13 18:04 tier1: patches 2000/2499, 8523 per minute
+- 2026-11-13 18:05 tier1: patches 2250/2499, 8519 per minute
+- 2026-11-13 18:05 tier1: patches 2499/2499, 8558 per minute
+- 2026-11-13 18:05 tier1: TNP has values for 2397 candidates
+- 2026-11-13 18:05 tier1: nativeness has values for 768 candidates
+- 2026-11-13 18:05 tier1: humanness has values for 2500 candidates
+- 2026-11-13 18:05 tier1: neighbours has values for 2500 candidates
+- 2026-11-13 18:05 tier1: EGFR wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 18:05 tier1: GLP1R wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 18:05 tier1: PRLR wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 18:05 tier1: TL1A wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 18:05 tier1: TNFa wrote 500 rows, 499 with a model, 499 with surface patches
+- 2026-11-13 18:05 tier1: complete, 2500 structure rows
+- 2026-11-13 18:05 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'specificity': 26} of 500
+- 2026-11-13 18:05 score: EGFR 500 rows, 13 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 18:05 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'specificity': 27} of 500
+- 2026-11-13 18:05 score: GLP1R 500 rows, 17 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 18:05 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'specificity': 15} of 500
+- 2026-11-13 18:05 score: PRLR 500 rows, 19 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 18:05 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'specificity': 14} of 500
+- 2026-11-13 18:05 score: TL1A 500 rows, 28 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 18:05 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'specificity': 21} of 500
+- 2026-11-13 18:05 score: TNFa 500 rows, 22 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 18:05 qc_pareto: EGFR 500 rows, stored front 13, independent front 13, AGREE
+- 2026-11-13 18:05 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 18:05 qc_pareto: GLP1R 500 rows, stored front 17, independent front 17, AGREE
+- 2026-11-13 18:05 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 18:05 qc_pareto: PRLR 500 rows, stored front 19, independent front 19, AGREE
+- 2026-11-13 18:05 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 18:05 qc_pareto: TL1A 500 rows, stored front 28, independent front 28, AGREE
+- 2026-11-13 18:05 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 18:05 qc_pareto: TNFa 500 rows, stored front 22, independent front 22, AGREE
+- 2026-11-13 18:05 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 18:05 build-db: EGFR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 18:05 build-db: GLP1R bundle, 500 rows, 38 columns with data, 2 pending
+- 2026-11-13 18:05 build-db: PRLR bundle, 500 rows, 31 columns with data, 9 pending
+- 2026-11-13 18:05 build-db: TL1A bundle, 500 rows, 31 columns with data, 9 pending
+- 2026-11-13 18:05 build-db: TNFa bundle, 500 rows, 31 columns with data, 9 pending
+- 2026-11-13 18:05 build-db: 15 bundles, 2510 kB total
+- 2026-11-13 18:05 nativeness: 800/2500, 23 per minute, about 74 minutes left
+- 2026-11-13 18:08 nativeness: 880/2500, 24 per minute, about 69 minutes left
+- 2026-11-13 18:09 qc: recorded molstar_contexts = PASS (30 consecutive drawer opens: peak 1 live WebGL context, 31 created and 31 disposed, 0 live after closing, and the viewer still renders on reopening)
+- 2026-11-13 18:09 qc: recorded phone_width = PASS (At a 500px viewport (the narrowest macOS allows a window, below the 900px breakpoint): document scrollWidth 485 against innerWidth 500, so no horizontal page scroll; no element overflows outside a box that scrolls on its own; the explorer is collapsed to its strip and the toolbar and target selector wrap)
+- 2026-11-13 18:09 build-db: EGFR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 18:09 build-db: GLP1R bundle, 500 rows, 38 columns with data, 2 pending
+- 2026-11-13 18:09 build-db: PRLR bundle, 500 rows, 31 columns with data, 9 pending
+- 2026-11-13 18:09 build-db: TL1A bundle, 500 rows, 31 columns with data, 9 pending
+- 2026-11-13 18:09 build-db: TNFa bundle, 500 rows, 31 columns with data, 9 pending
+- 2026-11-13 18:09 build-db: 15 bundles, 2511 kB total
+- 2026-11-13 18:11 nativeness: 960/2500, 24 per minute, about 64 minutes left

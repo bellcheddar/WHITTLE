@@ -473,9 +473,21 @@
     await renderTmPanel(d);
 
     const container = el('viewer');
-    if (d.structure_url && window.WViewer) {
+    // Only build a WebGL context for a panel the reader can see. Loading the
+    // Structure panel's viewer while the Neighbours panel is the visible one
+    // spends a context on a hidden div, and contexts are the scarce resource
+    // (DESIGN 3.6).
+    const structureVisible = (W.state.panel || 'structure') === 'structure';
+    if (d.structure_url && window.WViewer && structureVisible) {
       await window.WViewer.show(container, [{ url: d.structure_url, format: 'pdb',
         binary: false }]);
+    } else if (d.structure_url && !structureVisible) {
+      const placeholder = container.querySelector('.placeholder');
+      if (placeholder) {
+        placeholder.hidden = false;
+        placeholder.textContent = 'Select this tab to load the model.';
+      }
+      container.dataset.pending = '1';
     } else {
       const placeholder = container.querySelector('.placeholder');
       if (placeholder) {
@@ -707,6 +719,7 @@
   }
 
   function selectPanel(name) {
+    const previous = W.state.panel;
     W.state.panel = name;
     document.querySelectorAll('.subtabs button').forEach((btn) => {
       btn.setAttribute('aria-selected', String(btn.dataset.panel === name));
@@ -714,6 +727,17 @@
     ['structure', 'metrics', 'sequence', 'neighbours'].forEach((panel) => {
       el(`panel-${panel}`).hidden = panel !== name;
     });
+    // Coming back to Structure after the viewer was skipped for a hidden
+    // panel: load it now that it is visible.
+    if (name === 'structure' && previous !== 'structure' && currentDetail
+        && currentDetail.structure_url && window.WViewer) {
+      const container = el('viewer');
+      if (container && container.dataset.pending) {
+        delete container.dataset.pending;
+        window.WViewer.show(container,
+          [{ url: currentDetail.structure_url, format: 'pdb' }]);
+      }
+    }
     if (name === 'neighbours' && currentDetail && currentDetail.nearest_pdb
         && window.WViewer) {
       const node = el('nviewer');

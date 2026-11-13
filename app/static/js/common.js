@@ -135,9 +135,22 @@ W.writeUrl = (replace) => {
 /* --------------------------------------------------------------------- fetch */
 
 W.cache = new Map();
+
+/* The data bundles change on every rebuild and are fetched without a version,
+   so stamp them with this build's timestamp. Belt and braces against the
+   nginx Cache-Control rule: a proxy that ignores the header still cannot
+   serve last week's table. */
+W.stamp = (path) => {
+  if (!path.startsWith('/static/data/')) return path;
+  const built = (window.WHITTLE_META || {}).built_at || '';
+  if (!built) return path;
+  const sep = path.includes('?') ? '&' : '?';
+  return `${path}${sep}v=${encodeURIComponent(built)}`;
+};
+
 W.loadJson = async (path) => {
   if (W.cache.has(path)) return W.cache.get(path);
-  const promise = fetch(path, { credentials: 'same-origin' })
+  const promise = fetch(W.stamp(path), { credentials: 'same-origin' })
     .then((r) => (r.ok ? r.json() : null))
     .catch(() => null);
   W.cache.set(path, promise);

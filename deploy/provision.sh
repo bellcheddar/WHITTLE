@@ -57,15 +57,25 @@ ln -sf /etc/nginx/sites-available/whittle /etc/nginx/sites-enabled/whittle
 nginx -t && systemctl reload nginx
 
 echo "==> TLS certificate"
-if [[ ! -d "/etc/letsencrypt/live/${SERVER_NAME}" ]]; then
-  CERTBOT_ARGS=(--nginx -n --agree-tos --redirect -d "${SERVER_NAME}")
-  if [[ -n "${CERTBOT_EMAIL:-}" ]]; then
-    CERTBOT_ARGS+=(-m "${CERTBOT_EMAIL}")
-  else
-    CERTBOT_ARGS+=(--register-unsafely-without-email)
-  fi
-  certbot "${CERTBOT_ARGS[@]}" || \
-    echo "certbot failed; the site is still served over HTTP"
+# certbot writes its TLS block INTO the vhost this script has just regenerated
+# from the template, so a re-provision silently removes HTTPS. Guarding on
+# "does a certificate exist" is the wrong guard: the certificate survives, the
+# server block does not. Run certbot every time and let --keep-until-expiring
+# decide whether a new certificate is actually needed.
+CERTBOT_ARGS=(--nginx -n --agree-tos --redirect --keep-until-expiring
+              -d "${SERVER_NAME}")
+if [[ -n "${CERTBOT_EMAIL:-}" ]]; then
+  CERTBOT_ARGS+=(-m "${CERTBOT_EMAIL}")
+elif [[ ! -d /etc/letsencrypt/accounts ]]; then
+  CERTBOT_ARGS+=(--register-unsafely-without-email)
+fi
+certbot "${CERTBOT_ARGS[@]}" || \
+  echo "certbot failed; the site is still served over HTTP"
+
+# Prove it: a vhost with no 443 block means the site is plain HTTP, whatever
+# certbot reported.
+if ! grep -q "listen.*443" /etc/nginx/sites-available/whittle; then
+  echo "WARNING: the vhost has no TLS block. The site is HTTP only."
 fi
 nginx -t && systemctl reload nginx
 
