@@ -317,3 +317,5 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:26 tm_predict: 2500 sequences, ESM-2 esm2_t33_650M_UR50D
 - 2026-11-13 17:27 tm_model: 0 embeddings cached, 250 to compute
 - 2026-11-13 17:27 tm_model: ESM-2 embedded 8/250
+- 2026-11-13 17:28 tm_model: ESM-2 embedded 88/250
+- 2026-11-13 17:30 tm_model: ESM-2 embedded 168/250

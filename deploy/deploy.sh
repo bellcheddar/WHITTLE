@@ -125,6 +125,26 @@ systemctl --no-pager --lines=3 status ${SERVICE} || true
 REMOTE
 fi
 
+# Spec Section 2: the droplet is a read-only display layer. If a scientific
+# dependency ever lands there, something has quietly started computing at
+# request time and the whole placement decision has been undone. Assert it
+# rather than trust it.
+echo "==> Asserting the droplet carries no ML stack"
+ssh "$SSH_TARGET" bash -s <<'REMOTE'
+set -euo pipefail
+installed=$(/opt/whittle/.venv/bin/pip list --format=freeze 2>/dev/null | cut -d= -f1 | tr 'A-Z' 'a-z')
+forbidden=""
+for pkg in torch numpy scipy scikit-learn pandas openmm biopython fair-esm            immunebuilder anarci boltz boltz-community transformers ablang2; do
+  if echo "$installed" | grep -qx "$pkg"; then forbidden="$forbidden $pkg"; fi
+done
+if [ -n "$forbidden" ]; then
+  echo "FAIL: the droplet venv carries:$forbidden"
+  echo "Spec Section 2 says the droplet does no request-time compute."
+  exit 1
+fi
+echo "    clean: $(echo "$installed" | wc -l | tr -d ' ') packages, none of them a scientific dependency"
+REMOTE
+
 echo "==> Checking the live site"
 curl -fsS --max-time 20 "https://${SERVER_NAME}/healthz" || \
   curl -fsS --max-time 20 "http://${SERVER_NAME}/healthz" || echo "healthz not answering yet"
