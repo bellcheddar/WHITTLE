@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ title }}{% endblock %} | WHITTLE</title>
+<meta name="description" content="WHITTLE triages 2,500 candidate nanobody sequences against five targets on four predicted axes: binding, non-specific binding, thermostability and expression. Rankings are percentiles within each target.">
+{% if not indexable %}<meta name="robots" content="noindex, nofollow">{% endif %}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WHITTLE">
+<meta property="og:title" content="WHITTLE: whole-repertoire in-silico nanobody triage">
+<meta property="og:description" content="2,500 candidate nanobodies, five targets, four predicted scoring axes, cheapest checks first. Percentiles within each target, Pareto fronts, and a control set run blind through the same pipeline.">
+<meta property="og:url" content="https://whittle.mdeller.com{{ request.path }}">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+<link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+<meta name="theme-color" content="#3457A6">
+<link rel="stylesheet" href="{{ url_for('static', filename='fonts/fonts.css') }}?v={{ asset_version('fonts/fonts.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}?v={{ asset_version('css/theme.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<a class="sr-only skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="row">
+    <a class="wordmark" href="/">WHITTLE</a>
+    <p class="backronym">{% for letter, word in backronym %}<b>{{ letter }}</b>{{ word }} {% endfor %}</p>
+    <span class="spacer"></span>
+    <nav class="tabs" aria-label="Sections">
+      {% for label, href in tabs %}
+      <a href="{{ href }}" {% if active == href %}aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+    </nav>
+    <p class="runmeta">
+      {% if meta.built_date %}Run {{ meta.built_date }} &middot; {% endif %}
+      {{ '{:,}'.format(meta.n_candidates or 0) }} VHH &middot; {{ meta.n_targets or 0 }} targets
+    </p>
+  </div>
+</header>
+
+{% block targetbar %}{% endblock %}
+
+<main id="main">
+{% block main %}{% endblock %}
+</main>
+
+<footer class="card" style="max-width:1680px;margin:0 auto 16px;">
+  <p style="margin:0;font-size:11px;color:var(--ink-3);">
+    WHITTLE {{ meta.run_id }}{% if meta.git_sha %} &middot; {{ meta.git_sha }}{% endif %}
+    &middot; all values are predicted or estimated, never measured
+    &middot; rankings are percentiles within each target and are not comparable between targets
+    &middot; <a href="https://github.com/bellcheddar/WHITTLE">source</a>
+    &middot; <a href="/about">methods, references and limitations</a>
+  </p>
+</footer>
+
+<script>window.WHITTLE_META = {{ meta | tojson }};</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

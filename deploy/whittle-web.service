@@ -1,0 +1,25 @@
+# systemd unit for the WHITTLE web app (gunicorn behind nginx).
+# Copied from debris/deploy/debris-gunicorn.service; names, paths and port changed.
+# There is no timer: WHITTLE has no refresh job. Every number is computed on the
+# Studio and pushed here (spec 2).
+[Unit]
+Description=WHITTLE web app (gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=whittle
+Group=whittle
+WorkingDirectory=/opt/whittle
+EnvironmentFile=-/opt/whittle/.env
+ExecStart=/opt/whittle/.venv/bin/gunicorn --config /opt/whittle/deploy/gunicorn.conf.py wsgi:app
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/whittle
+
+[Install]
+WantedBy=multi-user.target

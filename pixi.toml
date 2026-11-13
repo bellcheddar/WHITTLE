@@ -23,6 +23,12 @@ pip = "*"
 openmm = "*"
 hmmer = "*"
 pdbfixer = "*"
+# bioconda's noarch anarci ships the prebuilt IMGT HMMs. Installing ANARCI from
+# its GitHub source instead fails on macOS: the build pipeline shells out to a
+# bundled `muscle_macOS` that is not in the sdist, and muscle 5 does not take
+# muscle 3's flags. ImmuneBuilder imports `anarci` unconditionally, so this is
+# not optional (see DECISIONS.md).
+anarci = "*"
 # --- numerics and bio ---
 numpy = "*"
 scipy = "*"
@@ -103,7 +109,9 @@ install-boltz = "bash tools/install_boltz.sh"
 cofold = "python -m pipeline.cofold"
 
 [environments]
-cofold = ["cofold"]
+# no-default-feature: the cofold env must NOT inherit python 3.12 from
+# [dependencies], or the solve is unsatisfiable against boltz's 3.11 ceiling.
+cofold = { features = ["cofold"], no-default-feature = true }
 
 [activation.env]
 PYTORCH_ENABLE_MPS_FALLBACK = "1"

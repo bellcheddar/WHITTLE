@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="card">
+  <div class="prose">
+    <h1 style="font-size:20px;margin:0 0 12px;color:var(--ink)">About and methods</h1>
+
+    <h2 id="what">What WHITTLE does</h2>
+    <p>
+      WHITTLE takes 2,500 candidate nanobody sequences, 500 against each of five
+      targets, and triages them down to a defensible shortlist of about twenty per
+      target by running the cheapest checks first. Each candidate is scored on four
+      axes: binding, non-specific binding, thermostability and expression. Every
+      score is reported as a percentile within its own target, because the five
+      targets are different sizes, different constructs and different libraries, and
+      a pooled league table would be meaningless. Everything here is predicted or
+      estimated from sequence and from predicted structure: nothing on this site is
+      a measurement.
+    </p>
+
+    <h2 id="honest">The weak axis, stated up front</h2>
+    <p>
+      Published benchmarks show that co-folding confidence does not reliably
+      discriminate cognate from non-cognate nanobody-antigen pairs. WHITTLE is
+      therefore strong at discarding and only suggestive about ranking. The affinity
+      axis is a co-folding confidence prior, it is labelled as such wherever it
+      appears, and the control-set tab reports what a scrambled-CDR negative control
+      did to it. If that control shows the axis cannot separate real sequences from
+      shuffled ones, that is reported as a finding and the axis is marked
+      non-discriminating rather than quietly kept.
+    </p>
+
+    <h2 id="workflow">Workflow</h2>
+    {% if diagram_svg %}
+    <div class="diagram">{{ diagram_svg | safe }}</div>
+    {% else %}
+    <table class="reftable">
+      <caption class="sr-only">Tiers, what each one computes and how many candidates reach it</caption>
+      <thead><tr><th>Tier</th><th>What it computes</th><th>Candidates</th></tr></thead>
+      <tbody>
+        <tr><td>Tier 0, sequence</td>
+            <td>IMGT numbering and CDRs, hallmark tetrad, liability motifs, charge and pI, disulfides, CDR3 clustering</td>
+            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier0 or 0) }}</td></tr>
+        <tr><td>Tier 1, structure</td>
+            <td>NanoBodyBuilder2 model, TNP developability, surface patches, solubility, nativeness, humanness, nearest experimental neighbour</td>
+            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier1 or 0) }}</td></tr>
+        <tr><td>Tier 1b, thermostability</td>
+            <td>The WHITTLE apparent-Tm model with a per-row error estimate, cross-checked against TemStaPro</td>
+            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier1b or 0) }}</td></tr>
+        <tr><td>Tier 2, co-folding</td>
+            <td>boltz-community co-folds, five seeds, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR</td>
+            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier2 or 0) }}</td></tr>
+        <tr><td>Ranking</td>
+            <td>Within-target percentiles, Pareto non-dominated sorting, Derringer-Suich desirability, axis correlation matrix</td>
+            <td class="num">{{ '{:,}'.format(meta.n_candidates or 0) }}</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--ink-3)">
+      The rendered workflow diagram is produced at build time and appears here once
+      Phase 4 has run.
+    </p>
+    {% endif %}
+
+    <h2 id="targets">Targets and constructs</h2>
+    <table class="reftable">
+      <caption class="sr-only">The five targets and their constructs</caption>
+      <thead><tr><th>Target</th><th>UniProt</th><th>Construct</th><th>Antigen</th><th>Complex</th><th>Notes</th></tr></thead>
+      <tbody>
+        {% for t in meta.targets %}
+        <tr>
+          <td><strong>{{ t.target }}</strong></td>
+          <td>{{ t.uniprot }}</td>
+          <td>{{ t.construct_label }}</td>
+          <td class="num">{{ '{:,}'.format(t.antigen_length) }} aa</td>
+          <td class="num">about {{ '{:,}'.format(t.complex_length) }} aa</td>
+          <td class="wrap" style="max-width:300px;font-size:11px">
+            {% if t.ecd_scoped %}<span class="chip warn">ECD-scoped</span>{% endif %}
+            {% if t.stoichiometry > 1 %}<span class="chip accent">Trimer</span>{% endif %}
+            {% if t.his_enriched %}<span class="chip">His-enriched library</span>{% endif %}
+            {% if not t.known_nanobodies %}<span class="chip">No target-matched reference</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p>
+      GLP1R is scoped to the N-terminal extracellular domain only, by explicit
+      decision. The 7TM bundle and the extracellular loops are excluded, so a GLP1R
+      result here cannot support any claim about binding the intact receptor in a
+      membrane. TNFa and TL1A are co-folded as homotrimers, because the epitope
+      commonly spans two subunits and a monomer run would be wrong rather than
+      merely cheaper.
+    </p>
+
+    <h2 id="axes">Axes, and what they are made of</h2>
+    <p>
+      Each axis is a weighted mean of the available component metrics, converted to
+      a percentile within the target. An axis whose components have not been
+      computed yet is shown as pending rather than filled with a placeholder.
+    </p>
+    <table class="reftable">
+      <caption class="sr-only">What each scoring axis is computed from</caption>
+      <thead><tr><th>Axis</th><th>Tier</th><th>Components</th></tr></thead>
+      <tbody>
+        {% for name, info in (axes.axes or {}).items() %}
+        <tr>
+          <td><strong>{{ name }}</strong></td>
+          <td>{% if info.available %}{{ info.tier }}{% else %}<span class="chip">pending</span>{% endif %}</td>
+          <td class="wrap">
+            {% for c in info.components %}
+            {{ c.note }}{% if c.sign < 0 %} (lower is better){% endif %}{% if not loop.last %}; {% endif %}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h3>Axis correlation, per target</h3>
+    <p>
+      Hydrophobic patch area feeds non-specificity, aggregation and expression, so
+      the axes are not independent by construction. The correlation matrix is
+      computed per target and any pair above 0.8 is stated here rather than left
+      implicit.
+    </p>
+    {% set flagged = [] %}
+    {% for target, info in (axes.correlations or {}).items() %}
+      {% for line in info.flagged %}{% set _ = flagged.append(target ~ ': ' ~ line) %}{% endfor %}
+    {% endfor %}
+    {% if flagged %}
+    <ul>{% for line in flagged %}<li>{{ line }}</li>{% endfor %}</ul>
+    {% else %}
+    <p style="color:var(--ink-3)">No axis pair correlates above 0.8 in any target
+    for this run.</p>
+    {% endif %}
+
+    <h2 id="references">References</h2>
+    {% if about.references %}
+    <table class="reftable">
+      <caption class="sr-only">Tools and databases used, with citations</caption>
+      <thead><tr><th>Tool or database</th><th>Role</th><th>Version or snapshot</th><th>Citation</th><th>Licence</th></tr></thead>
+      <tbody>
+        {% for ref in about.references %}
+        <tr id="ref-{{ ref.key }}">
+          <td><strong>{{ ref.key }}</strong></td>
+          <td class="wrap" style="max-width:190px">{{ ref.role }}</td>
+          <td>{{ ref.version_used or ref.snapshot_date or '' }}</td>
+          <td class="wrap" style="max-width:380px">
+            {{ ref.title }}{% if ref.authors %}, {{ ref.authors }}{% endif %}{% if ref.year %} ({{ ref.year }}){% endif %}{% if ref.container %}, {{ ref.container }}{% endif %}
+            {% if ref.doi %}
+              &middot; <a href="https://doi.org/{{ ref.doi }}">{{ ref.doi }}</a>
+              {% if ref.doi_verified %}<span class="chip good">DOI verified</span>
+              {% else %}<span class="chip warn">DOI unverified</span>{% endif %}
+            {% elif ref.repo %}
+              &middot; <a href="{{ ref.repo }}">{{ ref.repo }}</a>
+              {% if ref.commit_sha %} at {{ ref.commit_sha[:8] }}{% endif %}
+              <span class="chip">repository, no DOI</span>
+            {% elif ref.url %}
+              &middot; <a href="{{ ref.url }}">{{ ref.url }}</a>
+              <span class="chip">accessed {{ ref.snapshot_date or '' }}</span>
+            {% endif %}
+          </td>
+          <td>{{ ref.licence or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--ink-3)">
+      The reference table is generated from <code>config/references.yaml</code> and
+      resolved through Crossref at build time. It appears here once that step has run.
+    </p>
+    {% endif %}
+
+    <h2 id="provenance">Provenance</h2>
+    {% if about.provenance %}
+    <table class="reftable">
+      <caption class="sr-only">Tool versions, database snapshot dates and run identifiers</caption>
+      <thead><tr><th>Key</th><th>Value</th></tr></thead>
+      <tbody>
+        {% for key, value in about.provenance.items() %}
+        <tr><td>{{ key.replace('_', ' ') }}</td><td class="wrap">{{ value }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <table class="reftable">
+      <tbody>
+        <tr><td>run id</td><td>{{ meta.run_id }}</td></tr>
+        <tr><td>built at</td><td>{{ meta.built_at }}</td></tr>
+        <tr><td>git sha</td><td>{{ meta.git_sha or 'not recorded' }}</td></tr>
+      </tbody>
+    </table>
+    {% endif %}
+
+    <h2 id="limitations">Limitations</h2>
+    <div class="limits">
+      <ul style="margin:0">
+        {% for line in about.limitations or [] %}<li>{{ line }}</li>{% endfor %}
+        {% if not about.limitations %}
+        <li>Co-folding confidence is a weak prior for nanobody-antigen specificity
+            and is not an affinity measurement.</li>
+        <li>Thermostability predictions carry wide error bars away from the training
+            manifold.</li>
+        <li>The experimental-structure badge is a positive signal only; its absence
+            says nothing about expressibility.</li>
+        <li>GLP1R results are scoped to the N-terminal ECD, not the intact
+            receptor.</li>
+        <li>Rankings are within-target percentiles. Scores are not comparable
+            between targets.</li>
+        {% endif %}
+      </ul>
+
+      <h3 style="margin-top:14px">Defects in the upstream columns</h3>
+      <ul style="margin:0">
+        {% for line in about.upstream_defects or [] %}<li>{{ line }}</li>{% endfor %}
+      </ul>
+    </div>
+
+    <h2 id="licence">Licence and citation</h2>
+    <p>
+      Code: MIT, at <a href="https://github.com/bellcheddar/WHITTLE">github.com/bellcheddar/WHITTLE</a>.
+      Every component is permissively licensed and self-hosted: no academic-only
+      binaries, no webserver dependency at serve time.
+    </p>
+    <p style="font-size:12px;color:var(--ink-3)">
+      Cite as: Deller, M. C. WHITTLE: whole-repertoire hierarchical in-silico triage
+      of nanobody candidates (thermostability, liabilities, expression). Run
+      {{ meta.run_id }}{% if meta.git_sha %}, git {{ meta.git_sha }}{% endif %}.
+      https://whittle.mdeller.com
+    </p>
+  </div>
+</div>
+{% endblock %}

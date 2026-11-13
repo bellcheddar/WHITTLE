@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/tabulator.min.css') }}?v={{ asset_version('vendor/tabulator.min.css') }}">
+{% endblock %}
+
+{% block targetbar %}
+{# The target selector is the primary control and sits directly under the
+   masthead (DESIGN 1). Five targets, one at a time. There is no pooled view and
+   no "all targets" option, by decision (spec 6.5 item 5). #}
+<section class="targetbar" aria-label="Target">
+  <div class="row">
+    <span class="label" id="targetlabel">Target</span>
+    <div class="targetset" role="group" aria-labelledby="targetlabel" id="targetset">
+      {% for t in meta.targets %}
+      <button type="button" data-target="{{ t.target }}" aria-pressed="false">{{ t.target }}</button>
+      {% endfor %}
+    </div>
+    <span class="construct" id="construct"></span>
+    <span id="targetchips"></span>
+    <span class="spacer" style="flex:1 1 auto"></span>
+    <span class="construct" id="targetcount"></span>
+  </div>
+</section>
+{% endblock %}
+
+{% block main %}
+
+{% if meta.axes_pending %}
+<p class="banner" id="provisional">
+  <strong>Provisional.</strong>
+  The axes still to be computed for this run are
+  <span id="pendingaxes">{{ meta.axes_pending | join(', ') }}</span>.
+  Everything shown is predicted or estimated from the sequence level so far, and
+  the ranking will change as the structural and co-folding tiers complete.
+</p>
+{% endif %}
+
+<!-- ----------------------------------------------- 3.1 four-axis explorer -->
+<section class="card" id="explorercard" aria-labelledby="explorerhead">
+  <div class="cardhead">
+    <h2 id="explorerhead">Four-axis explorer</h2>
+    <span class="hint" id="explorerhint">drag an axis to brush</span>
+    <span class="spacer"></span>
+    <span class="legend" aria-hidden="true">
+      <span><i class="front"></i> on the Pareto front</span>
+      <span><i class="dom"></i> dominated</span>
+    </span>
+    <button type="button" class="btn" id="resetbrush">Reset brush</button>
+  </div>
+  <div class="explorer-strip">
+    <strong>Four-axis explorer</strong>
+    <span id="stripfilters">no filters</span>
+    <span class="spacer" style="flex:1 1 auto"></span>
+    <button type="button" class="btn" id="expand">Expand</button>
+  </div>
+  <div id="explorer" role="img" aria-label="Parallel-coordinates plot of the four scoring axes, with Pareto-front candidates drawn over the dominated ones"></div>
+</section>
+
+<!-- ------------------------------------------------------- 3.2 toolbar -->
+<div class="toolbar">
+  <label class="sr-only" for="search">Search candidates</label>
+  <input type="search" id="search" placeholder="Search ID, target, CDR3 motif"
+         autocomplete="off">
+  <button type="button" class="btn" id="paretotoggle" aria-pressed="false">
+    Pareto front &middot; <span id="frontcount">0</span>
+  </button>
+  <span class="pop-anchor">
+    <button type="button" class="btn" id="columnsbtn" aria-expanded="false"
+            aria-controls="columnpop">
+      Columns &middot; <span id="colcount">6 of 41</span>
+    </button>
+    <div class="popover" id="columnpop" hidden role="dialog" aria-label="Choose columns">
+      <header>
+        <h3>Columns</h3>
+        <label class="sr-only" for="colfind">Find a column</label>
+        <input type="search" id="colfind" placeholder="Find a column" autocomplete="off">
+        <button type="button" class="btn" id="colreset">Reset</button>
+      </header>
+      <div class="body" id="colbody"></div>
+      <footer>
+        <span id="colfoot">6 of 41 shown</span>
+        <span class="spacer" style="flex:1 1 auto"></span>
+        <button type="button" class="btn" id="colsave">Save as view</button>
+        <button type="button" class="btn primary" id="coldone">Done</button>
+      </footer>
+    </div>
+  </span>
+  <span class="spacer"></span>
+  <a class="btn" id="exportbtn" href="#" download>Export</a>
+</div>
+
+<!-- --------------------------------------------- 3.3 table and 3.5 drawer -->
+<div class="split">
+  <div class="tablewrap">
+    <div id="table"></div>
+    <p class="caption" id="caption">Loading.</p>
+  </div>
+
+  <aside class="drawer" id="drawer" hidden aria-label="Candidate detail">
+    <header>
+      <h2 id="drawerid">&nbsp;</h2>
+      <span id="drawerchips"></span>
+      <button type="button" class="close" id="drawerclose" aria-label="Close the detail panel">&times;</button>
+    </header>
+    <div class="subtabs" role="tablist" aria-label="Candidate detail sections">
+      <button type="button" role="tab" aria-selected="true" data-panel="structure">Structure</button>
+      <button type="button" role="tab" aria-selected="false" data-panel="metrics">Metrics</button>
+      <button type="button" role="tab" aria-selected="false" data-panel="sequence">Sequence</button>
+      <button type="button" role="tab" aria-selected="false" data-panel="neighbours">Neighbours</button>
+    </div>
+
+    <div class="panel" id="panel-structure" role="tabpanel">
+      <div id="viewer">
+        <p class="placeholder" id="viewerplaceholder">No model yet for this candidate. The structural tier has not run.</p>
+        <p class="vcap"><span id="vcapleft"></span><span id="vcapright"></span></p>
+      </div>
+      <div class="tiles" id="axistiles"></div>
+      <div id="tmpanel" style="margin-top:14px"></div>
+      <p class="footnote" id="structfootnote"></p>
+    </div>
+
+    <div class="panel" id="panel-metrics" role="tabpanel" hidden></div>
+    <div class="panel" id="panel-sequence" role="tabpanel" hidden></div>
+    <div class="panel" id="panel-neighbours" role="tabpanel" hidden></div>
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/tabulator.min.js') }}?v={{ asset_version('vendor/tabulator.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/common.js') }}?v={{ asset_version('js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/viewer.js') }}?v={{ asset_version('js/viewer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/candidates.js') }}?v={{ asset_version('js/candidates.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{
+  "name": "whittle-bundle",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build-time only: the partial Plotly bundle and the Mol* copy. Nothing here runs on the droplet.",
+  "devDependencies": {
+    "plotly.js": "2.35.2",
+    "esbuild": "0.24.0",
+    "molstar": "4.9.0",
+    "@mermaid-js/mermaid-cli": "11.4.0"
+  },
+  "scripts": {
+    "bundle": "node tools/bundle/build.mjs"
+  }
+}

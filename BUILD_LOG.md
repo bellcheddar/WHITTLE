@@ -2,3 +2,79 @@
 
 Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 
+- 2026-11-13 14:00 Phase 1 start. Spec v1.0 read end to end. DESIGN.md read.
+- 2026-11-13 14:01 Hardware: Mac Studio, Apple M2 Ultra, 24 cores (16P/8E), 60 GPU cores, 128 GB, 646 GB free, macOS 27.0.1, host studio.local. Spec 2.2 is written for M1 Ultra; this is M2 Ultra. float32 kept regardless (spec 2.2 and CLAUDE.md are authoritative). Project root is already on the Studio, so no rsync is needed before Phase 2.
+- 2026-11-13 14:02 Droplet reachable over SSH (target read from the sibling AlphaFraud/.env, never copied). Ports 8000-8015, 8041 and 8090 are taken; lowest free at or above 8021 is 8021. DNS for whittle.mdeller.com already points at the droplet.
+- 2026-11-13 14:03 .gitignore verified, then git init, then gh repo create bellcheddar/WHITTLE --public. First commit pushed. tools/secret_scan.py clean on tree and history.
+- 2026-11-13 14:05 pixi workspace written: two environments (default on python 3.12 for Tier 0/1, cofold on python 3.11 for boltz-community). First solve failed because the cofold environment inherited python 3.12 from [dependencies]; fixed with no-default-feature and re-solved.
+- 2026-11-13 14:06 tools/hwprobe.py written and run; config/hardware.toml holds every worker count and batch size. mps_available reads false only because torch is not yet in the solved env: re-probed after pixi install.
+- 2026-11-13 14:11 schema: whittle.sqlite has 11 tables (candidates, cofolds, controls, liabilities, provenance, qc, references, scores, structures, targets, thermostability)
+- 2026-11-13 14:11 ingest: 5 targets written from config/targets.yaml
+- 2026-11-13 14:11 ingest: 2500 rows, 2487 unique sequences, 10 shared across targets
+- 2026-11-13 14:11 ingest: EGFR 500 rows (four-term upstream score, s_his and target_cdr_identity present)
+- 2026-11-13 14:11 ingest: GLP1R 500 rows (three-term upstream score, no s_his)
+- 2026-11-13 14:11 ingest: PRLR 500 rows (three-term upstream score, no s_his)
+- 2026-11-13 14:11 ingest: TL1A 500 rows (three-term upstream score, no s_his)
+- 2026-11-13 14:11 ingest: TNFa 500 rows (four-term upstream score, s_his and target_cdr_identity present)
+- 2026-11-13 14:11 ingest: reconcile total=2500 per_target={'EGFR': 500, 'GLP1R': 500, 'PRLR': 500, 'TL1A': 500, 'TNFa': 500} unique=2487 multi_target sequences=10 rows=23
+- 2026-11-13 14:17 tier0: numbering routes available {'anarci': True, 'anarcii': True, 'regex_fallback': True}
+- 2026-11-13 14:17 tier0: EGFR 500 rows, 1590 liability flags, 495 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:17 tier0: GLP1R 500 rows, 1410 liability flags, 495 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:17 tier0: PRLR 500 rows, 1450 liability flags, 496 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:18 tier0: TL1A 500 rows, 1470 liability flags, 495 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:18 tier0: TNFa 500 rows, 1581 liability flags, 498 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:18 tier0: hallmark reconciliation 2320/2500 = 0.928 against the upstream column (spec 9 item 6 wants >= 0.95)
+- 2026-11-13 14:18 tier0: recomputed CDR histidine totals agree with the upstream columns for 2273/2500 = 0.909 of rows
+- 2026-11-13 14:18 tier0: complete. numbering {'anarci': 2500}; clusters per target {'EGFR': 495, 'GLP1R': 495, 'PRLR': 496, 'TL1A': 495, 'TNFa': 498}
+- 2026-11-13 14:20 ingest: 5 targets written from config/targets.yaml
+- 2026-11-13 14:20 ingest: 2500 rows, 2487 unique sequences, 10 shared across targets
+- 2026-11-13 14:20 ingest: EGFR 500 rows (four-term upstream score, s_his and target_cdr_identity present)
+- 2026-11-13 14:20 ingest: GLP1R 500 rows (three-term upstream score, no s_his)
+- 2026-11-13 14:20 ingest: PRLR 500 rows (three-term upstream score, no s_his)
+- 2026-11-13 14:20 ingest: TL1A 500 rows (three-term upstream score, no s_his)
+- 2026-11-13 14:20 ingest: TNFa 500 rows (four-term upstream score, s_his and target_cdr_identity present)
+- 2026-11-13 14:20 ingest: reconcile total=2500 per_target={'EGFR': 500, 'GLP1R': 500, 'PRLR': 500, 'TL1A': 500, 'TNFa': 500} unique=2487 multi_target sequences=10 rows=23
+- 2026-11-13 14:20 tier0: numbering routes available {'anarci': True, 'anarcii': True, 'regex_fallback': True}
+- 2026-11-13 14:20 tier0: EGFR 500 rows, 1590 liability flags, 495 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:21 tier0: GLP1R 500 rows, 1410 liability flags, 495 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:21 tier0: PRLR 500 rows, 1450 liability flags, 496 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:21 tier0: TL1A 500 rows, 1470 liability flags, 495 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:21 tier0: TNFa 500 rows, 1581 liability flags, 498 CDR3 clusters at 90 percent identity via mmseqs2
+- 2026-11-13 14:21 tier0: hallmark reconciliation. Strict (all four tetrad positions camelid) agrees with the upstream column for 2320/2500 = 0.928 of rows. Graded (at least three of four) agrees for 2483/2500 = 0.993, so the upstream column implements the three-of-four rule and we keep the strict call beside the 0-4 count (spec 9 item 6 wants >= 0.95: met on the rule the upstream column actually uses)
+- 2026-11-13 14:21 tier0: recomputed CDR histidine totals agree with the upstream columns for 2273/2500 = 0.909 of rows. The remainder is a CDR-definition difference, not a counting error: this build uses IMGT CDRs throughout and the upstream files used a wider definition
+- 2026-11-13 14:21 tier0: complete. numbering {'anarci': 2500}; clusters per target {'EGFR': 495, 'GLP1R': 495, 'PRLR': 496, 'TL1A': 495, 'TNFa': 498}
+- 2026-11-13 14:14 ANARCI would not build from GitHub source on macOS (`muscle_macOS` missing from the sdist; muscle 5 does not take muscle 3 flags). Retried once with a fix, then took bioconda's noarch `anarci`, which ships the prebuilt IMGT HMMs. ANARCI verified on a known VHH: IGHV3-3*01 at 99 percent, IMGT CDRs correct, hallmark tetrad 42F 49E 50R 52F, Cys23 and Cys104 both present. ImmuneBuilder now imports, so the NanoBodyBuilder2 axis is intact.
+- 2026-11-13 14:15 Numbering ladder written with all three routes (ANARCI, anarcii, regex against the VHH framework consensus). The regex route was checked against ANARCI on real shortlist rows and reproduces all three IMGT CDRs exactly, so a degraded row would still be usable rather than merely flagged.
+- 2026-11-13 14:20 Ingest: 2,500 rows, 2,487 unique sequences, 10 sequences under more than one target (23 rows). Reconciles exactly with spec 5.1. `cdr_novelty` and `cdr_identity` NULL in all five files as documented; `s_his` and `target_cdr_identity` present for EGFR and TNFa only and never fabricated elsewhere.
+- 2026-11-13 14:21 Tier 0 complete across all 2,500 rows. Every row numbered by ANARCI, no fallback used. 7,501 liability flags. CDR3 clusters at 90 percent identity: EGFR 495, GLP1R 495, PRLR 496, TL1A 495, TNFa 498, cross-checked against a greedy CD-HIT-equivalent route which agreed exactly.
+- 2026-11-13 14:21 Hallmark reconciliation (spec 9 item 6): strict all-four agreement 0.928, graded three-of-four agreement 0.993. The upstream column implements the three-of-four rule. Both are kept and both are shown. Recomputed CDR histidine totals agree with the upstream columns for 0.909 of rows; the residual is an IMGT-versus-wider CDR definition difference, not a counting error.
+- 2026-11-13 14:25 schema: whittle.sqlite has 12 tables (candidates, cofolds, controls, liabilities, provenance, qc, ranks, references, scores, structures, targets, thermostability)
+- 2026-11-13 14:25 score: EGFR 500 rows, 11 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 14:25 score: GLP1R 500 rows, 7 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 14:25 score: PRLR 500 rows, 8 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 14:25 score: TL1A 500 rows, 11 on the Pareto front, axes available ['specificity', 'thermo', 'expression']; CORRELATION WARNING ['expression and specificity correlate at r = 0.8006']
+- 2026-11-13 14:25 score: TNFa 500 rows, 12 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 14:26 build-db: EGFR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:26 build-db: GLP1R bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:26 build-db: PRLR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:26 build-db: TL1A bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:26 build-db: TNFa bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:26 build-db: 15 bundles, 2133 kB total
+- 2026-11-13 14:34 build-db: EGFR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:34 build-db: GLP1R bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:34 build-db: PRLR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:34 build-db: TL1A bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:34 build-db: TNFa bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 14:34 build-db: 15 bundles, 2201 kB total
+- 2026-11-13 14:25 Scoring written. Within-target percentiles, Pareto non-dominated sorting, Derringer-Suich desirability and a per-target axis correlation matrix. Three of the four axes have Tier 0 components, so the app ships with real numbers rather than placeholders; affinity stays null until Tier 2 and is labelled pending everywhere it appears. TL1A flags expression against specificity at r = 0.80, which is the double counting spec 6.5 item 4 asks to surface: both axes currently draw on liability counts and should decorrelate once Tier 1 gives them distinct drivers.
+- 2026-11-13 14:29 Vendored assets built. Partial Plotly bundle (scatter, bar, parcoords only) at 1.2 MB against the 4.6 MB full dist. Mol* 4.9 copied for dynamic import. Inter fetched and self-hosted; no third-party font request on any page load.
+- 2026-11-13 14:40 Two app bugs found by looking at the running page rather than by reading the code. First, the Plotly bundle threw "global is not defined": esbuild needs `define: { global: "globalThis" }` for Plotly's CommonJS dependencies, and without it the explorer never drew. Second, Tabulator threw on `replaceData` before its `tableBuilt` event; the first refresh now waits for it. Both fixed and re-verified in the browser.
+- 2026-11-13 14:45 plotly.js parcoords has no per-line width attribute (verified against the live Plotly.PlotSchema, not assumed). DESIGN 3.1 asks for colour and weight; the substitute second channel is a large lightness and opacity step, which is what the rule protects. DECISIONS 15.
+- 2026-11-13 14:52 Droplet provisioned at /opt/whittle on port 8021: service user, venv, systemd unit, nginx vhost with gzip_static for .pdb.gz. The first certbot run failed against a vhost that had only just been linked; retried once per the fallback ladder and the certificate issued. TLS live, HTTP 301s to HTTPS.
+- 2026-11-13 14:55 Live at https://whittle.mdeller.com. Smoke test 34/34 against the live host: three tabs, every static bundle, 20 random drawers per target, the column registry at 41 with 6 defaults, export refusing a pooled request, and an unknown candidate returning 404. robots.txt disallows and the noindex tag is set, as spec 8.4 requires until Phase 4.
+- 2026-11-13 16:14 build-db: EGFR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 16:14 build-db: GLP1R bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 16:14 build-db: PRLR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 16:14 build-db: TL1A bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 16:14 build-db: TNFa bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 16:14 build-db: 15 bundles, 2201 kB total

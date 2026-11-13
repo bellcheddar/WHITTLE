@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/tabulator.min.css') }}?v={{ asset_version('vendor/tabulator.min.css') }}">
+{% endblock %}
+
+{% block main %}
+{# The honesty tab. A first-class page, not a footnote (spec 8.2). #}
+
+<div class="card">
+  <div class="cardhead">
+    <h2>Control set</h2>
+    <span class="hint">known nanobodies with published measurements, run blind through the same pipeline</span>
+  </div>
+  <p style="margin:0;font-size:12.5px;color:var(--ink-2);max-width:900px">
+    Every control below went through the identical pipeline with its published
+    measurement withheld. What this page shows is how far the predicted axes track
+    the observed numbers, per axis, with the residuals drawn rather than summarised.
+    A control that fails its assertion is marked and kept on the page rather than
+    dropped.
+  </p>
+</div>
+
+{# Two panels that must be visible without scrolling (DESIGN 4). #}
+<div class="scatgrid" style="margin-bottom:16px">
+  <div class="card" style="margin:0;border-left:3px solid var(--accent)">
+    <h2 style="margin:0 0 6px">Coverage caveat</h2>
+    <p style="margin:0;font-size:12.5px;color:var(--ink-2)">
+      {{ controls.coverage_caveat or
+      'Only EGFR and TNFa have target-matched published nanobodies, so this tab checks
+      the general axes for all five targets and the target-aware axis for those two
+      only. TL1A, PRLR and GLP1R have no published nanobody benchmark.' }}
+    </p>
+  </div>
+  <div class="card" style="margin:0;border-left:3px solid var(--accent)">
+    <h2 style="margin:0 0 6px">Scrambled negative control</h2>
+    <p style="margin:0;font-size:12.5px;color:var(--ink-2)" id="scrambledsummary">
+      Fifty shuffled-CDR sequences per target run through the same pipeline. If the
+      affinity axis does not separate them from the real candidates, that is reported
+      here in plain words and the axis is marked non-discriminating wherever it
+      appears. This panel fills when the co-folding tier completes.
+    </p>
+  </div>
+</div>
+
+<section class="card" aria-labelledby="scatterhead">
+  <div class="cardhead">
+    <h2 id="scatterhead">Observed against predicted, per axis</h2>
+    <span class="hint">identity line dashed; any control that fails its assertion in red</span>
+  </div>
+  <div class="scatgrid" id="scatters">
+    <p style="font-size:12px;color:var(--ink-3)">
+      The control set is assembled and run in the co-folding phase. Until then this
+      panel is empty rather than populated with placeholder points.
+    </p>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="promischead">
+  <div class="cardhead">
+    <h2 id="promischead">Internal promiscuity controls</h2>
+    <span class="hint">the ten sequences that appear under more than one target</span>
+  </div>
+  <p style="margin:0 0 10px;font-size:12.5px;color:var(--ink-2);max-width:900px">
+    Ten of the 2,500 sequences were submitted against more than one unrelated target.
+    They are not deduplicated. A sequence that scores well against two unrelated
+    targets is either polyreactive or evidence that the scoring is not target-aware,
+    and either reading is worth knowing.
+  </p>
+  <div id="promisctable"></div>
+  <p class="caption" id="promisccaption"></p>
+</section>
+
+<section class="card" aria-labelledby="qchead">
+  <div class="cardhead">
+    <h2 id="qchead">QC panel</h2>
+    <span class="hint">every check this build runs, with its result</span>
+  </div>
+  <table class="reftable">
+    <caption class="sr-only">Quality-control checks and their results</caption>
+    <thead><tr><th>Check</th><th>Result</th><th>Value</th></tr></thead>
+    <tbody>
+      {% for check in qc.checks or [] %}
+      <tr>
+        <td>{{ check.key.replace('_', ' ') }}</td>
+        <td>{% if check.passed %}<span class="chip good">pass</span>{% else %}<span class="chip poor">attention</span>{% endif %}</td>
+        <td class="wrap" style="max-width:520px;font-size:11px;color:var(--ink-2)">
+          {{ check.value if check.value is string else check.value | tojson }}
+        </td>
+      </tr>
+      {% endfor %}
+      {% if not qc.checks %}
+      <tr><td colspan="3" style="color:var(--ink-3)">No checks recorded yet.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/tabulator.min.js') }}?v={{ asset_version('vendor/tabulator.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/common.js') }}?v={{ asset_version('js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/controls.js') }}?v={{ asset_version('js/controls.js') }}"></script>
+{% endblock %}
