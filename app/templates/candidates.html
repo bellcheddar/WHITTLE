@@ -54,7 +54,15 @@
     <span class="spacer" style="flex:1 1 auto"></span>
     <button type="button" class="btn" id="expand">Expand</button>
   </div>
-  <div id="explorer" role="img" aria-label="Parallel-coordinates plot of the four scoring axes, with Pareto-front candidates drawn over the dominated ones"></div>
+  {# role="img" with a label, and the table below carries the same data in a
+     form a screen reader can actually work with. The caption states the active
+     filters in words, so the view is self-describing however it is read
+     (DESIGN 3.1 and 6). #}
+  <div id="explorer" role="img" aria-describedby="caption"
+       aria-label="Parallel-coordinates plot of the four scoring axes, with
+                   Pareto-front candidates drawn over the dominated ones. The
+                   same candidates are in the table below, which states the
+                   active filters in words."></div>
 </section>
 
 <!-- ------------------------------------------------------- 3.2 toolbar -->
