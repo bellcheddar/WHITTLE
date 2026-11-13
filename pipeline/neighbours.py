@@ -483,9 +483,12 @@ def main() -> int:
                     if write_superposed(model_path, superposed, aligned):
                         record["superposed"] = 1
                         with_superposed += 1
-                    reference = write_reference_chain(ref["pdb"], ref["chain"])
-                    if reference:
-                        record["reference_file"] = reference
+                    # Not `reference`: that name holds the SAbDab entry list
+                    # in this scope and rebinding it here made the next
+                    # iteration index into a string.
+                    ref_file = write_reference_chain(ref["pdb"], ref["chain"])
+                    if ref_file:
+                        record["reference_file"] = ref_file
 
         manifest_write("neighbours", record)
         if n % 100 == 0 or n == len(candidates):

@@ -451,3 +451,58 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:47 neighbours: MMseqs2 shortlisted hits for 2500 of 2500 candidates
 - 2026-11-13 17:47 tm_model: ESM-2 embedded 168/250
 - 2026-11-13 17:47 tnp: retrying 41 skipped candidates with a germline N-terminus so NanoBodyBuilder2 will model them
+- 2026-11-13 17:48 tm_model: ESM-2 embedded 248/250
+- 2026-11-13 17:48 tm_predict: 1500/2500
+- 2026-11-13 17:48 tm_model: 2 embeddings cached, 248 to compute
+- 2026-11-13 17:49 tm_model: ESM-2 embedded 8/248
+- 2026-11-13 17:49 tnp: recovered 21 of 41 skipped candidates
+- 2026-11-13 17:49 tnp: 2397 candidates profiled in total
+- 2026-11-13 17:50 tm_model: ESM-2 embedded 88/248
+- 2026-11-13 17:50 nativeness: 400/2500, 21 per minute, about 100 minutes left
+- 2026-11-13 17:50 tm_model: ESM-2 embedded 168/248
+- 2026-11-13 17:51 tm_model: ESM-2 embedded 248/248
+- 2026-11-13 17:51 tm_predict: 1750/2500
+- 2026-11-13 17:52 tm_model: 0 embeddings cached, 250 to compute
+- 2026-11-13 17:52 tm_model: ESM-2 embedded 8/250
+- 2026-11-13 17:52 nativeness: 480/2500, 22 per minute, about 90 minutes left
+- 2026-11-13 17:53 tm_model: ESM-2 embedded 88/250
+- 2026-11-13 17:53 tm_model: ESM-2 embedded 168/250
+- 2026-11-13 17:54 tm_model: ESM-2 embedded 248/250
+- 2026-11-13 17:54 tm_predict: 2000/2500
+- 2026-11-13 17:55 tm_model: 1 embeddings cached, 249 to compute
+- 2026-11-13 17:55 tm_model: ESM-2 embedded 8/249
+- 2026-11-13 17:56 tm_model: ESM-2 embedded 88/249
+- 2026-11-13 17:56 nativeness: 560/2500, 22 per minute, about 88 minutes left
+- 2026-11-13 17:56 tm_model: ESM-2 embedded 168/249
+- 2026-11-13 17:57 tm_model: ESM-2 embedded 248/249
+- 2026-11-13 17:57 tm_predict: 2250/2500
+- 2026-11-13 17:58 tm_model: 3 embeddings cached, 247 to compute
+- 2026-11-13 17:58 tm_model: ESM-2 embedded 8/247
+- 2026-11-13 17:59 tm_model: ESM-2 embedded 88/247
+- 2026-11-13 18:00 nativeness: 640/2500, 22 per minute, about 84 minutes left
+- 2026-11-13 18:00 tm_model: ESM-2 embedded 168/247
+- 2026-11-13 18:01 tm_model: ESM-2 embedded 247/247
+- 2026-11-13 18:01 tm_predict: 2500/2500
+- 2026-11-13 18:01 tm_predict: TemStaPro is not installed; the cross-check column stays pending
+- 2026-11-13 18:01 tm_predict: 2500 predictions in 34.1 minutes. Tm 58.8 to 91.1 deg C, mean error bar 14.7 deg C, 0 above 95 deg C (spec 9 item 3 wants none)
+- 2026-11-13 18:01 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 18:01 neighbours: 2500 candidates against 1390 unique experimental nanobody sequences
+- 2026-11-13 18:01 neighbours: MMseqs2 shortlisted hits for 2500 of 2500 candidates
+- 2026-11-13 18:02 neighbours: 100/2500, 0 with an experimental badge, 100 with a TM-score, 100 superposed, 846 per minute
+- 2026-11-13 18:02 neighbours: 200/2500, 0 with an experimental badge, 200 with a TM-score, 200 superposed, 895 per minute
+- 2026-11-13 18:02 neighbours: 300/2500, 0 with an experimental badge, 300 with a TM-score, 300 superposed, 927 per minute
+- 2026-11-13 18:02 neighbours: 400/2500, 0 with an experimental badge, 400 with a TM-score, 400 superposed, 945 per minute
+- 2026-11-13 18:02 neighbours: 500/2500, 0 with an experimental badge, 500 with a TM-score, 500 superposed, 958 per minute
+- 2026-11-13 18:02 neighbours: 600/2500, 0 with an experimental badge, 600 with a TM-score, 600 superposed, 965 per minute
+- 2026-11-13 18:02 nativeness: 720/2500, 23 per minute, about 78 minutes left
+- 2026-11-13 18:02 neighbours: 700/2500, 0 with an experimental badge, 700 with a TM-score, 700 superposed, 978 per minute
+- 2026-11-13 18:02 neighbours: 800/2500, 0 with an experimental badge, 800 with a TM-score, 800 superposed, 989 per minute
+- 2026-11-13 18:02 neighbours: 900/2500, 0 with an experimental badge, 900 with a TM-score, 900 superposed, 997 per minute
+- 2026-11-13 18:02 neighbours: 1000/2500, 0 with an experimental badge, 1000 with a TM-score, 1000 superposed, 1007 per minute
+- 2026-11-13 18:03 neighbours: 1100/2500, 0 with an experimental badge, 1100 with a TM-score, 1100 superposed, 1014 per minute
+- 2026-11-13 18:03 neighbours: 1200/2500, 0 with an experimental badge, 1200 with a TM-score, 1200 superposed, 1021 per minute
+- 2026-11-13 18:03 neighbours: 1300/2500, 0 with an experimental badge, 1300 with a TM-score, 1300 superposed, 1029 per minute
+- 2026-11-13 18:03 neighbours: 1400/2500, 0 with an experimental badge, 1400 with a TM-score, 1400 superposed, 1033 per minute
+- 2026-11-13 18:03 neighbours: 1500/2500, 0 with an experimental badge, 1500 with a TM-score, 1500 superposed, 1037 per minute
+- 2026-11-13 18:03 neighbours: 1600/2500, 0 with an experimental badge, 1600 with a TM-score, 1600 superposed, 1041 per minute
+- 2026-11-13 18:03 neighbours: 1700/2500, 0 with an experimental badge, 1700 with a TM-score, 1700 superposed, 1044 per minute
