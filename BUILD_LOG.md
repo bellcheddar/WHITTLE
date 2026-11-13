@@ -605,3 +605,15 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 18:09 Spec 10 item 7 passes on measurement: 30 consecutive drawer opens, peak 1 live WebGL context, 31 created and 31 disposed, and the viewer still renders on reopening. Spec 10 item 8 too: no horizontal page scroll at a 500px viewport and nothing overflowing outside a box that scrolls on its own.
 - 2026-11-13 18:06 With Tier 1 in, no axis pair correlates above 0.26 in any target. The Tier 0 warning of 0.80 between expression and specificity on TL1A is gone, because those axes now draw on genuinely distinct evidence rather than both leaning on liability counts. The independent Pareto implementation agrees with the fast one on all five targets.
 - 2026-11-13 18:13 Nearest-neighbour statistics over all 2,500: framework identity median 93.4 percent, TM-score median 0.918, CDR identity median 60.0 percent. The first two are near-constant across the whole library because every VHH has the same fold, which is exactly why the spec asks for per-region identity. Only 2 of 2,500 candidates are within 95 percent whole-chain identity of a solved structure.
+- 2026-11-13 18:16 nativeness: 1120/2500, 25 per minute, about 56 minutes left
+- 2026-11-13 18:19 nativeness: 1200/2500, 25 per minute, about 52 minutes left
+- 2026-11-13 18:22 nativeness: 1280/2500, 25 per minute, about 49 minutes left
+- 2026-11-13 18:24 nativeness: 1360/2500, 25 per minute, about 45 minutes left
+- 2026-11-13 18:27 nativeness: 1440/2500, 26 per minute, about 41 minutes left
+- 2026-11-13 18:30 nativeness: 1520/2500, 25 per minute, about 38 minutes left
+- 2026-11-13 18:32 nativeness: 1600/2500, 26 per minute, about 35 minutes left
+- 2026-11-13 18:35 nativeness: 1680/2500, 26 per minute, about 32 minutes left
+- 2026-11-13 18:39 nativeness: 1760/2500, 26 per minute, about 29 minutes left
+- 2026-11-13 18:40 nativeness: 1840/2500, 26 per minute, about 25 minutes left
+- 2026-11-13 18:43 nativeness: 1920/2500, 26 per minute, about 22 minutes left
+- 2026-11-13 18:47 nativeness: 2000/2500, 26 per minute, about 19 minutes left

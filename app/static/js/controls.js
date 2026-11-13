@@ -161,7 +161,8 @@
       groupBy: (row) => String(row.id).split('-').slice(0, 2).join('-'),
       groupHeader: (value, count) => `${W.escape(value)} `
         + `<span style="color:var(--ink-3);font-weight:400">`
-        + `&middot; the same sequence against ${count} targets</span>`,
+        + `&middot; the same sequence against `
+        + `${count} ${count === 1 ? 'target' : 'targets'}</span>`,
       columns: [
         { title: 'Row', field: 'id', frozen: true, width: 190 },
         { title: 'Target', field: 'target', cssClass: '' },
@@ -185,7 +186,84 @@
       + `unrelated antigens.`;
   }
 
+  /* The QC panel holds structured results as well as sentences. Dumping the
+     JSON makes the most important page in the build unreadable, so each known
+     shape gets a summary and anything else is shown compactly. */
+  function renderQcValues() {
+    document.querySelectorAll('#qctable tr[data-key]').forEach((row) => {
+      const holder = row.querySelector('.qcjson');
+      const out = row.querySelector('.qcrendered');
+      if (!holder || !out) return;
+      let value;
+      try { value = JSON.parse(holder.textContent); } catch (err) { return; }
+      const key = row.dataset.key;
+
+      if (key === 'axis_correlations') {
+        const lines = Object.entries(value).map(([target, info]) => {
+          const m = info.matrix || {};
+          const pairs = [];
+          const axes = Object.keys(m);
+          axes.forEach((a, i) => axes.slice(i + 1).forEach((b) => {
+            const r = m[a] && m[a][b];
+            if (typeof r === 'number') pairs.push([a, b, r]);
+          }));
+          if (!pairs.length) return `${target}: no axis pair computed yet`;
+          pairs.sort((x, y) => Math.abs(y[2]) - Math.abs(x[2]));
+          const [a, b, r] = pairs[0];
+          const flagged = (info.flagged || []).length;
+          return `<strong>${W.escape(target)}</strong>: strongest pair `
+            + `${W.escape(a)} and ${W.escape(b)} at r = ${r.toFixed(3)}`
+            + (flagged ? `, ${flagged} pair(s) above 0.8` : ', none above 0.8');
+        });
+        out.innerHTML = lines.join('<br>');
+        return;
+      }
+
+      if (key === 'axis_availability') {
+        const lines = Object.entries(value).map(([axis, info]) => {
+          if (!info.available) {
+            return `<strong>${W.escape(axis)}</strong>: pending`;
+          }
+          const parts = (info.components || []).map((c) => c.note
+            + (c.sign < 0 ? ' (lower is better)' : ''));
+          return `<strong>${W.escape(axis)}</strong>, tier ${info.tier}: `
+            + W.escape(parts.join('; '));
+        });
+        out.innerHTML = lines.join('<br>');
+        return;
+      }
+
+      if (key === 'vacuous_tests') {
+        const lines = Object.entries(value).map(([axis, entry]) => {
+          const targets = entry.targets || {};
+          const findings = new Set();
+          Object.values(targets).forEach((t2) => (t2.findings || [])
+            .forEach((f) => findings.add(f)));
+          const verdict = entry.passed ? 'informative' : 'NOT DISCRIMINATING';
+          return `<strong>${W.escape(axis)}</strong>: ${verdict}`
+            + (findings.size
+              ? ` &middot; ${W.escape([...findings].join('; '))}` : '');
+        });
+        out.innerHTML = lines.join('<br>');
+        return;
+      }
+
+      if (key === 'pareto_independent_check') {
+        const lines = Object.entries(value).map(([target, info]) =>
+          `<strong>${W.escape(target)}</strong>: ${info.front_stored} on the `
+          + `stored front, ${info.front_recomputed} on the independently `
+          + `recomputed one, ${info.agree ? 'they agree' : 'THEY DISAGREE'}`);
+        out.innerHTML = lines.join('<br>');
+        return;
+      }
+
+      const text = JSON.stringify(value);
+      out.textContent = text.length > 300 ? text.slice(0, 300) + '...' : text;
+    });
+  }
+
   async function init() {
+    renderQcValues();
     const data = await W.loadJson('/static/data/controls.json');
     const rows = (data && data.rows) || [];
     if (!rows.length) {

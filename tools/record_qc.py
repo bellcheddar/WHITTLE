@@ -35,14 +35,15 @@ def main() -> int:
         print("known keys: " + ", ".join(sorted(KNOWN)))
         return 2
     key, verdict, detail = sys.argv[1], sys.argv[2].lower(), " ".join(sys.argv[3:])
-    if verdict not in ("pass", "fail"):
-        print("the verdict must be pass or fail")
+    if verdict not in ("pass", "fail", "pending"):
+        print("the verdict must be pass, fail or pending")
         return 2
     note = KNOWN.get(key, "")
     conn = connect()
     conn.execute("INSERT OR REPLACE INTO qc (key, value, passed) VALUES (?,?,?)",
                  (key, f"{detail}" + (f" | {note}" if note else ""),
-                  1 if verdict == "pass" else 0))
+                  None if verdict == "pending"
+                  else (1 if verdict == "pass" else 0)))
     conn.commit()
     conn.close()
     log(f"qc: recorded {key} = {verdict.upper()} ({detail})")

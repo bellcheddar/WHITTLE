@@ -338,9 +338,12 @@ def main() -> int:
     results = assertions(conn)
     for res in results:
         passed = res["passed"]
+        # NULL, not 0, for a check that has not been able to run. A pending
+        # assertion shown as a failure makes the honesty tab cry wolf, and the
+        # one page that must be trusted is this one.
+        stored = None if passed is None else (1 if passed else 0)
         conn.execute("INSERT OR REPLACE INTO qc (key, value, passed) VALUES (?,?,?)",
-                     (res["key"], f"{res['value']} | {res['note']}",
-                      1 if passed else 0))
+                     (res["key"], f"{res['value']} | {res['note']}", stored))
         state = "PASS" if passed else ("PENDING" if passed is None else "ATTENTION")
         log(f"controls: {state} {res['key']}: {res['value']}")
     conn.commit()

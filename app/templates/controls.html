@@ -74,18 +74,29 @@
 <section class="card" aria-labelledby="qchead">
   <div class="cardhead">
     <h2 id="qchead">QC panel</h2>
-    <span class="hint">every check this build runs, with its result</span>
+    <span class="hint">every check this build runs, with the number that decided it</span>
   </div>
-  <table class="reftable">
+  <table class="reftable" id="qctable">
     <caption class="sr-only">Quality-control checks and their results</caption>
-    <thead><tr><th>Check</th><th>Result</th><th>Value</th></tr></thead>
+    <thead><tr><th>Check</th><th>Result</th><th>What decided it</th></tr></thead>
     <tbody>
       {% for check in qc.checks or [] %}
-      <tr>
+      <tr data-key="{{ check.key }}">
         <td>{{ check.key.replace('_', ' ') }}</td>
-        <td>{% if check.passed %}<span class="chip good">pass</span>{% else %}<span class="chip poor">attention</span>{% endif %}</td>
-        <td class="wrap" style="max-width:520px;font-size:11px;color:var(--ink-2)">
-          {{ check.value if check.value is string else check.value | tojson }}
+        <td>
+          {%- if check.passed is none -%}
+            <span class="chip">pending</span>
+          {%- elif check.passed -%}
+            <span class="chip good">pass</span>
+          {%- else -%}
+            <span class="chip poor">attention</span>
+          {%- endif -%}
+        </td>
+        <td class="wrap qcvalue" style="max-width:640px;font-size:11.5px;color:var(--ink-2)">
+          {%- if check.value is string -%}{{ check.value }}{%- else -%}
+          <span class="qcjson" hidden>{{ check.value | tojson }}</span>
+          <span class="qcrendered">summarising</span>
+          {%- endif -%}
         </td>
       </tr>
       {% endfor %}
@@ -94,6 +105,10 @@
       {% endif %}
     </tbody>
   </table>
+  <p style="font-size:11px;color:var(--ink-3);margin:10px 0 0">
+    A check marked for attention is not necessarily a failure. Where the spec
+    expects a finding rather than a pass, the finding is what is reported.
+  </p>
 </section>
 {% endblock %}
 

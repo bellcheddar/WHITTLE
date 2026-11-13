@@ -232,7 +232,10 @@ def qc_bundle(conn) -> dict:
             except json.JSONDecodeError:
                 pass
         parsed.append({"key": row["key"], "value": value,
-                       "passed": bool(row["passed"])})
+                       "passed": None if row["passed"] is None
+                       else bool(row["passed"]),
+                       "state": ("pending" if row["passed"] is None
+                                 else "pass" if row["passed"] else "attention")})
     return {"checks": parsed,
             "built_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M")}
 
