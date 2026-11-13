@@ -25,3 +25,7 @@ Copied and adapted, never imported; no sibling was modified.
 | `debris/deploy/fetch_fonts.py` | `tools/fetch_fonts.py` | Inter instead of Montserrat and IBM Plex Mono |
 | `debris/app/static/vendor/plotly-2.35.2.min.js` | not copied | Rejected: the full dist is 4.6 MB and has no `parcoords` saving. Built a partial bundle from `plotly.js/lib/core` plus scatter, bar and parcoords instead (`tools/bundle/`), 1.2 MB |
 | `debris/wsgi.py` | `wsgi.py` | App import path only |
+| Protein-Sol reference package (protein-sol.manchester.ac.uk, GPL-3, Warwicker and Hebditch 2017) | `pipeline/solubility.py` | Not copied. The perl was read for its documented algorithm and its published fitting statistics; the Python is independent and is validated against the package's own worked example in `pipeline/tests/test_solubility.py` |
+| SWI reference implementation (`Gardner-BinfLab/SoDoPE_paper_2020/SWI/swi.py`) | `pipeline/solubility.py` | Not copied. The 20 published weights and the two logistic constants are used as published constants |
+| SAbDab2 OpenAPI (`/api/download/all-single-domain-summary`) | `pipeline/neighbours.py` | The old `sabdab/nano/summary/all/` TSV endpoint is gone: SAbDab is now a single-page app with a documented OpenAPI. Derived values only; the database is never mirrored (spec 5.3) |
+| `tmtools` (TM-align bindings) | `pipeline/neighbours.py` | Used in place of a US-align binary; same TM-align algorithm, no binary to vendor |

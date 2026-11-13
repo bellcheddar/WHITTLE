@@ -55,10 +55,15 @@ pyyaml = "*"
 tomli-w = "*"
 pytest = "*"
 matplotlib = "*"
+openpyxl = "*"
 # --- the web app runs from this env locally; the droplet uses requirements.txt ---
 flask = "*"
 gunicorn = "*"
 jinja2 = "*"
+
+# DSSP is TNP's secondary-structure backend; conda-forge has osx-arm64 builds
+# (bioconda does not).
+dssp = "*"
 
 [pypi-dependencies]
 # ANARCI's conda package is py<=3.10 only on this platform, so the ANARCI route
@@ -67,6 +72,13 @@ jinja2 = "*"
 anarcii = "*"
 immunebuilder = "*"
 fair-esm = "*"
+# Nativeness. BSD-3 and it ships a named pseudo_log_likelihood mode
+# (DECISIONS.md 19). nanoBERT would be the better-matched prior but is
+# CC-BY-NC-SA and cannot ship here.
+ablang2 = "*"
+# Humanness: the OASis peptide identity without the 22 GB database
+# (DECISIONS.md 20). MIT, by the BioPhi authors.
+promb = "*"
 
 [tasks]
 probe = "python tools/hwprobe.py"

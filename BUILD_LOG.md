@@ -78,3 +78,88 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 16:14 build-db: TL1A bundle, 500 rows, 21 columns with data, 19 pending
 - 2026-11-13 16:14 build-db: TNFa bundle, 500 rows, 21 columns with data, 19 pending
 - 2026-11-13 16:14 build-db: 15 bundles, 2201 kB total
+- 2026-11-13 16:19 fold: 12 candidates across 1 targets on 6 workers, NanoBodyBuilder2 with OpenMM refinement on CPU
+- 2026-11-13 16:20 fold: 12/12 done, 12 ok, 0 failed, 0 unrefined, 29 per minute, about 0 minutes left
+- 2026-11-13 16:20 fold: finished 12 ok, 0 failed, 0 kept unrefined, in 0.4 minutes
+- 2026-11-13 16:20 fold: 4 candidates across 1 targets on 4 workers, NanoBodyBuilder2 with OpenMM refinement on CPU
+- 2026-11-13 16:21 fold: 4/4 done, 4 ok, 0 failed, 0 unrefined, 12 per minute, about 0 minutes left
+- 2026-11-13 16:21 fold: finished 4 ok, 0 failed, 0 kept unrefined, in 0.3 minutes
+- 2026-11-13 16:21 fold: 3 candidates across 1 targets on 3 workers, NanoBodyBuilder2 with OpenMM refinement on CPU
+- 2026-11-13 16:21 fold: 3/3 done, 3 ok, 0 failed, 0 unrefined, 16 per minute, about 0 minutes left
+- 2026-11-13 16:21 fold: finished 3 ok, 0 failed, 0 kept unrefined, in 0.2 minutes
+- 2026-11-13 16:21 fold: 2500 candidates across 5 targets on 12 workers, NanoBodyBuilder2 with OpenMM refinement on CPU
+- 2026-11-13 16:22 fold: 100/2500 done, 99 ok, 1 failed, 0 unrefined, 80 per minute, about 30 minutes left
+- 2026-11-13 16:23 fold: 200/2500 done, 196 ok, 4 failed, 0 unrefined, 94 per minute, about 25 minutes left
+- 2026-11-13 16:24 fold: 300/2500 done, 293 ok, 7 failed, 0 unrefined, 103 per minute, about 21 minutes left
+- 2026-11-13 16:25 fold: 400/2500 done, 388 ok, 12 failed, 0 unrefined, 107 per minute, about 20 minutes left
+- 2026-11-13 16:26 fold: 500/2500 done, 483 ok, 17 failed, 0 unrefined, 110 per minute, about 18 minutes left
+- 2026-11-13 16:27 fold: 600/2500 done, 583 ok, 17 failed, 0 unrefined, 110 per minute, about 17 minutes left
+- 2026-11-13 16:28 fold: 700/2500 done, 683 ok, 17 failed, 0 unrefined, 111 per minute, about 16 minutes left
+- 2026-11-13 16:28 fold: 800/2500 done, 781 ok, 19 failed, 0 unrefined, 113 per minute, about 15 minutes left
+- 2026-11-13 16:29 fold: 900/2500 done, 879 ok, 21 failed, 0 unrefined, 113 per minute, about 14 minutes left
+- 2026-11-13 16:30 fold: 1000/2500 done, 977 ok, 23 failed, 0 unrefined, 114 per minute, about 13 minutes left
+- 2026-11-13 16:31 fold: 1100/2500 done, 1077 ok, 23 failed, 0 unrefined, 115 per minute, about 12 minutes left
+- 2026-11-13 16:32 fold: 1200/2500 done, 1176 ok, 24 failed, 0 unrefined, 115 per minute, about 11 minutes left
+- 2026-11-13 16:32 fold: 1300/2500 done, 1276 ok, 24 failed, 0 unrefined, 116 per minute, about 10 minutes left
+- 2026-11-13 16:33 fold: 1400/2500 done, 1376 ok, 24 failed, 0 unrefined, 116 per minute, about 9 minutes left
+- 2026-11-13 16:34 fold: 1500/2500 done, 1473 ok, 27 failed, 0 unrefined, 117 per minute, about 9 minutes left
+- 2026-11-13 16:35 fold: 1600/2500 done, 1572 ok, 28 failed, 0 unrefined, 118 per minute, about 8 minutes left
+- 2026-11-13 16:36 fold: 1700/2500 done, 1672 ok, 28 failed, 0 unrefined, 116 per minute, about 7 minutes left
+- 2026-11-13 16:37 fold: 1800/2500 done, 1768 ok, 32 failed, 0 unrefined, 116 per minute, about 6 minutes left
+- 2026-11-13 16:37 fold: 1900/2500 done, 1866 ok, 34 failed, 0 unrefined, 117 per minute, about 5 minutes left
+- 2026-11-13 16:38 humanness: OASis peptide identity for 2500 sequences in 3 seconds
+- 2026-11-13 16:38 fold: 2000/2500 done, 1964 ok, 36 failed, 0 unrefined, 117 per minute, about 4 minutes left
+- 2026-11-13 16:39 fold: 2100/2500 done, 2060 ok, 40 failed, 1 unrefined, 117 per minute, about 3 minutes left
+- 2026-11-13 16:40 tm_data: NanoMelt Supplementary Dataset 1 gave 640 labelled rows
+- 2026-11-13 16:40 tm_data: NbThermo gave 621 measurement rows across 491 sequences (0 fell back to the Raw field)
+- 2026-11-13 16:40 tm_data: the external sheet's header could not be located; skipped
+- 2026-11-13 16:40 tm_data: 650 unique training sequences, 0 external (0 dropped as overlapping), Tm 26.64 to 98.23 degrees C, 486 sequences measured more than once with a median spread of 0.0 degrees C
+- 2026-11-13 16:40 fold: 2200/2500 done, 2154 ok, 46 failed, 1 unrefined, 118 per minute, about 3 minutes left
+- 2026-11-13 16:40 tm_data: NanoMelt Supplementary Dataset 1 gave 640 labelled rows
+- 2026-11-13 16:40 tm_data: NbThermo gave 621 measurement rows across 491 sequences (0 fell back to the Raw field)
+- 2026-11-13 16:40 tm_data: NanoMelt Supplementary Dataset 2 gave 83 external rows
+- 2026-11-13 16:40 tm_data: 650 unique training sequences, 77 external (6 dropped as overlapping), Tm 26.64 to 98.23 degrees C, 486 sequences measured more than once, of which 135 disagree between measurements by a mean of 3.63 and at most 30.5 degrees C
+- 2026-11-13 16:41 fold: 2300/2500 done, 2250 ok, 50 failed, 1 unrefined, 118 per minute, about 2 minutes left
+- 2026-11-13 16:41 fold: 2400/2500 done, 2347 ok, 53 failed, 1 unrefined, 119 per minute, about 1 minutes left
+- 2026-11-13 16:42 fold: 2500/2500 done, 2444 ok, 56 failed, 1 unrefined, 118 per minute, about 0 minutes left
+- 2026-11-13 16:42 fold: finished 2444 ok, 56 failed, 1 kept unrefined, in 21.2 minutes
+- 2026-11-13 16:43 fold: 55 candidates across 5 targets on 10 workers, NanoBodyBuilder2 with OpenMM refinement on CPU
+- 2026-11-13 16:43 fold: 55/55 done, 0 ok, 55 failed, 0 unrefined, 292 per minute, about 0 minutes left
+- 2026-11-13 16:43 fold: finished 0 ok, 55 failed, 0 kept unrefined, in 0.2 minutes
+- 2026-11-13 16:44 fold: 55 candidates across 5 targets on 10 workers, NanoBodyBuilder2 with OpenMM refinement on CPU
+- 2026-11-13 16:45 fold: 55/55 done, 55 ok, 0 failed, 0 unrefined, 58 per minute, about 0 minutes left
+- 2026-11-13 16:45 fold: finished 55 ok, 0 failed, 0 kept unrefined, in 1.0 minutes
+- 2026-11-13 16:42 NanoBodyBuilder2 across all 2,500 finished in 21.2 minutes on 12 workers: 2,444 models, 56 refusals, 1 kept unrefined. Every model carries its per-residue error in the B-factor column, read back out of the written file so the number on the page is the number the viewer colours by.
+- 2026-11-13 16:45 The 56 refusals all had one cause: an unalignable framework-1 N-terminal heptad (for example LRCSCRL where the germline has QVQLVES). ANARCI starts numbering at IMGT 8 and ImmuneBuilder refuses the domain as truncated. Trimming the heptad was tried first and failed identically. Modelling those seven framework residues as the VHH germline, at the opposite end of the domain from the CDRs, recovered 55 of the 56. Every sequence axis for those rows still uses the candidate's real sequence; only the coordinates differ, and the rows are flagged.
+- 2026-11-13 16:45 TNFa-0500 is the one candidate with no structural model. Its J region is corrupt: the sequence ends YYCYCRWFTQVIESS with no W-G-x-G framework-4 motif, so no numbering scheme can close the domain. It keeps its sequence axes and its structural columns stay empty, which is the last rung of the spec 0.2 ladder. 2,499 of 2,500 modelled.
+- 2026-11-13 16:38 Humanness: OASis 9-mer peptide identity for all 2,500 in 3 seconds via promb.
+- 2026-11-13 16:40 Thermostability labels assembled: 650 unique training sequences from the NanoMelt CC-BY supplementary (640 curated apparent-Tm nanobodies) and NbThermo (491 sequences via the AHo field; the Raw field is populated for only 44 entries and reading it would have silently lost 90 percent of the set). 77 genuinely held-out external sequences after dropping 6 that overlap the training set. Tm spans 26.6 to 98.2 degrees C. 135 sequences disagree between repeat measurements by a mean of 3.6 and at most 30.5 degrees C: that disagreement is the floor the error bars are calibrated against.
+- 2026-11-13 16:45 tnp: EGFR, 500 sequences, 12 cores. TNP folds each sequence itself, so this is the slow step
+- 2026-11-13 16:45 tm_model: 650 training sequences, 77 external, ESM-2 esm2_t33_650M_UR50D
+- 2026-11-13 16:45 tm_model: numbering the training set
+- 2026-11-13 16:46 tm_model: 377 CDR3 clusters at 90 percent identity across 650 sequences
+- 2026-11-13 16:48 tm_model: ESM-2 embedded 8/650
+- 2026-11-13 16:49 tm_model: ESM-2 embedded 88/650
+- 2026-11-13 16:50 tm_model: ESM-2 embedded 168/650
+- 2026-11-13 16:50 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 16:50 neighbours: 12 candidates against 1390 unique experimental nanobody sequences
+- 2026-11-13 16:50 neighbours: MMseqs2 shortlisted hits for 12 of 12 candidates
+- 2026-11-13 16:50 neighbours: 12/12, 0 with an experimental badge, 0 with a TM-score, 74 per minute
+- 2026-11-13 16:50 neighbours: complete. 0 candidates carry an experimental badge, 0 have a target-matched reference, 0 have a TM-score
+- 2026-11-13 16:50 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 16:51 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 16:51 neighbours: 12 candidates against 1390 unique experimental nanobody sequences
+- 2026-11-13 16:51 neighbours: MMseqs2 shortlisted hits for 12 of 12 candidates
+- 2026-11-13 16:51 neighbours: 12/12, 0 with an experimental badge, 12 with a TM-score, 1281 per minute
+- 2026-11-13 16:51 neighbours: complete. 0 candidates carry an experimental badge, 0 have a target-matched reference, 12 have a TM-score
+- 2026-11-13 16:51 tm_model: ESM-2 embedded 248/650
+- 2026-11-13 16:51 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 16:51 neighbours: 2500 candidates against 1390 unique experimental nanobody sequences
+- 2026-11-13 16:51 neighbours: MMseqs2 shortlisted hits for 2500 of 2500 candidates
+- 2026-11-13 16:52 neighbours: 100/2500, 0 with an experimental badge, 100 with a TM-score, 179 per minute
+- 2026-11-13 16:52 tm_model: ESM-2 embedded 328/650
+- 2026-11-13 16:52 neighbours: 200/2500, 0 with an experimental badge, 200 with a TM-score, 220 per minute
+- 2026-11-13 16:52 neighbours: 300/2500, 0 with an experimental badge, 300 with a TM-score, 252 per minute
+- 2026-11-13 16:52 neighbours: 400/2500, 0 with an experimental badge, 400 with a TM-score, 301 per minute
+- 2026-11-13 16:52 neighbours: 500/2500, 0 with an experimental badge, 500 with a TM-score, 340 per minute
+- 2026-11-13 16:53 neighbours: 600/2500, 0 with an experimental badge, 600 with a TM-score, 369 per minute
