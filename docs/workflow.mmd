@@ -1,0 +1,66 @@
+%% WHITTLE workflow. Rendered to a static SVG at build time by
+%% tools/render_diagram.py; the Mermaid runtime is never loaded on the droplet
+%% (spec 8.3). Each node links into its reference row on the About tab.
+flowchart TD
+    IN["2,500 candidate VHH sequences<br/>500 per target, 5 targets"]:::input
+
+    IN --> T0
+
+    subgraph T0G ["Tier 0 &middot; sequence &middot; minutes"]
+        T0["IMGT numbering and CDRs<br/>camelid hallmark tetrad<br/>liability motifs &middot; charge and pI<br/>disulfides &middot; CDR3 clustering"]:::tier
+    end
+
+    T0 --> T1
+
+    subgraph T1G ["Tier 1 &middot; structure &middot; about an hour per target"]
+        T1["NanoBodyBuilder2 model<br/>OpenMM refinement"]:::tier
+        T1 --> T1a["TNP developability<br/>PSH &middot; PPC &middot; PNC"]:::tier
+        T1 --> T1b["surface patches &middot; SWI<br/>Protein-Sol"]:::tier
+        T1 --> T1c["AbLang2 nativeness<br/>OASis humanness"]:::tier
+        T1 --> T1d["nearest experimental neighbour<br/>SAbDab-nano &middot; TM-align"]:::tier
+    end
+
+    T1 --> TM
+
+    subgraph TMG ["Tier 1b &middot; thermostability"]
+        TM["WHITTLE Tm model<br/>650 labelled nanobodies<br/>grouped nested CV<br/>per-row error bar"]:::model
+    end
+
+    T1a --> RANK
+    T1b --> RANK
+    T1c --> RANK
+    T1d --> RANK
+    TM --> RANK
+
+    T1 --> T2
+
+    subgraph T2G ["Tier 2 &middot; co-folding &middot; days &middot; top 20 per target"]
+        T2["boltz-community<br/>cheapest first:<br/>GLP1R &rarr; PRLR &rarr; TNFa &rarr; TL1A &rarr; EGFR"]:::tier
+        T2 --> T2a["PRODIGY delta G &middot; buried area<br/>per subunit for the trimers<br/>epitope binning"]:::tier
+    end
+
+    T2a -.->|"weak prior, not an<br/>affinity measurement"| RANK
+
+    RANK["Within-target percentiles<br/>Pareto non-dominated front<br/>Derringer-Suich desirability<br/>axis correlation matrix"]:::rank
+
+    RANK --> OUT["About 20 candidates per target<br/>five independent rankings<br/>never pooled"]:::output
+
+    CTRL["Control set, run blind<br/>held-out Tm nanobodies<br/>known EGFR and TNFa binders<br/>50 CDR-shuffled per target"]:::control
+    CTRL -.-> RANK
+
+    classDef input fill:#F5F8FF,stroke:#3457A6,stroke-width:2px,color:#111827
+    classDef tier fill:#FFFFFF,stroke:#DDE2EB,stroke-width:1px,color:#434C5A
+    classDef model fill:#FFFFFF,stroke:#3457A6,stroke-width:1.5px,color:#111827
+    classDef rank fill:#F5F8FF,stroke:#3457A6,stroke-width:2px,color:#111827
+    classDef output fill:#DCF0E4,stroke:#1E4D35,stroke-width:1.5px,color:#1E4D35
+    classDef control fill:#FBF0DC,stroke:#B5781C,stroke-width:1.5px,color:#B5781C
+
+    click T0 "#ref-anarci" "ANARCI"
+    click T1 "#ref-immunebuilder" "ImmuneBuilder"
+    click T1a "#ref-tnp" "TNP"
+    click T1b "#ref-swi" "SWI and Protein-Sol"
+    click T1c "#ref-ablang2" "AbLang2"
+    click T1d "#ref-sabdab_nano" "SAbDab-nano"
+    click TM "#ref-nanomelt_method" "the thermostability labels"
+    click T2 "#ref-boltz2" "boltz-community"
+    click T2a "#ref-prodigy" "PRODIGY"

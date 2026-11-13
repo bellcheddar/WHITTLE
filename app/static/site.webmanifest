@@ -1,0 +1,14 @@
+{
+  "name": "WHITTLE",
+  "short_name": "WHITTLE",
+  "description": "Whole-repertoire hierarchical in-silico triage of nanobody candidates: thermostability, liabilities, expression.",
+  "icons": [
+    { "src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/static/favicon.svg", "type": "image/svg+xml", "sizes": "any" }
+  ],
+  "theme_color": "#3457A6",
+  "background_color": "#F1F3F7",
+  "display": "browser",
+  "start_url": "/"
+}

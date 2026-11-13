@@ -238,9 +238,62 @@ CREATE TABLE IF NOT EXISTS qc (
 """
 
 
+def _declared_columns() -> dict[str, list[tuple[str, str]]]:
+    """(table -> [(column, type)]) parsed out of SCHEMA itself."""
+    import re
+
+    out: dict[str, list[tuple[str, str]]] = {}
+    for match in re.finditer(
+            r'CREATE TABLE IF NOT EXISTS\s+"?(\w+)"?\s*\((.*?)\n\);',
+            SCHEMA, re.S):
+        table, body = match.group(1), match.group(2)
+        columns: list[tuple[str, str]] = []
+        for line in body.splitlines():
+            line = line.split("--")[0].strip().rstrip(",")
+            if not line or line.upper().startswith(("PRIMARY KEY", "FOREIGN KEY",
+                                                    "UNIQUE", "CHECK")):
+                continue
+            parts = line.split()
+            if len(parts) < 2:
+                continue
+            columns.append((parts[0], parts[1]))
+        out[table] = columns
+    return out
+
+
+def migrate(conn: sqlite3.Connection) -> list[str]:
+    """Add columns that SCHEMA declares but an existing database lacks.
+
+    `CREATE TABLE IF NOT EXISTS` does nothing to a table that already exists,
+    so a column added to SCHEMA after a database was built is silently absent
+    until something queries it and fails. This closes that gap: a rebuild over
+    an existing file picks up new columns.
+    """
+    added: list[str] = []
+    for table, columns in _declared_columns().items():
+        try:
+            present = {r[1] for r in conn.execute(f'PRAGMA table_info("{table}")')}
+        except sqlite3.Error:
+            continue
+        if not present:
+            continue
+        for name, column_type in columns:
+            if name not in present:
+                conn.execute(
+                    f'ALTER TABLE "{table}" ADD COLUMN {name} {column_type}')
+                added.append(f"{table}.{name}")
+    if added:
+        conn.commit()
+    return added
+
+
 def create(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA)
     conn.commit()
+    added = migrate(conn)
+    if added:
+        log(f"schema: added {len(added)} missing column(s) to the existing "
+            f"database: {', '.join(added)}")
 
 
 def main() -> None:

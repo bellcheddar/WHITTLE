@@ -1,0 +1,15 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Inter, system-ui, sans-serif",
+    "fontSize": "13px",
+    "primaryColor": "#FFFFFF",
+    "primaryTextColor": "#111827",
+    "primaryBorderColor": "#DDE2EB",
+    "lineColor": "#5B6472",
+    "clusterBkg": "#F1F3F7",
+    "clusterBorder": "#DDE2EB"
+  },
+  "securityLevel": "loose",
+  "flowchart": { "curve": "basis", "padding": 12 }
+}

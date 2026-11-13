@@ -50,11 +50,21 @@ STAGES = [
 ]
 for stage, label, expected in STAGES:
     rows = read(stage)
-    ok = sum(1 for r in rows if not str(r.get("status", "ok")).startswith("failed"))
-    bad = len(rows) - ok
+    # Count distinct ids, not manifest lines: a stage that retried a row writes
+    # two lines for it, and counting lines reports a retried row as a permanent
+    # failure long after it succeeded.
+    succeeded, failed = set(), set()
+    for r in rows:
+        key = str(r.get("id", len(succeeded) + len(failed)))
+        if str(r.get("status", "ok")).startswith("failed"):
+            failed.add(key)
+        else:
+            succeeded.add(key)
+    failed -= succeeded
+    ok, bad = len(succeeded), len(failed)
     pct = 100.0 * ok / expected if expected else 0.0
     bar = "#" * int(min(pct, 100) / 5) + "." * (20 - int(min(pct, 100) / 5))
-    flag = f"  {bad} failed" if bad else ""
+    flag = f"  {bad} still failing" if bad else ""
     print(f"{label:34} [{bar}] {ok:>5}/{expected:<5} {pct:5.1f}%{flag}")
 
 cofold = read("cofold")

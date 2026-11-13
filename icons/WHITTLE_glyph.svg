@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="34 20 232 212" width="300" height="300" role="img" aria-label="WHITTLE">
+  <title>WHITTLE</title>
+
+  <!-- ============================================================
+       marcdeller.com icon house style
+       glyph band   : x 30-270, y 24-224   (240 x 200)
+       wordmark band: x 20-280, y 232-288  (260 x 56)
+       ============================================================ -->
+  <style>
+    .ink    { fill: none; stroke: #0c183c; stroke-width: 5;
+              stroke-linecap: round; stroke-linejoin: round; }
+    .hair   { fill: none; stroke: #0c183c; stroke-width: 3.5;
+              stroke-linecap: round; stroke-linejoin: round; }
+    .lit    { fill: #90b4d8; stroke: #0c183c; stroke-width: 5;
+              stroke-linejoin: round; stroke-linecap: round; }
+    .mid    { fill: #3078c0; stroke: #0c183c; stroke-width: 5;
+              stroke-linejoin: round; stroke-linecap: round; }
+    .deep   { fill: #2c5aa8; stroke: #0c183c; stroke-width: 5;
+              stroke-linejoin: round; stroke-linecap: round; }
+    .glass  { fill: #cce4f0; stroke: #0c183c; stroke-width: 5;
+              stroke-linejoin: round; stroke-linecap: round; }
+    .shine  { fill: #ffffff; stroke: none; opacity: .55; }
+    .wordmark-outline { fill: #0c183c; stroke: none; }
+    .wordmark-fill    { fill: #3078c0; stroke: none; }
+  </style>
+
+  <g id="glyph">
+
+    <!-- the repertoire: 2,500 candidates tumbling into the wide end -->
+    <g id="repertoire">
+      <circle class="deep" cx="74"  cy="44" r="11"/>
+      <circle class="mid"  cx="110" cy="34" r="12"/>
+      <circle class="deep" cx="146" cy="42" r="10"/>
+      <circle class="mid"  cx="182" cy="32" r="12"/>
+      <circle class="deep" cx="218" cy="46" r="11"/>
+      <circle class="mid"  cx="128" cy="68" r="10"/>
+      <circle class="deep" cx="166" cy="70" r="11"/>
+      <circle class="mid"  cx="202" cy="74" r="9"/>
+    </g>
+
+    <!-- the funnel: cheapest checks at the wide end, three tiers down the cone -->
+    <path class="glass"
+          d="M46 92 H254 L166 156 V174 H134 V156 Z"/>
+    <path class="hair" d="M76 114 H224"/>
+    <path class="hair" d="M102 134 H198"/>
+    <path class="shine" d="M60 100 L94 100 L76 116 Z"/>
+
+    <!-- the shortlist: one VHH, three CDR loops on a beta-sandwich body -->
+    <g id="shortlist">
+      <path class="lit"
+            d="M110 196 q-5 -21 10 -23 q10 -1 12 10
+               q2 -22 17 -21 q14 1 13 21
+               q6 -15 17 -9 q11 6 4 22 Z"/>
+      <path class="mid"
+            d="M104 194 h92 q9 0 9 9 v9 q0 9 -9 9
+               h-92 q-9 0 -9 -9 v-9 q0 -9 9 -9 Z"/>
+      <path class="hair" d="M134 221 V194 M166 221 V194"/>
+      <path class="shine" d="M104 200 h22 v6 h-22 Z"/>
+    </g>
+  </g>
+</svg>

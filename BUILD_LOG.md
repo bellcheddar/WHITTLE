@@ -259,3 +259,22 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:09 references: 28 rows, 25 DOI-verified, 3 shown unverified; 32 provenance entries
 - 2026-11-13 17:09 references: 28 rows. 25 of 25 DOIs verified against Crossref, 3 rows cited by repository and commit instead (spec 8.3 allows both). 32 provenance entries
 - 2026-11-13 17:09 tm_model: ESM-2 embedded 168/650
+- 2026-11-13 17:10 tm_model: ESM-2 embedded 248/650
+- 2026-11-13 17:11 tm_model: ESM-2 embedded 328/650
+- 2026-11-13 17:11 tnp: PRLR complete, 478 of 500 sequences profiled in 8.8 minutes
+- 2026-11-13 17:11 tnp: TL1A, 500 sequences, 12 cores. TNP folds each sequence itself, so this is the slow step
+- 2026-11-13 17:11 findings: FINDINGS.md written, 74 lines
+- 2026-11-13 17:12 schema: whittle.sqlite has 12 tables (candidates, cofolds, controls, liabilities, provenance, qc, ranks, references, scores, structures, targets, thermostability)
+- 2026-11-13 17:12 tm_model: ESM-2 embedded 408/650
+- 2026-11-13 17:13 render_diagram: mmdc returned 1: sm/puppeteer/node/BrowserLauncher.js:45:28)
+    at async run (file:///Users/dellboy/Documents/Vibe_Coding/WHITTLE/node_modules/@mermaid-js/mermaid-cli/src/index.js:498:17)
+    at async cli (file:///Users/dellboy/Documents/Vibe_Coding/WHITTLE/node_modules/@mermaid-js/mermaid-cli/src/index.js:203:3)
+
+
+- 2026-11-13 17:13 tm_model: ESM-2 embedded 488/650
+- 2026-11-13 17:13 render_diagram: app/static/img/workflow.svg written, 41 kB, 9 reference anchors
+- 2026-11-13 17:14 tm_model: ESM-2 embedded 568/650
+- 2026-11-13 17:15 tm_model: ESM-2 embedded 648/650
+- 2026-11-13 17:16 tm_model: features (650, 1466) built in 8.2 minutes (one-hot 106, VHSE 80, ESM 1280)
+- 2026-11-13 17:16 tm_model: grouped 5-fold x 3, split on CDR3 clusters
+- 2026-11-13 17:16 make_favicons: 9 files into app/static/: icon-16.png (16px), icon-32.png (32px), icon-48.png (48px), icon-180.png (180px), apple-touch-icon.png (180px), icon-192.png (192px), icon-512.png (512px), favicon.ico (16, 32, 48), site.webmanifest

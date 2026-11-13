@@ -56,6 +56,9 @@ tomli-w = "*"
 pytest = "*"
 matplotlib = "*"
 openpyxl = "*"
+# Icon rendering and QC (tools/render_diagram.py and the icon house style).
+pillow = "*"
+cairosvg = "*"
 # --- the web app runs from this env locally; the droplet uses requirements.txt ---
 flask = "*"
 gunicorn = "*"
