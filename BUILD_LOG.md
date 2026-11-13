@@ -286,3 +286,24 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:17 build-db: 15 bundles, 2471 kB total
 - 2026-11-13 17:19 tm_model: grouped CV  R2 0.390  RMSE 8.40  MAE 6.21  Spearman 0.646
 - 2026-11-13 17:19 tm_model: row-wise 5-fold x 3, for contrast only
+- 2026-11-13 17:20 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 17:20 cofold: building the GLP1R antigen MSA once (116 aa, reused across every candidate)
+- 2026-11-13 17:20 tnp: TL1A complete, 475 of 500 sequences profiled in 9.0 minutes
+- 2026-11-13 17:20 tnp: TNFa, 500 sequences, 12 cores. TNP folds each sequence itself, so this is the slow step
+- 2026-11-13 17:21 cofold: GLP1R antigen MSA cached, 3609 sequences deep
+- 2026-11-13 17:21 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 17:21 cofold: building the PRLR antigen MSA once (210 aa, reused across every candidate)
+- 2026-11-13 17:22 cofold: PRLR antigen MSA cached, 2538 sequences deep
+- 2026-11-13 17:22 cofold: building the TNFa antigen MSA once (157 aa, reused across every candidate)
+- 2026-11-13 17:22 build-db: EGFR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:22 build-db: GLP1R bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:23 build-db: PRLR bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:23 build-db: TL1A bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:23 build-db: TNFa bundle, 500 rows, 21 columns with data, 19 pending
+- 2026-11-13 17:23 build-db: 15 bundles, 2471 kB total
+- 2026-11-13 17:23 tm_model: row-wise CV R2 0.697  RMSE 5.92  (the gap to the grouped figure is the near-duplicate leak)
+- 2026-11-13 17:23 tm_model: final fit on the whole training set
+- 2026-11-13 17:23 cofold: TNFa antigen MSA cached, 1971 sequences deep
+- 2026-11-13 17:23 cofold: building the TL1A antigen MSA once (180 aa, reused across every candidate)
+- 2026-11-13 17:24 cofold: TL1A antigen MSA cached, 2037 sequences deep
+- 2026-11-13 17:24 cofold: building the EGFR antigen MSA once (621 aa, reused across every candidate)

@@ -173,22 +173,34 @@ def api_candidate(cid: str):
     if rec.get("structure_path"):
         candidate_path = STRUCTURES / rec["target"] / f"{cid}.pdb.gz"
         if candidate_path.exists():
+            # The .pdb name, not the .pdb.gz one: see the `structure` route.
             rec["structure_url"] = url_for("structure", target=rec["target"],
-                                           name=f"{cid}.pdb.gz")
+                                           name=f"{cid}.pdb")
     return jsonify(rec)
 
 
 @app.route("/structures/<target>/<name>")
 def structure(target: str, name: str):
-    """Gzipped models. nginx serves these directly in production (spec 8.4)."""
-    if not name.endswith(".pdb.gz") or "/" in name or ".." in name:
+    """Predicted models, stored gzipped and requested as plain `.pdb`.
+
+    The URL asks for `<id>.pdb` and the file on disk is `<id>.pdb.gz`. That is
+    deliberate: in production nginx's `gzip_static always` picks up the `.gz`
+    for a request to the uncompressed name and sets `Content-Encoding: gzip`
+    itself, so the browser decompresses transparently and Mol* reads plain PDB.
+    Serving `<id>.pdb.gz` at its own URL instead would hand the browser raw
+    gzip bytes with no encoding header and the viewer would see rubbish. This
+    route is the development equivalent and sets the same headers.
+    """
+    if "/" in name or ".." in name or not name.endswith(".pdb"):
         abort(404)
     directory = STRUCTURES / target
-    if not (directory / name).exists():
+    gzipped = directory / f"{name}.gz"
+    if not gzipped.exists():
         abort(404)
-    response = send_from_directory(directory, name)
+    response = send_from_directory(directory, f"{name}.gz")
     response.headers["Content-Encoding"] = "gzip"
     response.headers["Content-Type"] = "chemical/x-pdb"
+    response.headers["Content-Disposition"] = f'inline; filename="{name}"'
     return response
 
 
