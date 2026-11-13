@@ -485,7 +485,13 @@ main {
 .kv { width: 100%; border-collapse: collapse; font-size: 12px; }
 .kv th, .kv td { text-align: left; padding: 5px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .kv th { font-weight: 500; color: var(--ink-3); width: 46%; }
-.kv td { font-variant-numeric: tabular-nums; }
+.kv td {
+  font-variant-numeric: tabular-nums;
+  /* A nearest-neighbour sequence is 130 characters with no spaces: wrap it
+     inside the cell instead of pushing the drawer sideways. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 .kv td.pending { color: var(--ink-3); font-style: normal; }
 
 .seqblock {

@@ -134,8 +134,18 @@ def padded_jobs(conn) -> list[tuple[str, str, str, int]]:
     opposite end of the domain from the CDRs, and PSH, PPC and PNC are CDR
     patch metrics, so the substitution does not touch what is being measured.
 
-    Returns (id, target, padded sequence, residues replaced). Rows whose
-    numbering already starts at the top are a different fault and are left out.
+    Two classes need different handling, and the first attempt only caught one:
+
+    * **Unalignable residues.** The candidate has a framework-1 heptad ANARCI
+      cannot align, so numbering starts part-way into the sequence. Those
+      residues are replaced with the germline ones.
+    * **Missing residues.** The candidate simply starts late, for example at
+      `ESGGG...` where the germline has `QVQLVESGGG...`, so ANARCI numbers from
+      IMGT 6 with nothing to trim. Those residues are prepended.
+
+    Returns (id, target, padded sequence, residues added or replaced). A row
+    whose numbering already starts at IMGT 1 is a different fault and is left
+    out, because padding would not change what NanoBodyBuilder2 refused.
     """
     from pipeline import numbering as nb
 
@@ -148,14 +158,25 @@ def padded_jobs(conn) -> list[tuple[str, str, str, int]]:
         numbered = nb.by_anarci(row["sequence"])
         if numbered is None or not numbered.numbered:
             continue
-        if numbered.numbered[0][0] <= 1:
+        first = numbered.numbered[0][0]
+        if first <= 1:
             continue
         domain = "".join(aa for _p, _i, aa in numbered.numbered)
         offset = row["sequence"].find(domain[:12])
-        if offset <= 0 or offset > len(GERMLINE_NTERM):
-            continue
-        out.append((row["id"], row["target"],
-                    GERMLINE_NTERM[:offset] + row["sequence"][offset:], offset))
+        if offset > 0:
+            if offset > len(GERMLINE_NTERM):
+                continue
+            padded = GERMLINE_NTERM[:offset] + row["sequence"][offset:]
+            changed = offset
+        else:
+            # Nothing to replace: the residues are absent, so prepend the
+            # germline ones for IMGT 1 up to `first` - 1.
+            missing = first - 1
+            if missing <= 0 or missing > len(GERMLINE_NTERM):
+                continue
+            padded = GERMLINE_NTERM[:missing] + row["sequence"]
+            changed = missing
+        out.append((row["id"], row["target"], padded, changed))
     return out
 
 

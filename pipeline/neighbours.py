@@ -205,6 +205,55 @@ def shortlist(candidates: list[dict], reference: list[dict], top_n: int
 
 # ------------------------------------------------------------------ TM-score
 
+REF_DIR = STRUCTURES / "_refs"
+
+
+def write_reference_chain(pdb_id: str, chain: str) -> str | None:
+    """Extract one chain of a PDB entry and store it for the drawer.
+
+    The drawer used to load the whole entry from RCSB, which for a cryo-EM
+    structure means a dozen chains and the nanobody lost among them, plus a
+    third-party request on every panel open. One chain, written once per unique
+    neighbour and shared by every candidate that matches it, is both the right
+    picture and one fewer dependency at view time.
+    """
+    REF_DIR.mkdir(parents=True, exist_ok=True)
+    out = REF_DIR / f"{pdb_id.lower()}_{chain}.pdb.gz"
+    if out.exists() and out.stat().st_size > 0:
+        return out.name
+    cached = PDB_CACHE / f"{pdb_id}.cif.gz"
+    if not cached.exists():
+        return None
+    try:
+        import gemmi
+
+        structure = gemmi.read_structure(str(cached))
+        structure.setup_entities()
+        structure.remove_ligands_and_waters()
+        structure.remove_alternative_conformations()
+        structure.remove_hydrogens()
+        text = structure.make_pdb_string()
+    except Exception:
+        return None
+    # Filter the PDB text by the author chain id rather than mutating the
+    # gemmi model: removing chains in place left five of them behind on the
+    # first entry it was tried on, because subchains are re-merged by
+    # setup_entities. Column 22 is unambiguous.
+    kept = [line for line in text.splitlines()
+            if line.startswith(("ATOM", "HETATM")) and len(line) > 21
+            and line[21] == chain]
+    if len(kept) < 200:
+        return None
+    try:
+        with gzip.open(out, "wt", compresslevel=9) as fh:
+            fh.write(f"REMARK  {pdb_id.upper()} CHAIN {chain}, EXTRACTED FOR "
+                     f"THE WHITTLE SUPERPOSITION PANEL\n")
+            fh.write("\n".join(kept) + "\nEND\n")
+    except Exception:
+        return None
+    return out.name
+
+
 def fetch_chain(pdb_id: str, chain: str, limiter: RateLimiter) -> list[tuple] | None:
     """CA coordinates and the one-letter sequence for one chain of one entry."""
     PDB_CACHE.mkdir(parents=True, exist_ok=True)
@@ -434,6 +483,9 @@ def main() -> int:
                     if write_superposed(model_path, superposed, aligned):
                         record["superposed"] = 1
                         with_superposed += 1
+                    reference = write_reference_chain(ref["pdb"], ref["chain"])
+                    if reference:
+                        record["reference_file"] = reference
 
         manifest_write("neighbours", record)
         if n % 100 == 0 or n == len(candidates):

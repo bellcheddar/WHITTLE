@@ -178,6 +178,7 @@ def main() -> int:
                 "nearest_chain": nb.get("nearest_chain"),
                 "nearest_rmsd": nb.get("nearest_rmsd"),
                 "superposed": nb.get("superposed", 0),
+                "reference_file": nb.get("reference_file"),
                 "has_experimental_badge": nb.get("badge", 0),
                 "model_note": note,
                 "status": status,

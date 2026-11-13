@@ -408,3 +408,46 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:42 interface: GLP1R 5 samples across 1 candidates, 1 epitope bins
 - 2026-11-13 17:43 interface: GLP1R 5 samples across 1 candidates, 1 epitope bins
 - 2026-11-13 17:43 tm_model: ESM-2 embedded 168/244
+- 2026-11-13 17:44 tnp: retrying 55 skipped candidates with a germline N-terminus so NanoBodyBuilder2 will model them
+- 2026-11-13 17:44 tm_model: ESM-2 embedded 244/244
+- 2026-11-13 17:44 tm_predict: 1250/2500
+- 2026-11-13 17:44 tier1: surface patches for 2499 models on 4 workers
+- 2026-11-13 17:44 tier1: patches 250/2499, 7080 per minute
+- 2026-11-13 17:44 tier1: patches 500/2499, 7395 per minute
+- 2026-11-13 17:44 tier1: patches 750/2499, 7486 per minute
+- 2026-11-13 17:44 tier1: patches 1000/2499, 7515 per minute
+- 2026-11-13 17:44 tier1: patches 1250/2499, 7514 per minute
+- 2026-11-13 17:44 tm_model: 0 embeddings cached, 250 to compute
+- 2026-11-13 17:44 tier1: patches 1500/2499, 7669 per minute
+- 2026-11-13 17:44 tier1: patches 1750/2499, 7736 per minute
+- 2026-11-13 17:44 tier1: patches 2000/2499, 7743 per minute
+- 2026-11-13 17:44 tier1: patches 2250/2499, 7622 per minute
+- 2026-11-13 17:44 tier1: patches 2499/2499, 7617 per minute
+- 2026-11-13 17:44 tier1: TNP has values for 2325 candidates
+- 2026-11-13 17:44 tier1: nativeness has values for 288 candidates
+- 2026-11-13 17:44 tier1: humanness has values for 2500 candidates
+- 2026-11-13 17:44 tier1: neighbours has values for 2500 candidates
+- 2026-11-13 17:44 tier1: EGFR wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 17:44 tier1: GLP1R wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 17:44 tier1: PRLR wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 17:44 tier1: TL1A wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 17:44 tier1: TNFa wrote 500 rows, 499 with a model, 499 with surface patches
+- 2026-11-13 17:44 tier1: complete, 2500 structure rows
+- 2026-11-13 17:44 tm_model: ESM-2 embedded 8/250
+- 2026-11-13 17:45 build-db: EGFR bundle, 500 rows, 30 columns with data, 10 pending
+- 2026-11-13 17:45 build-db: GLP1R bundle, 500 rows, 35 columns with data, 5 pending
+- 2026-11-13 17:45 build-db: PRLR bundle, 500 rows, 29 columns with data, 11 pending
+- 2026-11-13 17:45 build-db: TL1A bundle, 500 rows, 29 columns with data, 11 pending
+- 2026-11-13 17:45 build-db: TNFa bundle, 500 rows, 29 columns with data, 11 pending
+- 2026-11-13 17:45 build-db: 15 bundles, 2502 kB total
+- 2026-11-13 17:46 tm_model: ESM-2 embedded 88/250
+- 2026-11-13 17:46 nativeness: 320/2500, 21 per minute, about 103 minutes left
+- 2026-11-13 17:46 schema: added 1 missing column(s) to the existing database: structures.reference_file
+- 2026-11-13 17:46 schema: whittle.sqlite has 12 tables (candidates, cofolds, controls, liabilities, provenance, qc, ranks, references, scores, structures, targets, thermostability)
+- 2026-11-13 17:46 tnp: recovered 51 of 55 skipped candidates
+- 2026-11-13 17:46 tnp: 2376 candidates profiled in total
+- 2026-11-13 17:47 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 17:47 neighbours: 2500 candidates against 1390 unique experimental nanobody sequences
+- 2026-11-13 17:47 neighbours: MMseqs2 shortlisted hits for 2500 of 2500 candidates
+- 2026-11-13 17:47 tm_model: ESM-2 embedded 168/250
+- 2026-11-13 17:47 tnp: retrying 41 skipped candidates with a germline N-terminus so NanoBodyBuilder2 will model them

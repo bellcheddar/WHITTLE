@@ -46,6 +46,7 @@
     if (!molstar) throw new Error('Mol* unavailable');
     if (plugin) return plugin;
     plugin = await molstar.Viewer.create(container, {
+      // DESIGN 2: the Mol* canvas sits on #0D1117, not the library's white.
       layoutIsExpanded: false,
       layoutShowControls: false,
       layoutShowSequence: false,
@@ -57,6 +58,11 @@
       pdbProvider: 'rcsb',
       emdbProvider: 'rcsb',
     });
+    try {
+      plugin.plugin.canvas3d?.setProps({
+        renderer: { backgroundColor: 0x0D1117 },
+      });
+    } catch (err) { /* the viewer still works on its own background */ }
     contextCount += 1;
     return plugin;
   }

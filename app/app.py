@@ -146,6 +146,7 @@ def api_candidate(cid: str):
                st.oasis_humanness, st.nearest_pdb, st.nearest_tm,
                st.nearest_identity_fw, st.nearest_identity_cdr,
                st.nearest_chain, st.nearest_rmsd, st.superposed,
+               st.reference_file,
                st.has_experimental_badge, st.model_note,
                t.tm_pred, t.tm_err, t.train_nn_distance, t.temstapro,
                t.thermompnn_ddg, t.model_version
@@ -183,6 +184,14 @@ def api_candidate(cid: str):
         if (STRUCTURES / rec["target"] / f"{cid}.sup.pdb.gz").exists():
             rec["superposed_url"] = url_for("structure", target=rec["target"],
                                             name=f"{cid}.sup.pdb")
+    # The neighbour chain on its own, shared by every candidate that matches
+    # it, so the viewer loads two local files and never calls out to RCSB.
+    rec["reference_url"] = None
+    if rec.get("reference_file"):
+        if (STRUCTURES / "_refs" / rec["reference_file"]).exists():
+            rec["reference_url"] = url_for(
+                "structure", target="_refs",
+                name=rec["reference_file"].replace(".pdb.gz", ".pdb"))
     return jsonify(rec)
 
 

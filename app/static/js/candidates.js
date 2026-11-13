@@ -647,11 +647,13 @@
         + `padding:0 20px">${canSuperpose
           ? 'Loading the superposition.'
           : 'No superposed model for this candidate.'}</p>`
-        + `<p class="vcap"><span>model over ${W.escape(d.nearest_pdb)}`
+        + `</div><p style="font-size:10px;color:var(--ink-3);margin:4px 0 10px;`
+        + `display:flex;justify-content:space-between"><span>model over `
+        + `${W.escape(d.nearest_pdb)}`
         + `${d.nearest_chain ? ' chain ' + W.escape(d.nearest_chain) : ''}</span>`
         + `<span>${d.nearest_tm ? 'TM ' + d.nearest_tm.toFixed(2) : ''}`
         + `${d.nearest_rmsd ? ' &middot; RMSD ' + d.nearest_rmsd.toFixed(1) + ' A' : ''}`
-        + `</span></p></div>`);
+        + `</span></p>`);
       parts.push(kvTable([
         ['Nearest experimental structure',
           d.nearest_pdb + (d.nearest_chain ? ` chain ${d.nearest_chain}` : '')],
@@ -673,9 +675,14 @@
           + 'and nothing in the scoring reads this column.'],
       ]));
       parts.push('<p style="font-size:11px;color:var(--ink-3);margin:8px 0 0">'
-        + 'The experimental entry is fetched from the PDB by your browser when '
-        + 'this panel opens. The predicted model was superposed onto it at build '
-        + 'time, not in the browser.</p>');
+        + (d.reference_url
+          ? 'Both structures are served from here: the neighbour is the single '
+            + 'matching chain, extracted from its PDB entry, and the predicted '
+            + 'model was superposed onto it at build time rather than in the '
+            + 'browser.'
+          : 'The experimental entry is fetched from the PDB by your browser. The '
+            + 'predicted model was superposed onto it at build time.')
+        + '</p>');
     } else {
       parts.push('<p style="font-size:12px;color:var(--ink-3)">The nearest '
         + 'experimental neighbour is found in the structural tier, which has not '
@@ -714,10 +721,16 @@
         node.dataset.loaded = '1';
         // The superposed copy, not the raw model: the raw one sits hundreds of
         // angstroms away in its own frame and would not be a superposition.
-        window.WViewer.show(node, [
-          { url: currentDetail.superposed_url, format: 'pdb' },
-          { pdbId: currentDetail.nearest_pdb },
-        ]);
+        // The neighbour is the single extracted chain served from here, not
+        // the whole PDB entry from RCSB: a cryo-EM entry is a dozen chains and
+        // the nanobody gets lost among them.
+        const entries = [{ url: currentDetail.superposed_url, format: 'pdb' }];
+        if (currentDetail.reference_url) {
+          entries.push({ url: currentDetail.reference_url, format: 'pdb' });
+        } else if (currentDetail.nearest_pdb) {
+          entries.push({ pdbId: currentDetail.nearest_pdb });
+        }
+        window.WViewer.show(node, entries);
       }
     }
   }
