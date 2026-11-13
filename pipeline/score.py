@@ -280,6 +280,74 @@ def axis_values(records: list[dict], axis: str) -> tuple[list[float | None], lis
     return out, used
 
 
+def score_external(conn, target: str, external: list[dict]) -> dict[str, dict]:
+    """Place rows that are not candidates against a target's candidate scales.
+
+    Used for the control set (spec 8.2). The question a control answers is
+    "where would this have ranked among the candidates for this target", so:
+
+      * every component z-score uses the **candidates'** mean and standard
+        deviation, not a mean recomputed over candidates plus controls, which
+        would let 50 shuffled sequences move the scale they are being measured
+        against;
+      * the percentile is the position among the candidate values, by counting,
+        so a control can legitimately land below the 0th or above the 100th
+        candidate and is clamped to the range rather than extrapolated.
+
+    Returns {id: {axis: percentile}}.
+    """
+    records = gather(conn, target)
+    if not records:
+        return {}
+    out: dict[str, dict] = {row["id"]: {} for row in external}
+    for axis in RANK_AXES:
+        used: list[Component] = []
+        stats: list[tuple[Component, float, float]] = []
+        for comp in AXIS_COMPONENTS[axis]:
+            raw = [r.get(comp.field) for r in records]
+            present = [float(v) * comp.sign for v in raw if v is not None]
+            if len(present) < 2:
+                continue
+            mean = sum(present) / len(present)
+            var = sum((v - mean) ** 2 for v in present) / (len(present) - 1)
+            sd = math.sqrt(var)
+            if sd == 0:
+                continue
+            # The external row must have this component too, or the two sides
+            # are not being compared on the same axis.
+            if not any(row.get(comp.field) is not None for row in external):
+                continue
+            used.append(comp)
+            stats.append((comp, mean, sd))
+        if not used:
+            continue
+
+        def combine(source: dict) -> float | None:
+            num = den = 0.0
+            for comp, mean, sd in stats:
+                value = source.get(comp.field)
+                if value is None:
+                    continue
+                num += comp.weight * ((float(value) * comp.sign) - mean) / sd
+                den += comp.weight
+            return num / den if den else None
+
+        candidate_values = [combine(r) for r in records]
+        reference = sorted(v for v in candidate_values if v is not None)
+        if len(reference) < 10:
+            continue
+        for row in external:
+            value = combine(row)
+            if value is None:
+                continue
+            below = sum(1 for v in reference if v < value)
+            equal = sum(1 for v in reference if v == value)
+            rank = below + (equal - 1) / 2.0 if equal else below
+            pct = 100.0 * rank / (len(reference) - 1)
+            out[row["id"]][axis] = round(min(max(pct, 0.0), 100.0), 2)
+    return out
+
+
 def main() -> int:
     conn = connect()
     weights = {axis: 1.0 for axis in RANK_AXES}  # the UI re-weights client side

@@ -56,8 +56,12 @@ tools:
 
   - key: scikit_learn
     role: Stacked regression for the thermostability model
-    doi: 10.5555/1953048.2078195
-    title: "Scikit-learn: Machine Learning in Python"
+    # JMLR 12:2825-2830. The 10.5555 handle is an ACM Digital Library one and
+    # is not in Crossref, so this row cites the repository instead and shows
+    # as unverified rather than pretending to a DOI Crossref cannot confirm.
+    repo: https://github.com/scikit-learn/scikit-learn
+    url: https://jmlr.org/papers/v12/pedregosa11a.html
+    title: "Scikit-learn: Machine Learning in Python, JMLR 12:2825-2830"
     licence: BSD-3-Clause
 
   - key: nanomelt_method
@@ -89,7 +93,9 @@ tools:
 
   - key: ablang2
     role: Nativeness and pseudo-perplexity
-    doi: 10.1093/bioinformatics/btae514
+    # btae514 resolves to an unrelated phylogenetics paper; btae618 is the real
+    # one, confirmed by a Crossref title search at build time.
+    doi: 10.1093/bioinformatics/btae618
     title: "Addressing the antibody germline bias and its effect on language models"
     licence: BSD-3-Clause
 
@@ -147,14 +153,16 @@ databases:
 
   - key: nbthermo
     role: Apparent melting temperature training labels
-    doi: 10.1093/bioinformatics/btad529
+    # btad529 resolves to an unrelated paper. NbThermo is in Database, not
+    # Bioinformatics.
+    doi: 10.1093/database/baad021
     title: "NbThermo: a new thermostability database for nanobodies"
     snapshot_date: RESOLVE_AT_BUILD
 
   - key: pdb
     role: Experimental-structure badge, antigen reference structures
     doi: 10.1093/nar/gkae1091
-    title: "RCSB Protein Data Bank"
+    title: "Updated resources for exploring experimentally-determined PDB structures and Computed Structure Models"
     snapshot_date: RESOLVE_AT_BUILD
     note: "CC0. PDB-derived values ship without restriction."
 

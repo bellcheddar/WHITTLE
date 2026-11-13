@@ -44,13 +44,18 @@
     return r * r;
   }
 
+  /* [observed, predicted, title, x label, y label, sameUnits]
+     The thermostability panel compares degrees against degrees, so its
+     reference line is y = x and the residual is a real temperature error. The
+     other two compare a measurement against a percentile, where no identity
+     line exists: those panels draw a trend only and say so. */
   const AXIS_PAIRS = [
-    ['observed_tm', 'predicted_thermo', 'Thermostability', 'observed Tm, deg C',
-      'predicted thermostability percentile'],
+    ['observed_tm', 'predicted_tm', 'Thermostability', 'observed Tm, deg C',
+      'predicted Tm, deg C', true],
     ['observed_kd', 'predicted_affinity', 'Affinity', 'observed Kd, nM',
-      'predicted affinity percentile'],
+      'predicted affinity percentile', false],
     ['observed_expression', 'predicted_expression', 'Expression',
-      'observed yield, mg/L', 'predicted expression percentile'],
+      'observed yield, mg/L', 'predicted expression percentile', false],
   ];
 
   async function drawScatters(rows) {
@@ -67,17 +72,23 @@
       + `<div class="plot" id="resid-${obs}" style="height:150px"></div>`
       + `<p class="r2" id="r2-${obs}"></p></div>`).join('');
 
-    for (const [obs, pred, label, xlabel, ylabel] of panels) {
+    for (const [obs, pred, label, xlabel, ylabel, sameUnits] of panels) {
       const points = known.filter((r) => r[obs] !== null && r[pred] !== null);
       const failed = points.filter((r) => r.assertion_passed === 0);
       const passed = points.filter((r) => r.assertion_passed !== 0);
       const r2 = rsquared(points.map((r) => [r[obs], r[pred]]));
       const xs = points.map((r) => r[obs]);
+      const ys = points.map((r) => r[pred]);
       const lo = Math.min(...xs); const hi = Math.max(...xs);
+      // y = x only where both axes are the same quantity in the same units.
+      const refLo = sameUnits ? Math.min(lo, Math.min(...ys)) : lo;
+      const refHi = sameUnits ? Math.max(hi, Math.max(...ys)) : hi;
 
       await Plotly.react(el(`plot-${obs}`), [
-        { x: [lo, hi], y: [0, 100], mode: 'lines', name: 'identity',
-          line: { color: W.PALETTE.ink3, dash: 'dash', width: 1 }, hoverinfo: 'skip' },
+        { x: [refLo, refHi], y: sameUnits ? [refLo, refHi] : [0, 100],
+          mode: 'lines', name: sameUnits ? 'y = x' : 'range',
+          line: { color: W.PALETTE.ink3, dash: 'dash', width: 1 },
+          hoverinfo: 'skip' },
         { x: passed.map((r) => r[obs]), y: passed.map((r) => r[pred]),
           mode: 'markers', name: 'control',
           text: passed.map((r) => `${r.name} (${r.target})`),
@@ -94,12 +105,16 @@
         xaxis: { title: { text: xlabel, font: { size: 10 } },
           gridcolor: W.PALETTE.rule, zeroline: false },
         yaxis: { title: { text: ylabel, font: { size: 10 } },
-          gridcolor: W.PALETTE.rule, zeroline: false, range: [0, 100] },
+          gridcolor: W.PALETTE.rule, zeroline: false,
+          range: sameUnits ? undefined : [0, 100] },
         showlegend: false,
       }, { displayModeBar: false, responsive: true });
 
-      // The residual plot, per axis (spec 8.2).
+      // The residual plot, per axis (spec 8.2). Where the two axes share units
+      // the residual is predicted minus observed, in those units. Where they do
+      // not, it is the departure from the rank the measurement implies.
       const resid = points.map((r) => {
+        if (sameUnits) return r[pred] - r[obs];
         const expected = 100 * (r[obs] - lo) / ((hi - lo) || 1);
         return r[pred] - expected;
       });
@@ -117,10 +132,17 @@
         showlegend: false,
       }, { displayModeBar: false, responsive: true });
 
-      el(`r2-${obs}`).textContent = r2 === null
+      let caption = r2 === null
         ? `${points.length} controls, too few for an R squared.`
         : `R squared ${r2.toFixed(3)} over ${points.length} controls`
           + (failed.length ? `, ${failed.length} failing their assertion.` : '.');
+      if (sameUnits && points.length) {
+        const mae = points.reduce((s, r) => s + Math.abs(r[pred] - r[obs]), 0)
+          / points.length;
+        caption += ` Mean absolute error ${mae.toFixed(1)} deg C.`;
+      }
+      caption += ' Every control was run with its published measurement withheld.';
+      el(`r2-${obs}`).textContent = caption;
     }
   }
 

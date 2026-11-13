@@ -82,20 +82,34 @@ promb = "*"
 
 [tasks]
 probe = "python tools/hwprobe.py"
-postinstall = "bash tools/post_install.sh"
 ingest = "python -m pipeline.ingest"
 tier0 = "python -m pipeline.tier0"
+fold = "python -m pipeline.fold"
+patches = "python -m pipeline.tier1"
+tnp = "python -m pipeline.tnp"
+nativeness = "python -m pipeline.nativeness"
+neighbours = "python -m pipeline.neighbours"
 tier1 = "python -m pipeline.tier1"
+tm-data = "python -m pipeline.tm_data"
 tm-train = "python -m pipeline.tm_model"
+tm-predict = "python -m pipeline.tm_predict"
+antigens = "python -m pipeline.antigens"
 tier2 = "bash tools/run_queue.sh"
+interface = "python -m pipeline.interface"
 controls = "python -m pipeline.controls"
+controls-run = "python -m pipeline.controls_run"
 refs = "python -m pipeline.references"
 score = "python -m pipeline.score"
 build-db = "python -m pipeline.build_db"
 serve = "python -m app.app"
 deploy = "bash deploy/deploy.sh"
 qc = "python tools/smoke_test.py"
+qc-pareto = "python tools/qc_pareto.py"
+qc-vacuous = "python tools/vacuous_tests.py"
+space = "python tools/space_check.py"
+secrets = "python tools/secret_scan.py"
 status = "bash tools/status.sh"
+findings = "python tools/findings.py"
 test = "pytest pipeline/tests -q"
 
 [feature.cofold]
@@ -132,3 +146,12 @@ TOKENIZERS_PARALLELISM = "false"
 # conda-forge libomp plus any pip-installed wheel that bundles its own: harmless
 # here, load-bearing if a pip torch ever enters the env (BoltzMaker, D-note).
 KMP_DUPLICATE_LIB_OK = "TRUE"
+
+[feature.cofold.activation.env]
+# boltz-community bundles its own libomp in the pip torch wheel while
+# conda-forge's stack links conda's. `boltz-fix-macos-libomp` repoints the
+# conda binaries, and this is the belt-and-braces guard: without one or the
+# other, importing torch aborts with "OMP: Error #15".
+KMP_DUPLICATE_LIB_OK = "TRUE"
+PYTORCH_ENABLE_MPS_FALLBACK = "1"
+PYTHONPATH = "$PIXI_PROJECT_ROOT"

@@ -163,3 +163,99 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 16:52 neighbours: 400/2500, 0 with an experimental badge, 400 with a TM-score, 301 per minute
 - 2026-11-13 16:52 neighbours: 500/2500, 0 with an experimental badge, 500 with a TM-score, 340 per minute
 - 2026-11-13 16:53 neighbours: 600/2500, 0 with an experimental badge, 600 with a TM-score, 369 per minute
+- 2026-11-13 16:53 tm_model: ESM-2 embedded 408/650
+- 2026-11-13 16:53 neighbours: 700/2500, 0 with an experimental badge, 700 with a TM-score, 401 per minute
+- 2026-11-13 16:53 neighbours: 800/2500, 0 with an experimental badge, 800 with a TM-score, 430 per minute
+- 2026-11-13 16:53 neighbours: 900/2500, 0 with an experimental badge, 900 with a TM-score, 454 per minute
+- 2026-11-13 16:53 neighbours: 1000/2500, 0 with an experimental badge, 1000 with a TM-score, 478 per minute
+- 2026-11-13 16:53 neighbours: 1100/2500, 0 with an experimental badge, 1100 with a TM-score, 510 per minute
+- 2026-11-13 16:53 neighbours: 1200/2500, 0 with an experimental badge, 1200 with a TM-score, 525 per minute
+- 2026-11-13 16:53 neighbours: 1300/2500, 0 with an experimental badge, 1300 with a TM-score, 556 per minute
+- 2026-11-13 16:53 neighbours: 1400/2500, 0 with an experimental badge, 1400 with a TM-score, 571 per minute
+- 2026-11-13 16:54 neighbours: 1500/2500, 0 with an experimental badge, 1500 with a TM-score, 586 per minute
+- 2026-11-13 16:54 neighbours: 1600/2500, 0 with an experimental badge, 1600 with a TM-score, 600 per minute
+- 2026-11-13 16:54 neighbours: 1700/2500, 0 with an experimental badge, 1700 with a TM-score, 616 per minute
+- 2026-11-13 16:54 tm_model: ESM-2 embedded 488/650
+- 2026-11-13 16:54 neighbours: 1800/2500, 0 with an experimental badge, 1800 with a TM-score, 635 per minute
+- 2026-11-13 16:54 neighbours: 1900/2500, 0 with an experimental badge, 1900 with a TM-score, 655 per minute
+- 2026-11-13 16:54 neighbours: 2000/2500, 0 with an experimental badge, 2000 with a TM-score, 675 per minute
+- 2026-11-13 16:54 neighbours: 2100/2500, 0 with an experimental badge, 2100 with a TM-score, 691 per minute
+- 2026-11-13 16:54 tnp: EGFR complete, 450 of 500 sequences profiled in 9.1 minutes
+- 2026-11-13 16:54 tnp: GLP1R, 500 sequences, 12 cores. TNP folds each sequence itself, so this is the slow step
+- 2026-11-13 16:54 neighbours: 2200/2500, 0 with an experimental badge, 2200 with a TM-score, 702 per minute
+- 2026-11-13 16:54 neighbours: 2300/2500, 0 with an experimental badge, 2300 with a TM-score, 707 per minute
+- 2026-11-13 16:54 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 16:54 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-13 16:54 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-13 16:54 controls: 354 control rows written {'scrambled': 250, 'known': 94, 'multi_target': 10}
+- 2026-11-13 16:54 controls: PENDING control_3_tm_sanity: no Tm predictions yet
+- 2026-11-13 16:54 controls: PENDING control_4_trimer_TNFa: no co-folds yet
+- 2026-11-13 16:54 controls: PENDING control_4_trimer_TL1A: no co-folds yet
+- 2026-11-13 16:54 controls: PENDING control_5_scrambled_EGFR: pending the affinity axis
+- 2026-11-13 16:54 controls: PENDING control_5_scrambled_GLP1R: pending the affinity axis
+- 2026-11-13 16:54 controls: PENDING control_5_scrambled_PRLR: pending the affinity axis
+- 2026-11-13 16:54 controls: PENDING control_5_scrambled_TL1A: pending the affinity axis
+- 2026-11-13 16:54 controls: PENDING control_5_scrambled_TNFa: pending the affinity axis
+- 2026-11-13 16:54 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-13 16:54 neighbours: 2400/2500, 0 with an experimental badge, 2400 with a TM-score, 721 per minute
+- 2026-11-13 16:54 neighbours: 2500/2500, 2 with an experimental badge, 2499 with a TM-score, 731 per minute
+- 2026-11-13 16:54 neighbours: complete. 2 candidates carry an experimental badge, 1 have a target-matched reference, 2499 have a TM-score
+- 2026-11-13 16:55 tm_model: ESM-2 embedded 568/650
+- 2026-11-13 16:56 tm_model: ESM-2 embedded 648/650
+- 2026-11-13 16:56 tm_model: features (650, 1466) built in 9.9 minutes (one-hot 106, VHSE 80, ESM 1280)
+- 2026-11-13 16:56 tm_model: grouped 5-fold x 3, split on CDR3 clusters
+- 2026-11-13 16:56 qc_pareto: EGFR 500 rows, stored front 11, independent front 11, AGREE
+- 2026-11-13 16:56 qc_pareto: GLP1R 500 rows, stored front 7, independent front 7, AGREE
+- 2026-11-13 16:56 qc_pareto: PRLR 500 rows, stored front 8, independent front 8, AGREE
+- 2026-11-13 16:56 qc_pareto: TL1A 500 rows, stored front 11, independent front 11, AGREE
+- 2026-11-13 16:56 qc_pareto: TNFa 500 rows, stored front 12, independent front 12, AGREE
+- 2026-11-13 16:57 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 16:57 vacuous_tests: PASS EGFR specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS EGFR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS EGFR expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 16:57 vacuous_tests: PASS GLP1R specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS GLP1R thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS GLP1R expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 16:57 vacuous_tests: PASS PRLR specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS PRLR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS PRLR expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 16:57 vacuous_tests: PASS TL1A specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS TL1A thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS TL1A expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 16:57 vacuous_tests: PASS TNFa specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS TNFa thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:57 vacuous_tests: PASS TNFa expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 16:59 tm_model: grouped CV  R2 0.390  RMSE 8.40  MAE 6.21  Spearman 0.646
+- 2026-11-13 16:59 tm_model: row-wise 5-fold x 3, for contrast only
+- 2026-11-13 16:59 antigens: EGFR P00533 25-645 -> 621 aa x1 = 621 aa antigen, md5 655a492f
+- 2026-11-13 16:59 antigens: TNFa P01375 77-233 -> 157 aa x3 = 471 aa antigen, md5 af81856e
+- 2026-11-13 16:59 antigens: TL1A O95150 72-251 -> 180 aa x3 = 540 aa antigen, md5 0ee83f34
+- 2026-11-13 16:59 antigens: PRLR P16471 25-234 -> 210 aa x1 = 210 aa antigen, md5 395e815d
+- 2026-11-13 16:59 antigens: GLP1R P43220 24-139 -> 116 aa x1 = 116 aa antigen, md5 4eb1736d
+- 2026-11-13 16:59 antigens: 5 constructs cached. Cheapest first by complex size: GLP1R, PRLR, TNFa, TL1A, EGFR
+- 2026-11-13 17:02 tm_model: row-wise CV R2 0.697  RMSE 5.92  (the gap to the grouped figure is the near-duplicate leak)
+- 2026-11-13 17:02 tm_model: final fit on the whole training set
+- 2026-11-13 17:03 tnp: GLP1R complete, 463 of 500 sequences profiled in 8.6 minutes
+- 2026-11-13 17:03 tnp: PRLR, 500 sequences, 12 cores. TNP folds each sequence itself, so this is the slow step
+- 2026-11-13 17:04 tm_model: error bars calibrated; they cover 76.0 percent of the out-of-fold residuals
+- 2026-11-13 17:04 tm_model: ESM-2 embedded 8/77
+- 2026-11-13 17:05 tm_model: external set R2 -0.058 RMSE 9.16 over 77 held-out sequences; error bars cover 66 percent
+- 2026-11-13 17:05 tm_model: written to /Users/dellboy/Documents/Vibe_Coding/WHITTLE/models/whittle_tm_v1
+- 2026-11-13 17:07 tm_model: 650 training sequences, 77 external, ESM-2 esm2_t33_650M_UR50D
+- 2026-11-13 17:07 tm_model: numbering the training set
+- 2026-11-13 17:07 tm_model: 377 CDR3 clusters at 90 percent identity across 650 sequences
+- 2026-11-13 17:07 tm_model: 0 embeddings cached, 650 to compute
+- 2026-11-13 17:07 tm_model: ESM-2 embedded 8/650
+- 2026-11-13 17:08 references: scikit_learn unverified: Crossref returned 404
+- 2026-11-13 17:08 references: ablang2 unverified: Crossref title does not match the expected one (similarity 0.29): Crossref says "Estimating the mean in the space of ranked phylogenetic trees"
+- 2026-11-13 17:08 references: nbthermo unverified: Crossref title does not match the expected one (similarity 0.29): Crossref says "Joint embedding of biological networks for cross-species functional alignment"
+- 2026-11-13 17:08 references: pdb unverified: Crossref title does not match the expected one (similarity 0.29): Crossref says "Updated resources for exploring experimentally-determined PDB structures and Computed Stru"
+- 2026-11-13 17:08 references: 28 rows, 22 DOI-verified, 6 shown unverified; 32 provenance entries
+- 2026-11-13 17:08 tm_model: ESM-2 embedded 88/650
+- 2026-11-13 17:09 references: 28 rows, 25 DOI-verified, 3 shown unverified; 32 provenance entries
+- 2026-11-13 17:09 references: 28 rows. 25 of 25 DOIs verified against Crossref, 3 rows cited by repository and commit instead (spec 8.3 allows both). 32 provenance entries
+- 2026-11-13 17:09 tm_model: ESM-2 embedded 168/650

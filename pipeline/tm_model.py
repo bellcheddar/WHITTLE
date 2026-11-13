@@ -134,9 +134,35 @@ def vhse_block(sequences: list[str], regions: list[dict[str, str]]) -> np.ndarra
 
 
 def esm_block(sequences: list[str], model_name: str, batch: int) -> np.ndarray:
-    """Mean-pooled ESM-2 embeddings. float32 throughout (spec 2.2)."""
+    """Mean-pooled ESM-2 embeddings. float32 throughout (spec 2.2).
+
+    Cached per sequence under `models/esm_cache/`: embedding 650 sequences
+    takes about twenty minutes, and recalibrating the error bars should not
+    cost that again.
+    """
+    import hashlib
+
     import esm
     import torch
+
+    cache_dir = MODELS / "esm_cache" / model_name
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    digests = [hashlib.md5(s.encode()).hexdigest() for s in sequences]
+    cached: dict[str, np.ndarray] = {}
+    missing: list[int] = []
+    for i, digest in enumerate(digests):
+        path = cache_dir / f"{digest}.npy"
+        if path.exists():
+            try:
+                cached[digest] = np.load(path)
+                continue
+            except Exception:
+                pass
+        missing.append(i)
+    if not missing:
+        log(f"tm_model: all {len(sequences)} ESM-2 embeddings came from the cache")
+        return np.asarray([cached[d] for d in digests], dtype=np.float32)
+    log(f"tm_model: {len(cached)} embeddings cached, {len(missing)} to compute")
 
     torch.set_grad_enabled(False)
     loader = getattr(esm.pretrained, model_name)
@@ -144,19 +170,22 @@ def esm_block(sequences: list[str], model_name: str, batch: int) -> np.ndarray:
     model.eval().float()
     layer = model.num_layers
     converter = alphabet.get_batch_converter()
-    out = []
-    for i in range(0, len(sequences), batch):
-        chunk = [(f"s{j}", s) for j, s in enumerate(sequences[i:i + batch])]
+    todo = [sequences[i] for i in missing]
+    todo_digests = [digests[i] for i in missing]
+    for i in range(0, len(todo), batch):
+        chunk = [(f"s{j}", s) for j, s in enumerate(todo[i:i + batch])]
         _labels, _strs, tokens = converter(chunk)
         result = model(tokens, repr_layers=[layer], return_contacts=False)
         reps = result["representations"][layer]
         for k, (_name, seq) in enumerate(chunk):
             # Drop the BOS token and the padding; mean-pool the residues only.
-            out.append(reps[k, 1:len(seq) + 1].mean(0).numpy())
+            vector = reps[k, 1:len(seq) + 1].mean(0).numpy().astype(np.float32)
+            digest = todo_digests[i + k]
+            cached[digest] = vector
+            np.save(cache_dir / f"{digest}.npy", vector)
         if (i // batch) % 10 == 0:
-            log(f"tm_model: ESM-2 embedded {min(i + batch, len(sequences))}"
-                f"/{len(sequences)}")
-    return np.asarray(out, dtype=np.float32)
+            log(f"tm_model: ESM-2 embedded {min(i + batch, len(todo))}/{len(todo)}")
+    return np.asarray([cached[d] for d in digests], dtype=np.float32)
 
 
 # ------------------------------------------------------------------- clustering
@@ -309,20 +338,42 @@ def calibrate_error(distances: np.ndarray, residuals: np.ndarray) -> dict:
             ys.append(float(np.median(absolute[mask])))
     if len(xs) < 3:
         return {"slope": 0.0, "intercept": float(np.median(absolute)),
-                "floor": 2.4, "method": "median only"}
+                "floor": 2.4, "multiplier": 1.96, "target_coverage": 0.90,
+                "method": "median only"}
     slope, intercept = np.polyfit(xs, ys, 1)
-    return {"slope": float(slope), "intercept": float(intercept),
-            "floor": 2.4,
-            "method": "linear fit of the median absolute residual against the "
-                      "cosine distance to the nearest training neighbour, with a "
-                      "floor at the 2.4 degree C mean disagreement between repeat "
-                      "measurements reported for this label set"}
+    base = {"slope": float(slope), "intercept": float(intercept), "floor": 2.4}
+    # The multiplier is measured, not assumed. A 1.96 sigma interval is only a
+    # 95 percent interval if the residuals are normal and the scale is right;
+    # here neither holds, and quoting a coverage the bars do not deliver is
+    # exactly the kind of crisp-looking number this model card exists to avoid.
+    # So: pick the smallest multiplier whose interval actually covers
+    # `target` of the out-of-fold residuals, and report the achieved figure.
+    target = 0.90
+    width = np.maximum(slope * distances + intercept, base["floor"])
+    multiplier = 1.0
+    for candidate in np.arange(0.5, 6.01, 0.05):
+        if float(np.mean(absolute <= candidate * width)) >= target:
+            multiplier = float(candidate)
+            break
+    else:
+        multiplier = 6.0
+    base.update({
+        "multiplier": round(multiplier, 2),
+        "target_coverage": target,
+        "method": (f"the median absolute residual is fitted linearly against the "
+                   f"cosine distance to the nearest training neighbour and "
+                   f"floored at the 2.4 degree C mean disagreement between "
+                   f"repeat measurements of the same nanobody; the width is then "
+                   f"scaled by {multiplier:.2f}, the smallest multiplier that "
+                   f"covers {target:.0%} of the out-of-fold residuals"),
+    })
+    return base
 
 
 def apply_error(distances: np.ndarray, calibration: dict) -> np.ndarray:
     raw = calibration["slope"] * distances + calibration["intercept"]
-    # 1.96 for a nominal 95 percent interval under a normal residual.
-    return np.maximum(raw, calibration["floor"]) * 1.96
+    return (np.maximum(raw, calibration["floor"])
+            * float(calibration.get("multiplier", 1.96)))
 
 
 # ------------------------------------------------------------------------ main
@@ -519,6 +570,38 @@ def write_model_card(card: dict) -> None:
         f"near-duplicate leak a row-wise split hides: it is reported here rather "
         f"than used.",
         "",
+    ]
+    if external:
+        ranks_well = external.get("spearman", 0) >= 0.5
+        poor_absolute = external.get("r2", 0) < 0.1
+        if ranks_well and poor_absolute:
+            lines += [
+                "### The external set ranks well and is not calibrated in degrees",
+                "",
+                f"This is the most important line in this card. On the "
+                f"{external['n']} held-out sequences the model reaches a Spearman "
+                f"of {external['spearman']:.3f} and a Pearson of "
+                f"{external['pearson']:.3f}, so it **orders** them well. Its R "
+                f"squared is {external['r2']:.3f}, which is no better than "
+                f"predicting a constant, so it does **not** place them correctly "
+                f"on the temperature scale: the predictions are compressed "
+                f"towards the training mean and carry an offset between "
+                f"measurement regimes.",
+                "",
+                "What follows from that, and is enforced in the app:",
+                "",
+                "- The thermostability **axis** is a within-target percentile, "
+                "which depends only on the ordering. That is the part this model "
+                "supports.",
+                "- The **absolute predicted Tm** is shown with its error bar and "
+                "described as an estimate. Two candidates three degrees apart on "
+                "this scale are not meaningfully different.",
+                "- Comparing a predicted Tm here against a Tm measured elsewhere, "
+                "under a different method, buffer and concentration, is not a "
+                "comparison this model can carry.",
+                "",
+            ]
+    lines += [
         "## Error estimate",
         "",
         f"Per row, from the cosine distance to the nearest training neighbour in "

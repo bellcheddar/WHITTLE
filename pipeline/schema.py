@@ -197,6 +197,8 @@ CREATE TABLE IF NOT EXISTS controls (
     predicted_thermo       REAL,
     predicted_specificity  REAL,
     predicted_expression   REAL,
+    predicted_tm           REAL,   -- the temperature itself, for the observed
+                                   -- against predicted scatter on Tab 2
     kind                   TEXT,   -- known | scrambled | multi_target
     blind                  INTEGER DEFAULT 1,
     assertion              TEXT,
