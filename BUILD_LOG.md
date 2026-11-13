@@ -335,3 +335,16 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:34 tm_predict: 500/2500
 - 2026-11-13 17:34 tm_model: 0 embeddings cached, 250 to compute
 - 2026-11-13 17:34 tm_model: ESM-2 embedded 8/250
+- 2026-11-13 17:35 nativeness: 80/2500, 19 per minute, about 130 minutes left
+- 2026-11-13 17:35 tm_model: ESM-2 embedded 88/250
+- 2026-11-13 17:09 References resolved through Crossref at build time. The title-match check earned its place immediately: three seed DOIs resolved to the wrong paper (AbLang2 to a phylogenetics paper, NbThermo to a network-embedding one, and the scikit-learn handle is an ACM one Crossref does not hold). All corrected or re-cited. 25 of 25 DOIs now verify; three rows cite a repository and commit instead, which spec 8.3 allows.
+- 2026-11-13 17:13 Mermaid workflow rendered to a static SVG with nine clickable anchors into the reference rows. mermaid-cli wanted its own Chrome download; pointing puppeteer at a browser already on the machine avoided it. The Mermaid runtime never reaches the droplet.
+- 2026-11-13 17:16 Icon and favicon set drawn to the house style: a triage funnel, the repertoire tumbling in, one VHH shortlisted below. Favicons generated from the same SVG with the wordmark stripped.
+- 2026-11-13 17:24 The schema now migrates missing columns into an existing database. CREATE TABLE IF NOT EXISTS silently skips a column added later, which is exactly how `predicted_tm` went absent until a query failed on it.
+- 2026-11-13 17:26 Tm model retrained with empirically calibrated error bars. The first pass quoted a 1.96 sigma interval and covered 76 percent of out-of-fold residuals; the multiplier is now measured (2.95) and covers 90.5 percent internally and 82 percent on the external set.
+- 2026-11-13 17:28 The droplet venv is Flask, gunicorn and their dependencies: ten packages, 34 MB, no scientific stack. deploy.sh asserts that on every deploy now rather than trusting it.
+- 2026-11-13 17:30 TNP complete: 2,325 of 2,500 candidates profiled. The 175 skips all give the same reason in TNP's own log, that NanoBodyBuilder2 would not model the sequence, which is the fault the folding stage already solved. A germline-padded retry recovers them.
+- 2026-11-13 17:31 All five antigen MSAs cached: GLP1R 3,609, PRLR 2,538, TNFa 1,971, TL1A 2,037, EGFR 3,597 sequences deep, 4.6 MB in total. One MSA per target, reused across every candidate, which is the decision that removes most of the Tier 2 MSA cost.
+- 2026-11-13 17:32 Scoring now withholds an axis from a row whose available components carry less than half the axis weight. A row scored from a light subset has the same expected value but a wider spread, so it drifts to both extremes and reads as more decisive than it is.
+- 2026-11-13 17:33 Tier 2 smoke co-fold started on the cheapest complex, GLP1R at 227 aa, to measure wall-clock before anything is queued (spec Phase 3, first bullet).
+- 2026-11-13 17:36 tm_model: ESM-2 embedded 168/250
