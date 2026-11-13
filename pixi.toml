@@ -1,0 +1,114 @@
+[workspace]
+name = "whittle"
+version = "1.0.0"
+description = "WHITTLE: Whole-repertoire Hierarchical In-silico Triage: Thermostability, Liabilities, Expression"
+authors = ["Marc C. Deller"]
+channels = ["conda-forge", "bioconda"]
+platforms = ["osx-arm64"]
+
+# Shape lifted from KINFOLK/pixi.toml and BoltzMaker/pixi.toml (see REUSE.md).
+#
+# Two environments, deliberately. `default` carries the Tier 0/1 stack on
+# python 3.12. `cofold` carries boltz-community on python 3.11, because boltz
+# pins numpy<2.0 and has no cp312 wheel for it (the same ceiling BoltzMaker
+# documents). Keeping them apart means a Tier 2 install cannot break Tier 1.
+#
+# Install order matters (spec 4.1): OpenMM and HMMER come from conda-forge /
+# bioconda in the solve below, before the `postinstall` task reaches for pip.
+
+[dependencies]
+python = "3.12.*"
+pip = "*"
+# --- conda-forge first: the two that must not come from pip (spec 4.1) ---
+openmm = "*"
+hmmer = "*"
+pdbfixer = "*"
+# --- numerics and bio ---
+numpy = "*"
+scipy = "*"
+pandas = "*"
+scikit-learn = "*"
+biopython = "*"
+biotite = "*"
+gemmi = "*"
+freesasa = "*"
+pyarrow = "*"
+# --- comparison and clustering ---
+mmseqs2 = "*"
+# --- pytorch from conda-forge, not pip: conda-forge's scientific stack links
+# conda's own libomp and a pip torch wheel bundles a second one, which aborts
+# the process on import (BoltzMaker documents the same crash). The conda-forge
+# osx-arm64 build is MPS-capable, which is all we need.
+pytorch = "*"
+# --- plumbing ---
+requests = "*"
+tenacity = "*"
+tqdm = "*"
+rich = "*"
+pyyaml = "*"
+tomli-w = "*"
+pytest = "*"
+matplotlib = "*"
+# --- the web app runs from this env locally; the droplet uses requirements.txt ---
+flask = "*"
+gunicorn = "*"
+jinja2 = "*"
+
+[pypi-dependencies]
+# ANARCI's conda package is py<=3.10 only on this platform, so the ANARCI route
+# is taken by `postinstall` against the already-built env; anarcii is the
+# PyTorch-based fallback the spec names and installs cleanly here.
+anarcii = "*"
+immunebuilder = "*"
+fair-esm = "*"
+
+[tasks]
+probe = "python tools/hwprobe.py"
+postinstall = "bash tools/post_install.sh"
+ingest = "python -m pipeline.ingest"
+tier0 = "python -m pipeline.tier0"
+tier1 = "python -m pipeline.tier1"
+tm-train = "python -m pipeline.tm_model"
+tier2 = "bash tools/run_queue.sh"
+controls = "python -m pipeline.controls"
+refs = "python -m pipeline.references"
+score = "python -m pipeline.score"
+build-db = "python -m pipeline.build_db"
+serve = "python -m app.app"
+deploy = "bash deploy/deploy.sh"
+qc = "python tools/smoke_test.py"
+status = "bash tools/status.sh"
+test = "pytest pipeline/tests -q"
+
+[feature.cofold]
+platforms = ["osx-arm64"]
+
+[feature.cofold.dependencies]
+python = "3.11.*"
+pip = "*"
+numpy = "<2"
+rdkit = "*"
+gemmi = "0.6.5.*"
+biopython = "1.84.*"
+scipy = "1.13.*"
+pyyaml = "6.0.2.*"
+ihm = "*"
+modelcif = "*"
+antlr4-python3-runtime = "4.9.3.*"
+
+[feature.cofold.tasks]
+# boltz-community is installed by this task, not by the solver: spec 4.2 forbids
+# upstream `boltz` and pixi's PyPI resolution would reach for it by name.
+install-boltz = "bash tools/install_boltz.sh"
+cofold = "python -m pipeline.cofold"
+
+[environments]
+cofold = ["cofold"]
+
+[activation.env]
+PYTORCH_ENABLE_MPS_FALLBACK = "1"
+PYTHONPATH = "$PIXI_PROJECT_ROOT"
+TOKENIZERS_PARALLELISM = "false"
+# conda-forge libomp plus any pip-installed wheel that bundles its own: harmless
+# here, load-bearing if a pip torch ever enters the env (BoltzMaker, D-note).
+KMP_DUPLICATE_LIB_OK = "TRUE"

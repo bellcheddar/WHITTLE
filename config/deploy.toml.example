@@ -1,0 +1,15 @@
+# Copy to config/deploy.toml and fill in. config/deploy.toml is gitignored.
+# Real values are resolved from the sibling AlphaFraud/.env at deploy time:
+# see WHITTLE_BUILD_SPEC.md Section 4.4. Never commit the filled-in file.
+
+[droplet]
+host = "REPLACE_ME"
+user = "REPLACE_ME"
+ssh_key = "~/.ssh/REPLACE_ME"
+app_dir = "/opt/whittle"
+
+[service]
+server_name = "whittle.mdeller.com"
+bind_addr = "127.0.0.1:8021"   # probe first: spec 4.5. Do not assume this is free.
+service_name = "whittle-web"
+workers = 2

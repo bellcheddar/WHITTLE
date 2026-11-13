@@ -1,0 +1,134 @@
+# WHITTLE — run configuration
+# Single source of truth for the five targets. Boundaries taken from UniProt
+# (accessed 2026-11-13); positions are UniProt numbering for the full-length
+# precursor unless stated otherwise.
+
+run:
+  id: whittle-2026-11
+  shortlist_dir: shortlist          # one CSV per target, 500 rows each
+  n_candidates_per_target: 500
+  ranking_scope: within_target      # five independent Pareto fronts; NO global league table
+  tier2_top_n_per_target: 20
+  cache_antigen_msa: true           # compute once per target, reuse across all candidates
+
+upstream:
+  # Pre-existing columns are retained for comparison only, prefixed upstream_*.
+  retain: [tm_pred, liability_score, on_nll, score, s_tm, s_liab, s_nll, s_his]
+  prefix: upstream_
+  recompute: [tm, liabilities, solubility, nativeness]
+  notes:
+    - "upstream_score is NOT comparable across targets: EGFR/TNFa blend four terms
+       (incl. s_his), the other three blend three. Flag wherever displayed."
+    - "upstream_tm_pred spans 71-101 C. Apparent Tm above ~100 C is unphysical for a
+       VHH in solution; treat as uncalibrated and display beside our own prediction."
+    - "cdr_novelty and cdr_identity are empty in all five source files (upstream bug)."
+    - "target_cdr_identity present only for EGFR and TNFa - the only two targets with
+       known nanobodies in SAbDab-nano. Target-aware comparison is limited to those two."
+    - "10 sequences occur under more than one target (2487 unique of 2500). Do NOT
+       dedupe: they serve as internal promiscuity controls."
+
+targets:
+
+  EGFR:
+    uniprot: P00533
+    name: Epidermal growth factor receptor
+    full_length: 1210
+    construct: ecd
+    range: [25, 645]                # extracellular domain; signal peptide 1-24 removed
+    length: 621
+    stoichiometry: 1
+    his_enriched_library: true      # 500/500 candidates carry >=1 CDR His, mean 1.37
+    ph_switch_intended: true
+    known_nanobodies: true
+    tier2_cost: highest             # largest antigen; ~746 aa total complex
+    notes:
+      - "Full ECD used. Domain III (approx 311-480 mature numbering) is the usual
+         nanobody epitope - sub-scoping there would cut Tier 2 cost substantially
+         if runtime becomes the binding constraint."
+
+  TNFa:
+    uniprot: P01375
+    name: Tumor necrosis factor alpha
+    full_length: 233
+    construct: soluble_trimer
+    range: [77, 233]                # UniProt CHAIN "soluble form"
+    length: 157                     # per chain
+    stoichiometry: 3                # 471 aa antigen
+    his_enriched_library: true      # 500/500 candidates carry >=1 CDR His, mean 1.32
+    ph_switch_intended: true
+    known_nanobodies: true
+    tier2_cost: high
+    notes:
+      - "Co-fold as homotrimer. Report interface metrics per-subunit AND total so a
+         candidate binding across the subunit cleft is distinguishable from one
+         binding a single face."
+
+  TL1A:
+    uniprot: O95150
+    name: TNF ligand superfamily member 15 (TL1A)
+    full_length: 251
+    construct: soluble_trimer
+    range: [72, 251]                # UniProt CHAIN "secreted form"
+    length: 180                     # per chain
+    stoichiometry: 3                # 540 aa antigen
+    his_enriched_library: false     # 90/500 carry any CDR His - background rate
+    ph_switch_intended: false       # confirmed 2026-11-13: pH design was EGFR + TNFa only
+    known_nanobodies: false
+    tier2_cost: high
+    notes:
+      - "Co-fold as homotrimer, same per-subunit reporting as TNFa."
+      - "No target-matched known nanobodies: no target_cdr_identity axis available."
+
+  PRLR:
+    uniprot: P16471
+    name: Prolactin receptor
+    full_length: 622
+    construct: ecd
+    range: [25, 234]                # two fibronectin-III-like domains
+    length: 210
+    stoichiometry: 1
+    his_enriched_library: false     # 81/500
+    ph_switch_intended: false
+    known_nanobodies: false
+    tier2_cost: moderate
+    notes:
+      - "Most tractable of the five. Good candidate for first end-to-end pipeline run."
+
+  GLP1R:
+    uniprot: P43220
+    name: Glucagon-like peptide 1 receptor
+    full_length: 463
+    construct: ecd_only
+    range: [24, 139]                # N-terminal ECD. TM1 begins at 140.
+    length: 116
+    stoichiometry: 1
+    his_enriched_library: false     # 75/500
+    ph_switch_intended: false
+    known_nanobodies: false
+    tier2_cost: lowest
+    notes:
+      - "Class B GPCR. ECD ONLY by explicit decision - the 7TM bundle and extracellular
+         loops (202-227, 291-305, 371-383) are excluded."
+      - "MUST be labelled as an ECD-scoped result in the UI. An ECD co-fold cannot
+         support any claim about binding the intact receptor in a membrane."
+
+tier2:
+  # Approximate complex size = antigen + ~125 aa nanobody. Attention scales
+  # ~quadratically, so EGFR is roughly an order of magnitude above GLP1R per run.
+  order: [GLP1R, PRLR, TNFa, TL1A, EGFR]   # cheapest first, so failures surface early
+  engine: boltz-community
+  accelerator: mps
+  precision: float32              # M1 has no hardware bf16; bf16-mixed is slower here
+  seeds_per_complex: 5
+  resumable: true                 # queued job must survive interruption; ~100 co-folds
+  env:
+    PYTORCH_ENABLE_MPS_FALLBACK: "1"
+
+limitations_statement:
+  - "Co-folding confidence is a weak prior for nanobody-antigen specificity and is not
+     an affinity measurement."
+  - "Thermostability predictions carry wide error bars away from the training manifold."
+  - "The experimental-structure badge is a positive signal only; its absence says
+     nothing about expressibility."
+  - "GLP1R results are scoped to the N-terminal ECD, not the intact receptor."
+  - "Rankings are within-target percentiles. Scores are not comparable between targets."

@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit", "Write", "Read", "Glob", "Grep", "WebFetch", "WebSearch",
+      "Bash(pixi:*)", "Bash(uv:*)", "Bash(conda:*)", "Bash(mamba:*)", "Bash(micromamba:*)",
+      "Bash(python:*)", "Bash(python3:*)", "Bash(pip:*)", "Bash(pytest:*)",
+      "Bash(boltz:*)", "Bash(TNP:*)", "Bash(ANARCI:*)", "Bash(anarcii:*)",
+      "Bash(mmseqs:*)", "Bash(cd-hit:*)", "Bash(USalign:*)", "Bash(US-align:*)",
+      "Bash(hmmscan:*)", "Bash(hmmbuild:*)", "Bash(mmdc:*)",
+      "Bash(caffeinate:*)", "Bash(sysctl:*)", "Bash(system_profiler:*)", "Bash(df:*)", "Bash(du:*)",
+      "Bash(git init:*)", "Bash(git add:*)", "Bash(git commit:*)", "Bash(git status:*)",
+      "Bash(git diff:*)", "Bash(git log:*)", "Bash(git remote:*)", "Bash(git branch:*)",
+      "Bash(git push:*)", "Bash(git config:*)",
+      "Bash(gh repo create:*)", "Bash(gh repo view:*)", "Bash(gh auth status:*)",
+      "Bash(curl:*)", "Bash(wget:*)", "Bash(brew install:*)", "Bash(brew list:*)",
+      "Bash(tar:*)", "Bash(gzip:*)", "Bash(gunzip:*)", "Bash(zcat:*)",
+      "Bash(mkdir:*)", "Bash(ls:*)", "Bash(find:*)", "Bash(grep:*)", "Bash(rg:*)",
+      "Bash(mv:*)", "Bash(cp:*)", "Bash(chmod:*)", "Bash(ln:*)", "Bash(osascript:*)",
+      "Bash(gunicorn:*)", "Bash(flask:*)", "Bash(sqlite3:*)", "Bash(duckdb:*)",
+      "Bash(npm:*)", "Bash(npx:*)", "Bash(node:*)",
+      "Bash(ssh:*)", "Bash(scp:*)", "Bash(rsync:*)",
+      "Bash(./deploy/deploy.sh:*)", "Bash(bash deploy/deploy.sh:*)",
+      "Bash(./tools/run_queue.sh:*)", "Bash(bash tools/run_queue.sh:*)",
+      "Bash(./tools/status.sh:*)", "Bash(bash tools/status.sh:*)"
+    ],
+    "deny": [
+      "Bash(sudo:*)",
+      "Bash(rm -rf /:*)", "Bash(rm -rf ~:*)", "Bash(rm -rf /Users:*)",
+      "Bash(git push --force:*)", "Bash(git filter-branch:*)", "Bash(git filter-repo:*)",
+      "Bash(gh repo delete:*)", "Bash(gh secret:*)",
+      "Bash(playwright install:*)",
+      "Bash(pip install pyrosetta:*)", "Bash(pip install boltz:*)"
+    ]
+  }
+}

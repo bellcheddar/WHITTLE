@@ -1,0 +1,180 @@
+# WHITTLE reference seed list.
+# pipeline/references.py resolves each entry against Crossref at BUILD TIME on the
+# Studio and bakes static JSON for the About tab. Never called per visitor.
+#
+# Each entry needs a citable identifier: either `doi`, or `repo` + `commit`.
+# Databases take `snapshot_date` rather than relying on a DOI alone.
+# `title` here is the fallback shown if Crossref cannot be reached (doi_verified = 0).
+# Extend this file whenever a tool is added. Every tool in the run must appear.
+
+tools:
+
+  - key: immunebuilder
+    role: Nanobody structure prediction (NanoBodyBuilder2)
+    doi: 10.1038/s42003-023-04927-7
+    title: "ImmuneBuilder: Deep-Learning models for predicting the structures of immune proteins"
+    repo: https://github.com/oxpig/ImmuneBuilder
+    licence: BSD-3-Clause
+
+  - key: tnp
+    role: Nanobody developability and non-specific binding
+    doi: 10.1038/s42003-026-09594-y
+    title: "Characterising nanobody developability to improve therapeutic design using the Therapeutic Nanobody Profiler"
+    repo: https://github.com/oxpig/TNP
+    licence: BSD-3-Clause
+
+  - key: tap
+    role: Methodological basis for the TNP metrics
+    doi: 10.1073/pnas.1810576116
+    title: "Five computational developability guidelines for therapeutic antibody profiling"
+
+  - key: anarci
+    role: IMGT numbering and CDR definition
+    doi: 10.1093/bioinformatics/btv552
+    title: "ANARCI: antigen receptor numbering and receptor classification"
+    licence: BSD-3-Clause
+
+  - key: boltz2
+    role: Nanobody-antigen co-folding and affinity prior
+    repo: https://github.com/Novel-Therapeutics/boltz-community
+    commit: RESOLVE_AT_BUILD
+    title: "Boltz-2: unified structure and affinity prediction (community fork, Apple Silicon MPS)"
+    licence: MIT
+    note: "Community fork. Upstream boltz declares CUDA-only cuequivariance and will not install on macOS."
+
+  - key: prodigy
+    role: Interface binding free energy
+    doi: 10.1093/bioinformatics/btw514
+    title: "PRODIGY: a web server for predicting the binding affinity of protein-protein complexes"
+    licence: Apache-2.0
+
+  - key: esm2
+    role: Sequence embeddings for the thermostability model
+    doi: 10.1126/science.ade2574
+    title: "Evolutionary-scale prediction of atomic-level protein structure with a language model"
+    licence: MIT
+
+  - key: scikit_learn
+    role: Stacked regression for the thermostability model
+    doi: 10.5555/1953048.2078195
+    title: "Scikit-learn: Machine Learning in Python"
+    licence: BSD-3-Clause
+
+  - key: nanomelt_method
+    role: Published method our thermostability model reimplements (model itself not licensed)
+    doi: 10.1080/19420862.2024.2442750
+    title: "Prediction of protein biophysical traits from limited data: a case study on nanobody thermostability through NanoMelt"
+    note: "Paper is CC-BY and the curated dataset is public. The packaged model is licensed via Cambridge Enterprise and is NOT used: see spec 4.2 and 6.3."
+
+  - key: temstapro
+    role: Independent thermostability cross-check
+    doi: 10.1093/bioinformatics/btae157
+    title: "TemStaPro: protein thermostability prediction using sequence representations from protein language models"
+
+  - key: aggrescan3d
+    role: Structure-based aggregation propensity
+    doi: 10.1093/nar/gkz321
+    title: "Aggrescan3D (A3D) 2.0: prediction and engineering of protein solubility"
+    licence: GPL-3.0
+
+  - key: protein_sol
+    role: Sequence-based solubility
+    doi: 10.1093/bioinformatics/btx345
+    title: "Protein-Sol: a web tool for predicting protein solubility from sequence"
+
+  - key: swi
+    role: Solubility-weighted index
+    doi: 10.1093/bioinformatics/btaa578
+    title: "Solubility-Weighted Index: fast and accurate prediction of protein solubility"
+
+  - key: ablang2
+    role: Nativeness and pseudo-perplexity
+    doi: 10.1093/bioinformatics/btae514
+    title: "Addressing the antibody germline bias and its effect on language models"
+    licence: BSD-3-Clause
+
+  - key: biophi
+    role: Humanness (OASis)
+    doi: 10.1080/19420862.2021.2020203
+    title: "BioPhi: A platform for antibody design, humanization, and humanness evaluation"
+    licence: MIT
+
+  - key: mmseqs2
+    role: CDR3 clustering
+    doi: 10.1038/nbt.3988
+    title: "MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets"
+
+  - key: usalign
+    role: Structural superposition and TM-score
+    doi: 10.1038/s41592-022-01585-1
+    title: "US-align: universal structure alignments of proteins, nucleic acids, and macromolecular complexes"
+
+  - key: freesasa
+    role: Solvent accessible surface area
+    doi: 10.12688/f1000research.7931.1
+    title: "FreeSASA: An open source C library for solvent accessible surface area calculations"
+
+  - key: molstar
+    role: In-browser structure viewer
+    doi: 10.1093/nar/gkab314
+    title: "Mol* Viewer: modern web app for 3D visualization and analysis of large biomolecular structures"
+    licence: MIT
+
+  - key: openmm
+    role: Structure refinement
+    doi: 10.1371/journal.pcbi.1005659
+    title: "OpenMM 7: Rapid development of high performance algorithms for molecular dynamics"
+
+  - key: biopython
+    role: Sequence handling, ProtParam
+    doi: 10.1093/bioinformatics/btp163
+    title: "Biopython: freely available Python tools for computational molecular biology and bioinformatics"
+
+databases:
+
+  - key: sabdab_nano
+    role: Nearest experimental nanobody neighbour, TM-score, known-binder comparison
+    doi: 10.1093/nar/gkt1043
+    title: "SAbDab: the structural antibody database"
+    snapshot_date: RESOLVE_AT_BUILD
+    note: "Updated weekly. Derived values only; not mirrored into the repo or onto the droplet."
+
+  - key: plabdab_nano
+    role: Patent and literature nanobody sequence context
+    doi: 10.1093/nar/gkae881
+    title: "PLAbDab-nano: a database of camelid and shark nanobodies from patents and literature"
+    snapshot_date: RESOLVE_AT_BUILD
+
+  - key: nbthermo
+    role: Apparent melting temperature training labels
+    doi: 10.1093/bioinformatics/btad529
+    title: "NbThermo: a new thermostability database for nanobodies"
+    snapshot_date: RESOLVE_AT_BUILD
+
+  - key: pdb
+    role: Experimental-structure badge, antigen reference structures
+    doi: 10.1093/nar/gkae1091
+    title: "RCSB Protein Data Bank"
+    snapshot_date: RESOLVE_AT_BUILD
+    note: "CC0. PDB-derived values ship without restriction."
+
+  - key: uniprot
+    role: Antigen sequences and domain boundaries for the five constructs
+    doi: 10.1093/nar/gkae1010
+    title: "UniProt: the Universal Protein Knowledgebase"
+    snapshot_date: "2026-11-13"
+    note: "Construct boundaries in config/targets.yaml were taken on this date."
+
+benchmarks:
+  # Cited in the limitations section. These are the evidence for the weak-affinity statement.
+
+  - key: cofold_nanobody_benchmark
+    role: Evidence that co-folding confidence generalises poorly across antigens
+    doi: 10.3389/fbinf.2026.1858891
+    title: "Analysing open-source protein folding models for nanobody binding prediction"
+
+  - key: nbbench
+    role: Nanobody-specific benchmark suite (thermostability, polyreactivity, binding)
+    repo: https://arxiv.org/abs/2505.02022
+    commit: v1
+    title: "NbBench: Benchmarking Language Models for Comprehensive Nanobody Tasks"
