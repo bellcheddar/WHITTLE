@@ -633,40 +633,65 @@
   }
 
   function renderNeighboursPanel(d) {
-    // The nearest-neighbour superposition leads: it is what justifies having a
-    // 3D viewer rather than decorating with one (DESIGN 3.5).
+    // The superposition leads: it is what justifies having a 3D viewer rather
+    // than decorating with one (DESIGN 3.5). The model was moved onto the
+    // experimental chain's frame by TM-align at build time, so this panel
+    // loads two files and does no geometry of its own.
     const parts = [];
     if (d.nearest_pdb) {
+      const canSuperpose = Boolean(d.superposed_url);
       parts.push(`<div id="nviewer" style="height:236px;background:var(--viewer);`
         + `border-radius:4px;position:relative;overflow:hidden">`
         + `<p class="placeholder" style="position:absolute;inset:0;display:grid;`
-        + `place-items:center;color:#8A93A5;font-size:11px">Loading the `
-        + `superposition.</p></div>`);
+        + `place-items:center;color:#8A93A5;font-size:11px;text-align:center;`
+        + `padding:0 20px">${canSuperpose
+          ? 'Loading the superposition.'
+          : 'No superposed model for this candidate.'}</p>`
+        + `<p class="vcap"><span>model over ${W.escape(d.nearest_pdb)}`
+        + `${d.nearest_chain ? ' chain ' + W.escape(d.nearest_chain) : ''}</span>`
+        + `<span>${d.nearest_tm ? 'TM ' + d.nearest_tm.toFixed(2) : ''}`
+        + `${d.nearest_rmsd ? ' &middot; RMSD ' + d.nearest_rmsd.toFixed(1) + ' A' : ''}`
+        + `</span></p></div>`);
       parts.push(kvTable([
-        ['Nearest experimental structure', d.nearest_pdb],
-        ['TM-score', d.nearest_tm],
-        ['Framework identity', d.nearest_identity_fw === null ? null
+        ['Nearest experimental structure',
+          d.nearest_pdb + (d.nearest_chain ? ` chain ${d.nearest_chain}` : '')],
+        ['TM-score', d.nearest_tm,
+          'Normalised by the model. Near 0.9 for almost every VHH, because '
+          + 'every VHH has the same fold.'],
+        ['RMSD over the alignment', d.nearest_rmsd === null
+          || d.nearest_rmsd === undefined ? null : `${d.nearest_rmsd.toFixed(2)} A`],
+        ['Framework identity', d.nearest_identity_fw === null
+          || d.nearest_identity_fw === undefined ? null
           : `${(d.nearest_identity_fw * 100).toFixed(1)} percent`,
-          'Framework TM and identity are high for almost every VHH and tell you little.'],
-        ['CDR identity', d.nearest_identity_cdr === null ? null
+          'Framework identity is high for almost every VHH and tells you little.'],
+        ['CDR identity', d.nearest_identity_cdr === null
+          || d.nearest_identity_cdr === undefined ? null
           : `${(d.nearest_identity_cdr * 100).toFixed(1)} percent`,
           'This is the number that carries information.'],
         ['Experimental badge', d.has_experimental_badge ? 'yes' : 'no',
-          'A positive signal only. Its absence says nothing about expressibility.'],
+          'A positive signal only. Its absence says nothing about expressibility, '
+          + 'and nothing in the scoring reads this column.'],
       ]));
+      parts.push('<p style="font-size:11px;color:var(--ink-3);margin:8px 0 0">'
+        + 'The experimental entry is fetched from the PDB by your browser when '
+        + 'this panel opens. The predicted model was superposed onto it at build '
+        + 'time, not in the browser.</p>');
     } else {
       parts.push('<p style="font-size:12px;color:var(--ink-3)">The nearest '
         + 'experimental neighbour is found in the structural tier, which has not '
         + 'run for this candidate yet.</p>');
     }
+    parts.push('<h3 style="font-size:11px;text-transform:uppercase;'
+      + 'letter-spacing:.07em;color:var(--ink-3);margin:16px 0 6px">'
+      + 'Upstream comparison columns</h3>');
     parts.push(kvTable([
       ['Upstream nearest sequence', d.upstream_global_nearest],
       ['Upstream global CDR identity', d.upstream_global_cdr_identity],
-      ['Upstream target-matched CDR identity',
-        d.upstream_target_cdr_identity,
-        'Only EGFR and TNFa have known nanobodies in SAbDab-nano, so this is null '
-        + 'for the other three targets rather than fabricated.'],
-      ['Upstream composite score', d.upstream_score === null ? null
+      ['Upstream target-matched CDR identity', d.upstream_target_cdr_identity,
+        'Only EGFR and TNFa have known nanobodies in SAbDab-nano, so this is '
+        + 'null for the other three targets rather than fabricated.'],
+      ['Upstream composite score', d.upstream_score === null
+        || d.upstream_score === undefined ? null
         : `${d.upstream_score.toFixed(4)} (not comparable between targets)`,
         'EGFR and TNFa blend four terms including s_his, the other three blend '
         + 'three, so the ranges are not on one scale. Kept for comparison only.'],
@@ -685,14 +710,14 @@
     if (name === 'neighbours' && currentDetail && currentDetail.nearest_pdb
         && window.WViewer) {
       const node = el('nviewer');
-      if (node && !node.dataset.loaded) {
+      if (node && !node.dataset.loaded && currentDetail.superposed_url) {
         node.dataset.loaded = '1';
-        const entries = [];
-        if (currentDetail.structure_url) {
-          entries.push({ url: currentDetail.structure_url, format: 'pdb' });
-        }
-        entries.push({ pdbId: currentDetail.nearest_pdb });
-        window.WViewer.show(node, entries);
+        // The superposed copy, not the raw model: the raw one sits hundreds of
+        // angstroms away in its own frame and would not be a superposition.
+        window.WViewer.show(node, [
+          { url: currentDetail.superposed_url, format: 'pdb' },
+          { pdbId: currentDetail.nearest_pdb },
+        ]);
       }
     }
   }

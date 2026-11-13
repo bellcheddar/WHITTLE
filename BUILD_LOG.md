@@ -348,3 +348,26 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 17:32 Scoring now withholds an axis from a row whose available components carry less than half the axis weight. A row scored from a light subset has the same expected value but a wider spread, so it drifts to both extremes and reads as more decisive than it is.
 - 2026-11-13 17:33 Tier 2 smoke co-fold started on the cheapest complex, GLP1R at 227 aa, to measure wall-clock before anything is queued (spec Phase 3, first bullet).
 - 2026-11-13 17:36 tm_model: ESM-2 embedded 168/250
+- 2026-11-13 17:37 tm_model: ESM-2 embedded 248/250
+- 2026-11-13 17:37 tm_predict: 750/2500
+- 2026-11-13 17:38 tm_model: 1 embeddings cached, 249 to compute
+- 2026-11-13 17:38 tm_model: ESM-2 embedded 8/249
+- 2026-11-13 17:38 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 17:38 neighbours: nothing to do
+- 2026-11-13 17:38 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 17:38 neighbours: 3 candidates against 1390 unique experimental nanobody sequences
+- 2026-11-13 17:38 neighbours: MMseqs2 shortlisted hits for 3 of 3 candidates
+- 2026-11-13 17:38 neighbours: 3/3, 0 with an experimental badge, 3 with a TM-score, 3 superposed, 653 per minute
+- 2026-11-13 17:38 neighbours: complete. 0 candidates carry an experimental badge, 0 have a target-matched reference, 3 have a TM-score and 3 have a superposed model written for the drawer
+- 2026-11-13 17:39 tm_model: ESM-2 embedded 88/249
+- 2026-11-13 17:39 schema: added 3 missing column(s) to the existing database: structures.nearest_chain, structures.nearest_rmsd, structures.superposed
+- 2026-11-13 17:39 schema: whittle.sqlite has 12 tables (candidates, cofolds, controls, liabilities, provenance, qc, ranks, references, scores, structures, targets, thermostability)
+- 2026-11-13 17:39 nativeness: 160/2500, 19 per minute, about 125 minutes left
+- 2026-11-13 17:40 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 17:40 neighbours: 2500 candidates against 1390 unique experimental nanobody sequences
+- 2026-11-13 17:40 neighbours: MMseqs2 shortlisted hits for 2500 of 2500 candidates
+- 2026-11-13 17:40 tm_model: ESM-2 embedded 168/249
+- 2026-11-13 17:40 neighbours: 100/2500, 0 with an experimental badge, 100 with a TM-score, 100 superposed, 823 per minute
+- 2026-11-13 17:40 neighbours: 200/2500, 0 with an experimental badge, 200 with a TM-score, 200 superposed, 859 per minute
+- 2026-11-13 17:40 neighbours: 300/2500, 0 with an experimental badge, 300 with a TM-score, 300 superposed, 867 per minute
+- 2026-11-13 17:40 neighbours: 400/2500, 0 with an experimental badge, 400 with a TM-score, 400 superposed, 878 per minute

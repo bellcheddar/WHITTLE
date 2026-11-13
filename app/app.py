@@ -145,6 +145,7 @@ def api_candidate(cid: str):
                st.charged_patch_area, st.sasa_total, st.nativeness_ppl,
                st.oasis_humanness, st.nearest_pdb, st.nearest_tm,
                st.nearest_identity_fw, st.nearest_identity_cdr,
+               st.nearest_chain, st.nearest_rmsd, st.superposed,
                st.has_experimental_badge, st.model_note,
                t.tm_pred, t.tm_err, t.train_nn_distance, t.temstapro,
                t.thermompnn_ddg, t.model_version
@@ -170,12 +171,18 @@ def api_candidate(cid: str):
     rec["target_detail"] = dict(target) if target else {}
     # Structure URL only when the file is actually on this host.
     rec["structure_url"] = None
+    rec["superposed_url"] = None
     if rec.get("structure_path"):
-        candidate_path = STRUCTURES / rec["target"] / f"{cid}.pdb.gz"
-        if candidate_path.exists():
-            # The .pdb name, not the .pdb.gz one: see the `structure` route.
+        # The .pdb names, not the .pdb.gz ones: see the `structure` route.
+        if (STRUCTURES / rec["target"] / f"{cid}.pdb.gz").exists():
             rec["structure_url"] = url_for("structure", target=rec["target"],
                                            name=f"{cid}.pdb")
+        # The model already moved onto its nearest experimental neighbour's
+        # frame by TM-align at build time, so the drawer loads two files and
+        # does no geometry of its own.
+        if (STRUCTURES / rec["target"] / f"{cid}.sup.pdb.gz").exists():
+            rec["superposed_url"] = url_for("structure", target=rec["target"],
+                                            name=f"{cid}.sup.pdb")
     return jsonify(rec)
 
 
@@ -192,6 +199,7 @@ def structure(target: str, name: str):
     route is the development equivalent and sets the same headers.
     """
     if "/" in name or ".." in name or not name.endswith(".pdb"):
+        # `<id>.sup.pdb` is the superposed copy and ends in .pdb like any other.
         abort(404)
     directory = STRUCTURES / target
     gzipped = directory / f"{name}.gz"

@@ -123,6 +123,9 @@ CREATE TABLE IF NOT EXISTS structures (
     nearest_tm           REAL,
     nearest_identity_fw  REAL,
     nearest_identity_cdr REAL,
+    nearest_chain        TEXT,
+    nearest_rmsd         REAL,
+    superposed           INTEGER DEFAULT 0,
     has_experimental_badge INTEGER DEFAULT 0,
     model_note           TEXT,   -- e.g. an N-terminus modelled as germline
     status               TEXT
