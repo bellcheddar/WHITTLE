@@ -196,15 +196,27 @@ def pareto_fronts(points: list[dict[str, float | None]], axes: list[str]
     return ranks
 
 
-def desirability(values: dict[str, float | None], weights: dict[str, float]
-                 ) -> float | None:
+def desirability(values: dict[str, float | None], weights: dict[str, float],
+                 required: list[str] | None = None) -> float | None:
     """Derringer-Suich: the weighted geometric mean of the per-axis desirabilities.
 
     Each axis is already a 0-100 percentile, so d_i is the percentile on 0-1 and
     the overall desirability is prod(d_i ** w_i) ** (1 / sum w). A geometric mean
     is the point of the method: one axis at zero sinks the candidate, which a
     weighted sum would hide.
+
+    `required` names the axes that must all be present. Without it, a candidate
+    missing an axis is scored on the ones it has, and a geometric mean over
+    fewer terms is systematically higher: two rows reached rank 1 for their
+    target on two axes each while carrying no specificity value at all, and one
+    of them was not even on the Pareto front. A candidate that cannot be placed
+    on every axis this run computed cannot be called the best of them, so it
+    gets no desirability and sorts below those that can.
     """
+    if required:
+        missing = [a for a in required if values.get(a) is None]
+        if missing:
+            return None
     terms: list[tuple[float, float]] = []
     for axis, weight in weights.items():
         value = values.get(axis)
@@ -405,7 +417,17 @@ def main() -> int:
         points = [{axis: pct[axis][i] for axis in RANK_AXES}
                   for i in range(len(records))]
         ranks = pareto_fronts(points, RANK_AXES)
-        desir = [desirability(p, weights) for p in points]
+        # Only the axes this run actually computed are required: an axis that
+        # is pending for everyone (affinity, before Tier 2) must not disqualify
+        # the whole table.
+        required = [a for a in RANK_AXES
+                    if axis_tiers.get(a, {}).get("available")]
+        desir = [desirability(p, weights, required) for p in points]
+        unranked = sum(1 for d in desir if d is None)
+        if unranked:
+            log(f"score: {target} {unranked} rows carry no desirability because "
+                f"they are missing one of the computed axes {required}; they "
+                f"sort below every fully scored row")
 
         # Rank within target: by desirability where there is one, Pareto rank as
         # the tie-break, then id so the order is stable across rebuilds.

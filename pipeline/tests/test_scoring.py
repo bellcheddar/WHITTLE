@@ -170,3 +170,29 @@ def test_pearson_detects_a_restatement() -> None:
 
 def test_pearson_is_none_without_enough_paired_values() -> None:
     assert pearson([1.0, 2.0], [1.0, 2.0]) is None
+
+
+def test_desirability_refuses_a_row_missing_a_required_axis() -> None:
+    """A candidate scored on fewer axes must not out-rank a complete one.
+
+    This is a regression test for a real ranking fault: two candidates reached
+    rank 1 for their target on two axes each while carrying no specificity
+    value, because a geometric mean over fewer terms is systematically higher.
+    One of them was not even on the Pareto front.
+    """
+    weights = {"a": 1.0, "b": 1.0, "c": 1.0}
+    required = ["a", "b", "c"]
+    partial = {"a": 98.0, "b": 95.0, "c": None}
+    complete = {"a": 80.0, "b": 80.0, "c": 80.0}
+    assert desirability(partial, weights, required) is None
+    assert desirability(complete, weights, required) is not None
+    # Without the requirement the partial row scores higher, which is the bug.
+    assert desirability(partial, weights) > desirability(complete, weights)
+
+
+def test_desirability_ignores_an_axis_nobody_has() -> None:
+    """An axis pending for the whole run must not disqualify the whole table."""
+    weights = {"a": 1.0, "b": 1.0}
+    # `required` is derived from the axes actually computed, so an all-null
+    # axis is simply not in it.
+    assert desirability({"a": 70.0, "b": 60.0}, weights, ["a", "b"]) is not None

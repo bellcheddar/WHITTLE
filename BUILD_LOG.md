@@ -666,3 +666,18 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 19:15 controls_run: 367 control sequences, run blind. No published measurement is read by anything below.
 - 2026-11-13 19:15 controls_run: TNP is not on PATH; the control specificity axis stays pending
 - 2026-11-13 19:15 controls_run: AbLang2 nativeness for 367 control sequences
+- 2026-11-13 19:18 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'specificity': 26} of 500
+- 2026-11-13 19:18 score: EGFR 26 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 19:18 score: EGFR 500 rows, 13 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:18 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'specificity': 27} of 500
+- 2026-11-13 19:18 score: GLP1R 27 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 19:18 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:18 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'specificity': 15} of 500
+- 2026-11-13 19:18 score: PRLR 15 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 19:18 score: PRLR 500 rows, 19 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:18 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'specificity': 14} of 500
+- 2026-11-13 19:18 score: TL1A 14 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 19:18 score: TL1A 500 rows, 25 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:18 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'specificity': 21} of 500
+- 2026-11-13 19:18 score: TNFa 21 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 19:18 score: TNFa 500 rows, 21 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
