@@ -3,9 +3,10 @@
 Rewritten after every phase and at least every 30 minutes during compute
 (spec 0.1 item 6). Live at <https://whittle.mdeller.com>.
 
-**Overall: about 60 percent.** Phase 1 complete and deployed. Phase 2 compute
-running. Phase 3 and Phase 4 machinery written and tested, waiting on the
-tiers below them.
+**Overall: about 75 percent.** Phases 1 and 2 are complete and deployed.
+Phase 3's machinery is proven end to end by a smoke co-fold and its queue is
+the remaining long pole, about 3.65 days. Phase 4 is largely written and waits
+only on the co-folding results.
 
 ---
 
@@ -24,7 +25,7 @@ tiers below them.
 - [x] Droplet provisioned on port 8021, nginx, systemd, TLS
 - [x] **Live** with a provisional banner; smoke test 34/34 against the live host
 
-## Phase 2: Tier 1, the Tm model, four axes, Pareto fronts: about 75 percent
+## Phase 2: Tier 1, the Tm model, four axes, Pareto fronts: complete
 
 - [x] NanoBodyBuilder2 across all 2,500: 2,499 models in 21 minutes
 - [x] The 56 refusals diagnosed and 55 recovered with a germline N-terminus
@@ -35,11 +36,12 @@ tiers below them.
 - [x] Tm training set assembled: 650 training, 77 genuinely held out
 - [x] Tm model trained with grouped nested CV; `MODEL_CARD.md` written
 - [x] Error bars recalibrated empirically after the first pass under-covered
-- [ ] TNP across all five targets (4 of 5 done)
-- [ ] AbLang2 nativeness across all 2,500 (about 3 hours, queued behind TNP)
-- [ ] `pipeline.tier1` assembling the `structures` table
-- [ ] `pipeline.tm_predict` over the candidates
-- [ ] Rescore, rebuild, deploy, push
+- [x] TNP across all five targets: 2,397 of 2,500 profiled after the padded retry
+- [x] AbLang2 nativeness across all 2,500, 92.6 minutes, 0 failed
+- [x] `pipeline.tier1` assembling the `structures` table, 2,500 rows
+- [x] `pipeline.tm_predict` over all 2,500: 58.8 to 91.1 degrees C, none above 95
+- [x] Rescored: 13 to 25 candidates on the Pareto front per target
+- [x] Deployed and pushed
 
 ## Phase 3: Tier 2 co-folding and the control set: machinery done, compute pending
 

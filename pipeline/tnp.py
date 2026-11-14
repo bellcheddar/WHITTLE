@@ -32,8 +32,9 @@ import sys
 import time
 from pathlib import Path
 
-from pipeline.common import (DATA, TARGETS, connect, log, manifest_read,
-                             manifest_write, tuning)
+from pipeline.common import (DATA, TARGETS, connect, env_binary,
+                             env_with_bin, log, manifest_read, manifest_write,
+                             tuning)
 
 # Framework 1, IMGT 1 to 9, of the camelid VHH germline. Used only to give
 # NanoBodyBuilder2 an alignable N-terminus for candidates whose own first few
@@ -79,14 +80,17 @@ def write_fasta(conn, target: str, path: Path) -> int:
 
 def run_target(target: str, fasta: Path, out_dir: Path, ncores: int) -> dict:
     started = time.time()
-    binary = shutil.which("TNP")
+    binary = env_binary("TNP")
     if binary is None:
         return {"id": target, "status": "failed:TNP not on PATH"}
     out_dir.mkdir(parents=True, exist_ok=True)
     cmd = [binary, "--file", str(fasta), "--output", str(out_dir),
            "--ncores", str(ncores)]
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=60 * 300)
+        # TNP shells out to DSSP and ANARCI, so it needs the environment's bin
+        # directory on PATH, not just its own resolved path.
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              timeout=60 * 300, env=env_with_bin())
     except subprocess.TimeoutExpired:
         return {"id": target, "status": "failed:timeout"}
     results = out_dir / "TNP_Results_Multientry.json"

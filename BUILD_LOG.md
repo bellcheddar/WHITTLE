@@ -623,3 +623,46 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 18:47 The QC panel was dumping raw JSON for the structured checks, which made the one page that has to be trusted unreadable. Each shape now gets a summary. Separately, a check that had not been able to run was stored as 0 and rendered as "attention", so eight pending assertions were showing as failures on the honesty tab. Pending is now NULL and has its own chip.
 - 2026-11-13 18:51 Deep links that change both target and candidate were half-working: the handler switched target and dropped the half of the link naming a candidate, so the table changed and the drawer stayed shut. Spec 8.1 makes that link the citable unit of the app, and a link arriving while another target is selected is the normal case. Found by pasting a TNFa link into a page showing EGFR.
 - 2026-11-13 18:50 CSV export verified against the live site: 500 rows per target, column selection honoured, and the "not comparable between targets" caveat carried in the file header.
+- 2026-11-13 18:55 nativeness: 2240/2500, 27 per minute, about 10 minutes left
+- 2026-11-13 18:57 nativeness: 2320/2500, 27 per minute, about 7 minutes left
+- 2026-11-13 19:00 nativeness: 2400/2500, 27 per minute, about 4 minutes left
+- 2026-11-13 19:03 nativeness: 2468/2500, 27 per minute, about 1 minutes left
+- 2026-11-13 19:03 nativeness: 2500/2500, 27 per minute, about 0 minutes left
+- 2026-11-13 19:03 nativeness: 2500 scored, 0 failed, in 92.6 minutes
+- 2026-11-13 19:15 tier1: surface patches already computed for 2499 models
+- 2026-11-13 19:15 tier1: TNP has values for 2397 candidates
+- 2026-11-13 19:15 tier1: nativeness has values for 2500 candidates
+- 2026-11-13 19:15 tier1: humanness has values for 2500 candidates
+- 2026-11-13 19:15 tier1: neighbours has values for 2500 candidates
+- 2026-11-13 19:15 tier1: EGFR wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 19:15 tier1: GLP1R wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 19:15 tier1: PRLR wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 19:15 tier1: TL1A wrote 500 rows, 500 with a model, 500 with surface patches
+- 2026-11-13 19:15 tier1: TNFa wrote 500 rows, 499 with a model, 499 with surface patches
+- 2026-11-13 19:15 tier1: complete, 2500 structure rows
+- 2026-11-13 19:15 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'specificity': 26} of 500
+- 2026-11-13 19:15 score: EGFR 500 rows, 13 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:15 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'specificity': 27} of 500
+- 2026-11-13 19:15 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:15 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'specificity': 15} of 500
+- 2026-11-13 19:15 score: PRLR 500 rows, 19 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:15 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'specificity': 14} of 500
+- 2026-11-13 19:15 score: TL1A 500 rows, 25 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:15 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'specificity': 21} of 500
+- 2026-11-13 19:15 score: TNFa 500 rows, 21 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 19:15 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 19:15 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-13 19:15 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-13 19:15 controls: 367 control rows written {'scrambled': 250, 'known': 94, 'multi_target': 23}
+- 2026-11-13 19:15 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-13 19:15 controls: PENDING control_4_trimer_TNFa: no co-folds yet
+- 2026-11-13 19:15 controls: PENDING control_4_trimer_TL1A: no co-folds yet
+- 2026-11-13 19:15 controls: PENDING control_5_scrambled_EGFR: pending the affinity axis
+- 2026-11-13 19:15 controls: PENDING control_5_scrambled_GLP1R: pending the affinity axis
+- 2026-11-13 19:15 controls: PENDING control_5_scrambled_PRLR: pending the affinity axis
+- 2026-11-13 19:15 controls: PENDING control_5_scrambled_TL1A: pending the affinity axis
+- 2026-11-13 19:15 controls: PENDING control_5_scrambled_TNFa: pending the affinity axis
+- 2026-11-13 19:15 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-13 19:15 controls_run: 367 control sequences, run blind. No published measurement is read by anything below.
+- 2026-11-13 19:15 controls_run: TNP is not on PATH; the control specificity axis stays pending
+- 2026-11-13 19:15 controls_run: AbLang2 nativeness for 367 control sequences

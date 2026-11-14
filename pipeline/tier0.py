@@ -19,7 +19,8 @@ from collections import Counter
 from pathlib import Path
 
 from pipeline import numbering as nb
-from pipeline.common import (TARGETS, connect, log, manifest_write, tuning)
+from pipeline.common import (TARGETS, connect, env_binary, log,
+                             manifest_write, tuning)
 
 # ----------------------------------------------------------------- liability motifs
 # Spec 6.1 item 4. Each is a flag with a position, not a score: the Pareto step
@@ -117,7 +118,7 @@ def cluster_mmseqs(records: list[tuple[str, str]], identity: float = 0.9
     absent or when its answer is degenerate (one cluster for everything, or one
     cluster per sequence), and the caller then uses the greedy route.
     """
-    binary = shutil.which("mmseqs")
+    binary = env_binary("mmseqs")
     if binary is None:
         return None
     with tempfile.TemporaryDirectory() as tmp:

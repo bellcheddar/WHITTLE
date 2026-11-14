@@ -35,8 +35,9 @@ import tempfile
 import time
 from pathlib import Path
 
-from pipeline.common import (DATA, STRUCTURES, TARGETS, connect, http_get, log,
-                             manifest_done, manifest_write, write_json, RateLimiter)
+from pipeline.common import (DATA, STRUCTURES, TARGETS, connect, env_binary,
+                             http_get, log, manifest_done, manifest_write,
+                             write_json, RateLimiter)
 
 SABDAB = DATA / "sabdab"
 SUMMARY = SABDAB / "sabdab_nano_summary.tsv"
@@ -153,7 +154,7 @@ def shortlist(candidates: list[dict], reference: list[dict], top_n: int
     returns. Without MMseqs2 the fallback is a cheap 4-mer Jaccard prefilter,
     which is coarse but keeps the stage running.
     """
-    binary = shutil.which("mmseqs")
+    binary = env_binary("mmseqs")
     if binary is not None:
         with tempfile.TemporaryDirectory() as tmp:
             tmpdir = Path(tmp)

@@ -97,6 +97,40 @@ def git_sha() -> str:
         return ""
 
 
+def env_binary(name: str, env: str = "default") -> str | None:
+    """A tool from this project's pixi environment, not whatever is on PATH.
+
+    Scripts invoked as `.pixi/envs/default/bin/python -m pipeline.x` do not get
+    the environment's bin directory on PATH, so `shutil.which` returns None and
+    a stage quietly degrades. That is how the control set lost its specificity
+    axis: TNP was installed and working, and `which` could not see it.
+    """
+    import shutil
+
+    local = ROOT / ".pixi" / "envs" / env / "bin" / name
+    if local.exists():
+        return str(local)
+    return shutil.which(name)
+
+
+def env_with_bin(env: str = "default") -> dict:
+    """os.environ with this project's environment bin directory on PATH.
+
+    Resolving the binary is not enough on its own: TNP is a console script that
+    shells out to DSSP and ANARCI, and a subprocess inherits the PATH it was
+    given. Running a stage as `.pixi/envs/default/bin/python -m pipeline.x`
+    leaves that directory off PATH, so the tool starts and then cannot find its
+    own dependencies.
+    """
+    import os
+
+    environ = dict(os.environ)
+    bin_dir = str(ROOT / ".pixi" / "envs" / env / "bin")
+    if bin_dir not in environ.get("PATH", "").split(os.pathsep):
+        environ["PATH"] = bin_dir + os.pathsep + environ.get("PATH", "")
+    return environ
+
+
 def git_hash_or_blank() -> str:
     """Alias kept for the bundle builder's import list."""
     return git_sha()

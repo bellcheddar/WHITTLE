@@ -31,8 +31,9 @@ from pathlib import Path
 
 from pipeline import solubility
 from pipeline import tier0
-from pipeline.common import (DATA, TARGETS, connect, log, manifest_read,
-                             manifest_write, tuning)
+from pipeline.common import (DATA, TARGETS, connect, env_binary,
+                             env_with_bin, log, manifest_read, manifest_write,
+                             tuning)
 
 CONTROL_DIR = DATA / "controls"
 
@@ -52,7 +53,7 @@ def run_tnp(rows: list[dict], ncores: int) -> dict[str, dict]:
     if not todo:
         log(f"controls_run: TNP already done for {len(done)} control sequences")
         return done
-    binary = shutil.which("TNP")
+    binary = env_binary("TNP")
     if binary is None:
         log("controls_run: TNP is not on PATH; the control specificity axis "
             "stays pending")
@@ -67,7 +68,8 @@ def run_tnp(rows: list[dict], ncores: int) -> dict[str, dict]:
     try:
         subprocess.run([binary, "--file", str(fasta), "--output", str(out_dir),
                         "--ncores", str(ncores)],
-                       capture_output=True, text=True, timeout=60 * 240)
+                       capture_output=True, text=True, timeout=60 * 240,
+                       env=env_with_bin())
     except subprocess.TimeoutExpired:
         log("controls_run: TNP timed out on the controls")
         return done
