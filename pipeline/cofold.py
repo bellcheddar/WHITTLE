@@ -130,6 +130,23 @@ def build_msa(target: str, binary: str, env: dict) -> bool:
 
 # ------------------------------------------------------------------- the run
 
+def sampling_steps(target: str) -> int | None:
+    """Sampling steps for this target, if it has been given its own.
+
+    Measured on a real complex rather than guessed (tools/cofold_bench.py):
+    halving the sampling steps saves about a third of the wall clock for an
+    ipTM change of -0.004, while the lever that looks more structural, dropping
+    recycling from 3 to 1, saves only 15 percent and collapses ipTM from 0.64
+    to 0.24. So this is the knob to reach for if the large targets prove
+    expensive, and recycling is the one never to touch. Set
+    `tier2_sampling_steps` on a target in `config/targets.yaml` to use it; left
+    unset, boltz's own default stands.
+    """
+    value = (targets_config()["targets"].get(target) or {}).get(
+        "tier2_sampling_steps")
+    return int(value) if value else None
+
+
 def run_one(target: str, cid: str, sequence: str, binary: str, env: dict,
             samples: int, timeout: int) -> dict:
     """One complex, with the documented OOM ladder. Never a monomer fallback."""
@@ -147,9 +164,14 @@ def run_one(target: str, cid: str, sequence: str, binary: str, env: dict,
     for i, extra in enumerate(ladder, 1):
         cmd = [binary, "predict", str(input_path), "--out_dir", str(out_dir),
                "--accelerator", str(tuning().get("cofold_accelerator", "mps")),
+               # Recycling is never reduced: it is the knob that destroys the
+               # interface confidence this tier exists to produce.
                "--recycling_steps", str(tuning().get("cofold_recycling", 3)),
                "--output_format", "pdb", "--num_workers", "0",
                "--seed", "0", "--override"] + extra
+        steps = sampling_steps(target)
+        if steps:
+            cmd += ["--sampling_steps", str(steps)]
         try:
             proc = subprocess.run(cmd, capture_output=True, text=True,
                                   timeout=timeout, env=env)
@@ -268,8 +290,11 @@ def main() -> int:
     if not jobs:
         log("cofold: queue empty, every complex is already done")
         return 0
+    tuned = {t: sampling_steps(t) for t in order if sampling_steps(t)}
     log(f"cofold: {len(jobs)} complexes queued, cheapest target first: "
-        f"{', '.join(order)}")
+        f"{', '.join(order)}"
+        + (f"; reduced sampling steps for {tuned}" if tuned else
+           "; full quality, no reduced settings"))
 
     started = time.time()
     ok = failed = 0
