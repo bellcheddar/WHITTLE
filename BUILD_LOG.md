@@ -1517,3 +1517,17 @@ through to the drawer.
 - 2026-11-14 12:32 cofold: 37/40 (37 ok, 0 failed), 4.9 min for EGFR-0327, about 0.1 hours left
 - 2026-11-14 12:37 cofold: 38/40 (38 ok, 0 failed), 4.9 min for EGFR-0467, about 0.1 hours left
 - 2026-11-14 12:42 cofold: 39/40 (39 ok, 0 failed), 4.9 min for EGFR-0005, about 0.0 hours left
+- 2026-11-14 12:47 cofold: 40/40 (40 ok, 0 failed), 4.8 min for EGFR-0235, about 0.0 hours left
+- 2026-11-14 12:47 cofold: finished 40 ok, 0 failed, in 1.9 hours
+- 2026-11-14 12:54 interface: EGFR published 59 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 12:54 interface: EGFR 345 samples across 69 candidates, 7 epitope bins
+- 2026-11-14 12:55 interface: GLP1R published 57 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 12:55 interface: GLP1R 6 of 67 candidates place more than 30% of their interface on the construct's cut edges. Those poses are artefacts of the truncation and cannot be epitopes on the intact protein
+- 2026-11-14 12:55 interface: GLP1R 335 samples across 67 candidates, 4 epitope bins
+- 2026-11-14 12:58 interface: PRLR published 58 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 12:58 interface: PRLR 340 samples across 68 candidates, 6 epitope bins
+- 2026-11-14 13:05 interface: TL1A published 58 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 13:05 interface: TL1A 340 samples across 68 candidates, 6 epitope bins, 58 of 68 contact more than one subunit
+- 2026-11-14 13:11 interface: TNFa published 58 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 13:11 interface: TNFa 340 samples across 68 candidates, 5 epitope bins, 61 of 68 contact more than one subunit
+- 2026-11-14 13:31 interactions: EGFR profiled 345 samples across 69 candidates, median 17 interactions per sample
