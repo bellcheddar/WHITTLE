@@ -326,3 +326,29 @@ def test_an_external_row_is_not_scored_on_fewer_components_than_the_candidates(
         "candidate scale, which is the fault that produced 144/240")
     assert "not comparable" in capsys.readouterr().out, (
         "the refusal must say why, or it looks like missing data")
+
+
+def test_a_component_constant_across_candidates_does_not_empty_the_axis(
+        tmp_path) -> None:
+    """The overcorrection the comparability guard invited.
+
+    `axis_values` keeps a component whose candidate values are all equal;
+    `score_external` drops it for sd == 0. A guard written as set equality
+    between the two therefore fired on `canonical_disulfide`, which is
+    constant at 1 for four of the five targets, and emptied the thermo axis
+    for all four. It is harmless: a constant column z-scores to 0.0, so it
+    adds nothing to the numerator and only rescales the denominator, and a
+    percentile is a rank that a positive rescale cannot move.
+    """
+    from pipeline.score import score_external
+
+    conn = _conn_with_candidates(tmp_path)
+    # Make one specificity component constant across every candidate.
+    conn.execute("UPDATE candidates SET net_charge_74 = 3.0")
+    conn.commit()
+    got = score_external(conn, "EGFR", [
+        {"id": "C1", "psh": 100.0, "tnp_flags": 1,
+         "n_cdr_liabilities": 1, "abs_charge": 3.0}])
+    assert got["C1"].get("specificity") is not None, (
+        "a component that is constant across the candidates must not empty "
+        "the axis: it cannot move a rank-based percentile")

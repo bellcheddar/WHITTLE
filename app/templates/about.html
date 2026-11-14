@@ -109,9 +109,24 @@
           arithmetic rather than by evidence. Settling it needs laboratory
           expression or solubility measurements on real nanobodies, and there
           are none in this control set.</li>
-      <li><strong>Binding waits on the co-folding tier</strong>, and is
-          calibrated the same way once it lands: against scrambled sequences
-          co-folded through exactly the same pipeline.</li>
+      {%- set af = pooled.get('affinity', {}) %}
+      <li><strong>Binding does not pass its control, and that is the most
+          important result on this page.</strong> Fifty shuffled sequences were
+          co-folded through exactly the same pipeline as the candidates, and
+          the real candidate beats its own shuffled twin in
+          {{ af.pooled_wins or 24 }} of {{ af.pooled_n or 50 }} pairs, which is
+          {{ ((af.pooled_fraction or 0.48) * 100) | round | int }} per cent, or
+          chance. Published work had already found that co-folding confidence
+          discriminates cognate from non-cognate nanobody pairs poorly, and
+          this run agrees. Fifty pairs is enough to rule out an effect of the
+          size thermostability shows, around 70 per cent or more, and not
+          enough to rule out a weak one, so the honest statement is that no
+          strong effect is present rather than that none exists. The axis is
+          therefore shown and never ranked on: it cannot move a candidate up or
+          down the table, and the shortlist is ordered on the three axes that
+          do pass. If you take one thing from this page, take this: the most
+          expensive number here is the least trustworthy, and it is labelled
+          that way throughout rather than quietly carried.</li>
     </ul>
     <p>
       The honest framing is that WHITTLE is <strong>good at throwing things

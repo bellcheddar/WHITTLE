@@ -406,13 +406,34 @@ def pooled_separation(axis: str, results: list[dict]) -> dict:
             f"understood.{spread}")
     else:
         out["verdict"] = "vacuous"
+        # What a negative is worth depends entirely on how big an effect this
+        # many pairs could have seen, and that is not a constant: the sequence
+        # axes pool a thousand pairs while affinity pools the fifty complexes
+        # the GPU had time for. The smallest effect detectable with about 80
+        # per cent power at the conventional threshold, for a two-sided sign
+        # test, is half a standard error times (1.96 + 0.84). Saying "this
+        # would have found a 60 per cent effect" regardless of n was simply
+        # untrue at n = 50, where the expected p-value for a 60 per cent
+        # effect is 0.20, and it is the claim DECISIONS 53's own power
+        # argument contradicts.
+        detectable = 0.5 + 2.80 * 0.5 / math.sqrt(n)
+        if detectable <= 0.60:
+            power = (f"At this pooled size the test has about 80 per cent "
+                     f"power against an effect as small as "
+                     f"{detectable:.0%}, so this is a real negative rather "
+                     f"than a shortage of controls.")
+        else:
+            power = (f"With {n} pairs the test has about 80 per cent power "
+                     f"only against an effect of {detectable:.0%} or more, so "
+                     f"what it rules out is a strong effect of the kind the "
+                     f"thermostability axis shows. A weak one is not excluded, "
+                     f"and separating those two would need more co-folded "
+                     f"controls rather than a different reading of these.")
         out["finding"] = (
             f"does not separate real candidates from CDR-shuffled ones: "
             f"pooled over all five targets, {wins} of {n} pairs "
             f"({fraction:.0%}, sign test p = {p:.2g}), with {testable:.0%} of "
-            f"the axis weight free to move. At this pooled size the test would "
-            f"have found a 60 per cent effect, so this is a real negative "
-            f"rather than a shortage of controls. The axis is "
+            f"the axis weight free to move. {power} The axis is "
             f"non-discriminating and is labelled as such wherever it "
             f"appears.{spread}")
     return out

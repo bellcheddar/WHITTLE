@@ -457,9 +457,23 @@ def score_external(conn, target: str, external: list[dict]) -> dict[str, dict]:
         # components the candidates themselves were scored on. Short of that
         # it yields nothing, which the app shows as pending: a missing number
         # invites the question, a wrong one answers it.
+        # The test is specifically "a component the candidates were scored on
+        # that no external row carries". It is deliberately not a set equality
+        # against the candidates' own component list, which was the first
+        # attempt and was wrong: `axis_values` keeps a component whose values
+        # are constant across the candidates, while the loop above drops it for
+        # sd == 0. On this data `canonical_disulfide` is constant at 1 for four
+        # of the five targets, so set equality emptied the thermo axis for all
+        # four and would have discarded the 837-of-1000 thermo result. That
+        # difference is harmless: `zscores` gives a constant column 0.0, so
+        # including it adds nothing to the numerator and only rescales the
+        # denominator by a fixed factor, and a percentile is a rank, which a
+        # positive rescale cannot move.
         candidate_used = {c.field for c in axis_values(records, axis)[1]}
-        if {c.field for c in used} != candidate_used:
-            missing = sorted(candidate_used - {c.field for c in used})
+        missing = sorted(
+            f for f in candidate_used
+            if not any(row.get(f) is not None for row in external))
+        if missing:
             log(f"score_external: {target} {axis} is not comparable and "
                 f"stays empty: the candidates were scored on {missing} and no "
                 f"external row carries {'it' if len(missing) == 1 else 'them'}. "

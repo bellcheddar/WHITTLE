@@ -103,10 +103,13 @@ def run_tnp(rows: list[dict], ncores: int) -> dict[str, dict]:
     # have slightly longer CDR3 loops (16.7 against 17.4 residues).
     dropped = [r["id"] for r in todo if r["id"] not in payload]
     if dropped:
+        # Keyed off the row's own target rather than parsed out of the id:
+        # splitting on "-" gave "04" for MULTI-04-* and "EXT" for the known
+        # controls, so the breakdown named things that are not targets.
+        target_of = {r["id"]: r.get("target") for r in rows}
         by_target: dict[str, int] = {}
         for cid in dropped:
-            parts = cid.split("-")
-            key = parts[1] if len(parts) > 2 else "other"
+            key = target_of.get(cid) or "unknown"
             by_target[key] = by_target.get(key, 0) + 1
         log(f"controls_run: TNP returned nothing for {len(dropped)} of "
             f"{len(todo)} sequences ({len(dropped) / len(todo):.0%}), which it "
@@ -214,6 +217,37 @@ def main() -> int:
             "nativeness_ppl": (native.get(row["id"]) or {}).get("pseudo_perplexity"),
         }
     log(f"controls_run: sequence metrics computed for {len(metrics)} controls")
+
+    # The co-folded controls carry the affinity axis too. Fifty scrambled
+    # controls were co-folded for exactly this purpose, spec Section 9 item 5,
+    # the control the spec calls the one that matters most, and their interface
+    # metrics have been in `cofolds` since the Tier 2 restore. Without this
+    # block the metrics dict above is sequence-only, so `score_external` sees
+    # no external row carrying `iptm` and drops the whole axis, and the site
+    # reports that no scrambled control has been scored on it. The aggregates
+    # are the same ones `pipeline.score.gather` takes for a candidate, which is
+    # what makes the two sides comparable: mean over the five diffusion samples
+    # for everything except pose consensus, which is already one value per
+    # complex repeated on each row.
+    cofolded = 0
+    for row in conn.execute(
+            """SELECT f.candidate_id AS id, AVG(f.iptm) AS iptm,
+                      AVG(f.sc) AS sc,
+                      AVG(f.cdr_interface_fraction) AS cdr_interface_fraction,
+                      AVG(f.hbond_per_100a2) AS hbond_per_100a2,
+                      MAX(f.pose_consensus) AS pose_consensus
+                 FROM cofolds f
+                WHERE f.status = 'ok'
+                GROUP BY f.candidate_id"""):
+        rec = metrics.get(row["id"])
+        if rec is None:
+            continue            # a candidate's co-fold, not a control's
+        rec.update({k: row[k] for k in
+                    ("iptm", "sc", "cdr_interface_fraction",
+                     "hbond_per_100a2", "pose_consensus")})
+        cofolded += 1
+    log(f"controls_run: {cofolded} controls carry co-folded interface metrics, "
+        f"so the affinity axis is testable on them")
 
     # Percentiles against each target's candidate distribution.
     from pipeline.score import score_external

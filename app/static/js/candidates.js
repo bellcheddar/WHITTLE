@@ -997,9 +997,9 @@
         + 'not an absence of signal, and nothing is ranked on it.'],
       weak: ['weak',
         'This axis separates real candidates from their own CDR-shuffled '
-        + 'twins, but by a small margin: around 60 per cent of pairs rather '
-        + 'than the 84 per cent the thermostability axis reaches. Treat its '
-        + 'ordering as suggestive.'],
+        + 'twins, but by a margin well short of the 84 per cent of pairs the '
+        + 'thermostability axis reaches. Treat its ordering as suggestive '
+        + 'rather than as evidence.'],
       untestable: ['untested',
         'The CDR-shuffled control preserves amino-acid composition, which is '
         + 'most of what this axis reads, so the control cannot test it either '
