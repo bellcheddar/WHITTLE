@@ -149,5 +149,8 @@
 <script src="{{ url_for('static', filename='vendor/tabulator.min.js') }}?v={{ asset_version('vendor/tabulator.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/common.js') }}?v={{ asset_version('js/common.js') }}"></script>
 <script src="{{ url_for('static', filename='js/viewer.js') }}?v={{ asset_version('js/viewer.js') }}"></script>
+<!-- Per-axis verdicts from the vacuous tests, so the drawer and the table can
+     mark an axis that does not separate real candidates from shuffled ones. -->
+<script id="axisverdicts" type="application/json">{{ meta.axis_verdicts | tojson }}</script>
 <script src="{{ url_for('static', filename='js/candidates.js') }}?v={{ asset_version('js/candidates.js') }}"></script>
 {% endblock %}

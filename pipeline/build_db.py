@@ -223,6 +223,26 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
             "SELECT COUNT(DISTINCT candidate_id) FROM cofolds").fetchone()[0],
     }
     provisional = [name for name, info in axes.items() if not info.get("available")]
+
+    # Per-axis, per-target verdict from the vacuous tests. `vacuous_tests.py`
+    # says a non-discriminating axis "must be labelled as such wherever it
+    # appears", and until now it appeared only on the Control set tab: a
+    # reader on the Candidates page saw an Expression percentile with nothing
+    # to say it does not separate a real candidate from a shuffled one.
+    verdicts: dict[str, dict[str, str]] = {}
+    row = conn.execute(
+        "SELECT value FROM qc WHERE key='vacuous_tests'").fetchone()
+    if row:
+        try:
+            payload = json.loads(row[0])
+        except (TypeError, ValueError):
+            payload = {}
+        for axis, block in (payload or {}).items():
+            for target, result in (block.get("targets") or {}).items():
+                passed = result.get("passed")
+                verdicts.setdefault(axis, {})[target] = (
+                    "pending" if passed is None else
+                    "informative" if passed else "vacuous")
     return {
         "run_id": run_id(),
         "built_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -235,6 +255,7 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
         "columns": cols.registry(),
         "axes": axes,
         "axes_pending": provisional,
+        "axis_verdicts": verdicts,
         "ranking_scope": "within_target",
         "upstream_caveat": "not comparable between targets",
     }

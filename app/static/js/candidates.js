@@ -389,7 +389,29 @@
 
   /* --------------------------------------------------------- 3.5 the drawer */
 
-  function tile(label, value, unit, pct) {
+  /* The verdict the vacuous tests reached for an axis on the target in view.
+     "A non-discriminating axis must be labelled as such wherever it appears"
+     is the test's own instruction, and until this was wired the label lived
+     only on the Control set tab: a reader here saw a percentile with nothing
+     to say it does not separate a real candidate from a shuffled one. */
+  let axisVerdicts = null;
+
+  function axisVerdict(axis) {
+    if (axisVerdicts === null) {
+      const node = document.getElementById('axisverdicts');
+      try {
+        axisVerdicts = node ? JSON.parse(node.textContent) || {} : {};
+      } catch (err) {
+        axisVerdicts = {};
+      }
+    }
+    const all = axisVerdicts;
+    const byTarget = all[axis];
+    if (!byTarget) return null;
+    return byTarget[W.state.target] || null;
+  }
+
+  function tile(label, value, unit, pct, axis) {
     const width = pct === null || pct === undefined ? 0 : Math.max(2, pct);
     const missing = value === null || value === undefined;
     const shown = missing
@@ -397,9 +419,15 @@
       : W.escape(value);
     // No unit beside "pending": there is no number for it to qualify.
     const unitSpan = missing ? '' : `<span class="tunit">${W.escape(unit || '')}</span>`;
+    const verdict = axis ? axisVerdict(axis) : null;
+    const flag = verdict === 'vacuous'
+      ? '<div class="tflag" title="This axis does not separate real candidates '
+        + 'from CDR-shuffled controls, so its ordering carries no evidence.">'
+        + 'non-discriminating</div>'
+      : '';
     return `<div class="tile"><div class="tlabel">${W.escape(label)}</div>
       <div class="tvalue">${shown}${unitSpan}</div>
-      <div class="trule"><i style="width:${width}%"></i></div></div>`;
+      <div class="trule"><i style="width:${width}%"></i></div>${flag}</div>`;
   }
 
   function kvTable(pairs) {
@@ -663,13 +691,13 @@
   async function renderStructurePanel(d) {
     el('axistiles').innerHTML = [
       tile('Affinity', d.axis_affinity === null ? null : Math.round(d.axis_affinity),
-        'pct', d.axis_affinity),
+        'pct', d.axis_affinity, 'affinity'),
       tile('Specificity', d.axis_specificity === null ? null : Math.round(d.axis_specificity),
-        'pct', d.axis_specificity),
+        'pct', d.axis_specificity, 'specificity'),
       tile('Thermostability', d.axis_thermo === null ? null : Math.round(d.axis_thermo),
-        'pct', d.axis_thermo),
+        'pct', d.axis_thermo, 'thermo'),
       tile('Expression', d.axis_expression === null ? null : Math.round(d.axis_expression),
-        'pct', d.axis_expression),
+        'pct', d.axis_expression, 'expression'),
     ].join('');
 
     syncViewerMode(d);

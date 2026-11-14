@@ -979,3 +979,19 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:46 cofold: 6/20 (6 ok, 0 failed), 0.9 min for SCRAM-GLP1R-006, about 0.2 hours left
 - 2026-11-13 20:46 tm_predict: 367 sequences, ESM-2 esm2_t33_650M_UR50D
 - 2026-11-13 20:47 cofold: 7/20 (7 ok, 0 failed), 1.0 min for SCRAM-GLP1R-007, about 0.2 hours left
+- 2026-11-13 20:48 tm_model: all 250 ESM-2 embeddings came from the cache
+- 2026-11-13 20:48 tm_predict: 250/367
+- 2026-11-13 20:48 cofold: 8/20 (8 ok, 0 failed), 1.0 min for SCRAM-GLP1R-008, about 0.2 hours left
+- 2026-11-13 20:49 tm_model: all 117 ESM-2 embeddings came from the cache
+- 2026-11-13 20:49 tm_predict: 367/367
+- 2026-11-13 20:49 tm_predict: TemStaPro is not installed; the cross-check column stays pending
+- 2026-11-13 20:49 tm_predict: 367 predictions in 2.3 minutes. Tm 40.1 to 94.1 deg C, mean error bar 15.2 deg C, 0 above 95 deg C (spec 9 item 3 wants none)
+- 2026-11-13 20:49 controls_run: 367 control sequences, run blind. No published measurement is read by anything below.
+- 2026-11-13 20:49 cofold: 9/20 (9 ok, 0 failed), 1.0 min for SCRAM-GLP1R-009, about 0.2 hours left
+- 2026-11-13 20:49 build-db: EGFR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:49 build-db: GLP1R bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:49 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:49 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:49 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:49 build-db: 15 bundles, 2883 kB total
+- 2026-11-13 20:50 cofold: 10/20 (10 ok, 0 failed), 1.0 min for SCRAM-GLP1R-010, about 0.2 hours left

@@ -489,6 +489,11 @@ main {
 #interactions .ixnote { font-size: 10px; color: var(--ink-3); margin-top: 7px; }
 #interactions .ixempty { font-size: 11px; color: var(--ink-3); }
 
+.tile .tflag {
+  margin-top: 6px; font-size: 9.5px; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--poor, #B0304A); cursor: help;
+}
+
 .tiles {
   display: grid;
   grid-template-columns: 1fr 1fr;
