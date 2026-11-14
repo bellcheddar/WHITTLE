@@ -127,6 +127,16 @@ def paired_against_parents(conn, target: str, control_column: str,
     Both sides are on the same scale: `pipeline.controls_run` ranks a control
     against its target's candidate distribution using scales fitted on the
     candidates alone, which is exactly the scale `scores.axis_*` carries.
+
+    That sentence was false for one day and this test believed it. Scoring a
+    control before TNP had run dropped `psh` and `tnp_flags` from the control
+    side only, so a control scored on 1.5 of the specificity axis's 4.5 weight
+    was being ranked against candidates scored on all of it. The paired result
+    read 60 per cent and was published as a property of the axis; with TNP
+    present the same controls read 84 per cent. `pipeline.score.score_external`
+    now refuses to emit an axis for an external row unless it used exactly the
+    components the candidates were scored on, so the sentence above holds by
+    construction rather than by assumption. See DECISIONS 59.
     """
     wins = losses = ties = 0
     for row in conn.execute(

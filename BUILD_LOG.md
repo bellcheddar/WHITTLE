@@ -1838,3 +1838,76 @@ through to the drawer.
 - 2026-11-14 16:54 vacuous_tests: PENDING expression [pooled 136/250, p = 0.18] UNTESTABLE: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so a result near chance is expected by construction rather than by failure. No synthetic control settles it either, because the two heaviest components are defined from composition and a deliberately insoluble sequence would score badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. Pooled over all five targets it is 136 of 250 (54%, p = 0.18), which is what a control that cannot move two thirds of the weight looks like.
 - 2026-11-14 16:54 vacuous_tests: PASS specificity [pooled 144/240, p = 0.0023] WEAK: weakly but measurably separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 144 of 240 pairs (60%, sign test p = 0.0023). Per target: EGFR 28/46, GLP1R 30/47, PRLR 32/48, TL1A 30/50, TNFa 24/49, of which PRLR is significant alone. 10 of 250 available pairs are unusable because the control carries no value on this axis, which for specificity is TNP declining to number the shuffled sequence. The dropout acts on the pair and not inside it, since a shuffle has its parent's exact length, so it costs sample size rather than skewing the comparison.
 - 2026-11-14 16:54 vacuous_tests: PASS thermo [pooled 210/250, p = 5.1e-29] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 210 of 250 pairs (84%, sign test p = 5.1e-29). Per target: EGFR 42/50, GLP1R 39/50, PRLR 47/50, TL1A 40/50, TNFa 42/50, every one of which is significant on its own.
+- 2026-11-14 17:12 interactions: PRLR profiled 340 samples across 68 candidates, median 12 interactions per sample
+- 2026-11-14 17:13 controls_run: sequence metrics computed for 1117 controls
+- 2026-11-14 17:13 controls_run: 209 EGFR controls placed against the EGFR candidate distribution
+- 2026-11-14 17:13 controls_run: 206 GLP1R controls placed against the GLP1R candidate distribution
+- 2026-11-14 17:13 controls_run: 207 PRLR controls placed against the PRLR candidate distribution
+- 2026-11-14 17:13 controls_run: 202 TL1A controls placed against the TL1A candidate distribution
+- 2026-11-14 17:13 controls_run: 216 TNFa controls placed against the TNFa candidate distribution
+- 2026-11-14 17:13 controls_run: 1040 control rows carry axis percentiles
+- 2026-11-14 17:13 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-14 17:13 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-14 17:13 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-14 17:13 controls: 1117 control rows written {'scrambled': 1000, 'known': 94, 'multi_target': 23}; 1040 carry predictions from an earlier blind run
+- 2026-11-14 17:13 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-14 17:13 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-14 17:13 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-14 17:13 controls: PENDING control_5_scrambled_EGFR: pending the affinity axis
+- 2026-11-14 17:13 controls: PENDING control_5_scrambled_GLP1R: pending the affinity axis
+- 2026-11-14 17:13 controls: PENDING control_5_scrambled_PRLR: pending the affinity axis
+- 2026-11-14 17:13 controls: PENDING control_5_scrambled_TL1A: pending the affinity axis
+- 2026-11-14 17:13 controls: PENDING control_5_scrambled_TNFa: pending the affinity axis
+- 2026-11-14 17:13 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-14 17:31 interactions: TL1A profiled 340 samples across 68 candidates, median 16 interactions per sample
+- 2026-11-14 17:52 interactions: TNFa profiled 340 samples across 68 candidates, median 16 interactions per sample
+- 2026-11-14 17:58 complementarity: EGFR Sc for 345 samples, median 0.524, range 0.057 to 0.637
+- 2026-11-14 18:02 complementarity: GLP1R Sc for 335 samples, median 0.534, range 0.388 to 0.667
+- 2026-11-14 18:05 complementarity: PRLR Sc for 340 samples, median 0.529, range 0.339 to 0.654
+- 2026-11-14 18:10 complementarity: TL1A Sc for 340 samples, median 0.489, range 0.228 to 0.615
+- 2026-11-14 18:14 complementarity: TNFa Sc for 340 samples, median 0.487, range 0.272 to 0.652
+- 2026-11-14 18:15 vacuous_tests: PENDING affinity [no controls] PENDING: no scrambled control has been scored on this axis, so its strongest check has not run
+- 2026-11-14 18:15 vacuous_tests:   EGFR also: not computed yet
+- 2026-11-14 18:15 vacuous_tests:   GLP1R also: not computed yet
+- 2026-11-14 18:15 vacuous_tests:   PRLR also: not computed yet
+- 2026-11-14 18:15 vacuous_tests:   TL1A also: not computed yet
+- 2026-11-14 18:15 vacuous_tests:   TNFa also: not computed yet
+- 2026-11-14 18:15 vacuous_tests: PENDING expression [pooled 982/1000, p = 2.5e-263] UNTESTABLE: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so a result near chance is expected by construction rather than by failure. No synthetic control settles it either, because the two heaviest components are defined from composition and a deliberately insoluble sequence would score badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. Pooled over all five targets it is 982 of 1000 (98%, p = 2.5e-263), which is what a control that cannot move two thirds of the weight looks like.
+- 2026-11-14 18:15 vacuous_tests: PASS specificity [pooled 679/839, p = 8.6e-77] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 679 of 839 pairs (81%, sign test p = 8.6e-77). Per target: EGFR 130/169, GLP1R 141/162, PRLR 140/171, TL1A 137/169, TNFa 131/168, every one of which is significant on its own. 34 of 873 available pairs are unusable because the control carries no value on this axis, which for specificity is TNP declining to number the shuffled sequence. The dropout acts on the pair and not inside it, since a shuffle has its parent's exact length, so it costs sample size rather than skewing the comparison.
+- 2026-11-14 18:15 vacuous_tests: PASS thermo [pooled 837/1000, p = 9.8e-110] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 837 of 1000 pairs (84%, sign test p = 9.8e-110). Per target: EGFR 164/200, GLP1R 162/200, PRLR 174/200, TL1A 167/200, TNFa 170/200, every one of which is significant on its own.
+- 2026-11-14 18:25 vacuous_tests: PENDING affinity [no controls] PENDING: no scrambled control has been scored on this axis, so its strongest check has not run
+- 2026-11-14 18:25 vacuous_tests:   EGFR also: not computed yet
+- 2026-11-14 18:25 vacuous_tests:   GLP1R also: not computed yet
+- 2026-11-14 18:25 vacuous_tests:   PRLR also: not computed yet
+- 2026-11-14 18:25 vacuous_tests:   TL1A also: not computed yet
+- 2026-11-14 18:25 vacuous_tests:   TNFa also: not computed yet
+- 2026-11-14 18:25 vacuous_tests: PENDING expression [pooled 982/1000, p = 2.5e-263] UNTESTABLE: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so a result near chance is expected by construction rather than by failure. No synthetic control settles it either, because the two heaviest components are defined from composition and a deliberately insoluble sequence would score badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. Pooled over all five targets it is 982 of 1000 (98%, p = 2.5e-263), which is what a control that cannot move two thirds of the weight looks like.
+- 2026-11-14 18:25 vacuous_tests: PASS specificity [pooled 679/839, p = 8.6e-77] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 679 of 839 pairs (81%, sign test p = 8.6e-77). Per target: EGFR 130/169, GLP1R 141/162, PRLR 140/171, TL1A 137/169, TNFa 131/168, every one of which is significant on its own. 34 of 873 available pairs are unusable because the control carries no value on this axis, which for specificity is TNP declining to number the shuffled sequence. The dropout acts on the pair and not inside it, since a shuffle has its parent's exact length, so it costs sample size rather than skewing the comparison.
+- 2026-11-14 18:25 vacuous_tests: PASS thermo [pooled 837/1000, p = 9.8e-110] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 837 of 1000 pairs (84%, sign test p = 9.8e-110). Per target: EGFR 164/200, GLP1R 162/200, PRLR 174/200, TL1A 167/200, TNFa 170/200, every one of which is significant on its own.
+- 2026-11-14 18:26 score_external: EGFR specificity is not comparable and stays empty: the candidates were scored on ['psh', 'tnp_flags'] and no external row carries them. A percentile here would rank a 2-component score against the 4-component scale in scores.axis_specificity.
+- 2026-11-14 18:26 score_external: EGFR specificity is not comparable and stays empty: the candidates were scored on ['psh', 'tnp_flags'] and no external row carries them. A percentile here would rank a 2-component score against the 4-component scale in scores.axis_specificity.
+- 2026-11-14 18:27 score_external: EGFR specificity is not comparable and stays empty: the candidates were scored on ['psh', 'tnp_flags'] and no external row carries them. A percentile here would rank a 2-component score against the 4-component scale in scores.axis_specificity.
+- 2026-11-14 18:28 score: ['affinity'] is computed, displayed and NOT ranked on; the ordering is ['specificity', 'thermo', 'expression']. See run.tier2_reorders_shortlist in config/targets.yaml and DECISIONS 50.
+- 2026-11-14 18:28 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'affinity': 441, 'specificity': 26} of 500
+- 2026-11-14 18:28 score: EGFR 26 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 18:28 score: EGFR 500 rows, 13 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 18:28 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'affinity': 443, 'specificity': 27} of 500
+- 2026-11-14 18:28 score: GLP1R 27 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 18:28 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 18:28 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 15} of 500
+- 2026-11-14 18:28 score: PRLR 15 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 18:28 score: PRLR 500 rows, 19 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 18:28 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 14} of 500
+- 2026-11-14 18:28 score: TL1A 14 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 18:28 score: TL1A 500 rows, 25 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 18:28 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 21} of 500
+- 2026-11-14 18:28 score: TNFa 21 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 18:28 score: TNFa 500 rows, 21 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 18:28 build-db: EGFR bundle, 500 rows, 46 columns with data, 1 pending
+- 2026-11-14 18:28 build-db: GLP1R bundle, 500 rows, 46 columns with data, 1 pending
+- 2026-11-14 18:28 build-db: PRLR bundle, 500 rows, 46 columns with data, 1 pending
+- 2026-11-14 18:28 build-db: TL1A bundle, 500 rows, 46 columns with data, 1 pending
+- 2026-11-14 18:28 build-db: TNFa bundle, 500 rows, 46 columns with data, 1 pending
+- 2026-11-14 18:28 build-db: 15 bundles, 3487 kB total
+- 2026-11-14 18:29 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-14 18:29 cofold: 2  complexes queued, cheapest target first: EGFR; full quality, no reduced settings

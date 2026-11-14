@@ -381,11 +381,15 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/32/46/9cb0e58b2deb7f82b84065f37f3bffeb12413f947f9388e4cac22c4621ce/sortedcontainers-2.4.0-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/53/a4/cf8c53a5cf38c2ee303c020d1769e7bb98ecf4d154636062e2f940a1af13/ImmuneBuilder-1.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/62/b8/6315b46baf27331c4117ceb7aa3ce2c26fee9dd20719378e53717f7033a9/promb-1.0.2-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/63/2d/720579ccff6247aa8fd2d397a7bd592dae72ef0f0133fe6cce2323ea13a2/openbabel_wheel-3.1.1.23.tar.gz
       - pypi: https://files.pythonhosted.org/packages/79/26/1cc82571f507b9dae3b36d4242764edc6e4ae9f3f81f44a6382c15fad565/fair_esm-2.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/80/c4/f5af4c1ca8c1eeb2e92ccca14ce8effdeec651d5ab6053c589b074eda6e1/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl
       - pypi: https://files.pythonhosted.org/packages/99/30/db962f3755fc0accdd164e3320e2116bd8d4c52b60ead7d65db3f1bfd3e6/rotary_embedding_torch-0.9.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a2/48/dc4e9f1c7101e0a4bf8879c273cfead5e0eda66ea9942cdf0220e07798aa/anarcii-2.0.8-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c6/89/79e5964b73c6cf7a9b19bc8b7a9c727dedffd780086da92196cc6464d720/ablang2-0.2.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/c9/53/574a2b10d5c7b3df5f84041ab97bbbc351c489b26883f865e99ee7c8fbde/openbabel-3.2.1-cp312-cp312-macosx_11_0_arm64.whl
+      - pypi: https://files.pythonhosted.org/packages/dd/1f/a180b57d9eeabaab77f9d5aa30356898ea749c4795596a8f66d1eb6bef2e/lxml-6.1.3-cp312-cp312-macosx_10_13_universal2.whl
+      - pypi: https://files.pythonhosted.org/packages/e2/22/c243c25fc3cb85c108b866efa08b0a2d709fb11cb43aa21966e8fe92bfe7/plip-3.0.1-py3-none-any.whl
 packages:
 - conda: https://conda.anaconda.org/bioconda/noarch/anarci-2024.05.21-pyhdfd78af_0.tar.bz2
   sha256: 481b7d0557b8058cd157cc8f76eb1687558f2f48190a5a5857775b2833720bc2
@@ -4821,6 +4825,11 @@ packages:
   - pandas
   - tqdm
   requires_python: '>=3.8'
+- pypi: https://files.pythonhosted.org/packages/63/2d/720579ccff6247aa8fd2d397a7bd592dae72ef0f0133fe6cce2323ea13a2/openbabel_wheel-3.1.1.23.tar.gz
+  name: openbabel-wheel
+  version: 3.1.1.23
+  sha256: 68fd86540ff0895d36b26f25721187399fb6073f874f6ae474a574e6acf8759d
+  requires_python: '>=3.8'
 - pypi: https://files.pythonhosted.org/packages/79/26/1cc82571f507b9dae3b36d4242764edc6e4ae9f3f81f44a6382c15fad565/fair_esm-2.0.0-py3-none-any.whl
   name: fair-esm
   version: 2.0.0
@@ -4909,3 +4918,27 @@ packages:
   - einops
   - rotary-embedding-torch
   - numpy
+- pypi: https://files.pythonhosted.org/packages/c9/53/574a2b10d5c7b3df5f84041ab97bbbc351c489b26883f865e99ee7c8fbde/openbabel-3.2.1-cp312-cp312-macosx_11_0_arm64.whl
+  name: openbabel
+  version: 3.2.1
+  sha256: c5785ccc30b0405890e037f4d7652cc12df2909be092aef5eabc9dd4c5d01848
+  requires_python: '>=3.10'
+- pypi: https://files.pythonhosted.org/packages/dd/1f/a180b57d9eeabaab77f9d5aa30356898ea749c4795596a8f66d1eb6bef2e/lxml-6.1.3-cp312-cp312-macosx_10_13_universal2.whl
+  name: lxml
+  version: 6.1.3
+  sha256: 0c0710ac085a157b593c38fbcacd950f15c4afa8e2057527185875ab302752bc
+  requires_dist:
+  - cssselect>=0.7 ; extra == 'cssselect'
+  - html5lib ; extra == 'html5'
+  - beautifulsoup4 ; extra == 'htmlsoup'
+  - lxml-html-clean ; extra == 'html-clean'
+  requires_python: '>=3.8'
+- pypi: https://files.pythonhosted.org/packages/e2/22/c243c25fc3cb85c108b866efa08b0a2d709fb11cb43aa21966e8fe92bfe7/plip-3.0.1-py3-none-any.whl
+  name: plip
+  version: 3.0.1
+  sha256: be8de3b78ba0c0bb76c082272cb8ccd89233c2f0c0dcee1819cd5095d000af8f
+  requires_dist:
+  - numpy>=1.13.3
+  - lxml>=4.2.1
+  - openbabel>=3.2.0
+  requires_python: '>=3.6'

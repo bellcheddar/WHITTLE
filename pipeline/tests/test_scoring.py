@@ -267,3 +267,62 @@ def test_app_meta_fallback_covers_every_template_key():
         f"templates read meta keys the pre-build fallback does not provide: "
         f"{missing}. Add them to app.meta() or the shell 500s before the "
         f"first build-db run.")
+
+
+# --------------------------------------------------- external comparability
+
+def _conn_with_candidates(tmp_path, n=40):
+    """A target whose candidates carry every specificity component."""
+    import sqlite3
+    from pipeline import schema
+
+    conn = sqlite3.connect(tmp_path / "s.sqlite")
+    conn.row_factory = sqlite3.Row
+    conn.executescript(schema.SCHEMA)
+    conn.execute("INSERT INTO targets (target) VALUES ('EGFR')")
+    rng = random.Random(7)
+    for i in range(1, n + 1):
+        cid = f"EGFR-{i:04d}"
+        conn.execute("INSERT INTO candidates (id, target, sequence, seq_md5, "
+                     "length) VALUES (?, 'EGFR', 'QVQLV', ?, 5)", (cid, cid))
+        conn.execute("UPDATE candidates SET net_charge_74 = ? WHERE id = ?",
+                     (rng.uniform(-6, 6), cid))
+        conn.execute("INSERT INTO structures (candidate_id, psh, tnp_flags) "
+                     "VALUES (?, ?, ?)",
+                     (cid, rng.uniform(70, 140), rng.randint(0, 3)))
+        for k in range(rng.randint(0, 3)):
+            conn.execute("INSERT INTO liabilities (candidate_id, kind, region) "
+                         "VALUES (?, 'NG', 'cdr3')", (cid,))
+    conn.commit()
+    return conn
+
+
+def test_an_external_row_is_not_scored_on_fewer_components_than_the_candidates(
+        tmp_path, capsys) -> None:
+    """The fault that published a 60 per cent specificity result.
+
+    At 00:31 on 2026-11-14 the control set was scored before TNP had produced
+    anything, so `psh` (2.0 of the axis's 4.5 weight) and `tnp_flags` (1.0)
+    were dropped for the controls and kept for the candidates. Each side was
+    internally consistent, so nothing looked wrong, and the paired test read
+    144 of 240 against the 181 of 216 the same controls give with TNP
+    present. An axis must therefore yield nothing at all for external rows
+    rather than a percentile on a different scale from `scores.axis_*`.
+    """
+    from pipeline.score import score_external
+
+    conn = _conn_with_candidates(tmp_path)
+    full = score_external(conn, "EGFR", [
+        {"id": "C1", "psh": 100.0, "tnp_flags": 1,
+         "n_cdr_liabilities": 1, "abs_charge": 2.0}])
+    assert full["C1"].get("specificity") is not None, (
+        "an external row carrying every component must be scored")
+
+    # The same row with TNP absent, which is the 00:31 state exactly.
+    crippled = score_external(conn, "EGFR", [
+        {"id": "C1", "n_cdr_liabilities": 1, "abs_charge": 2.0}])
+    assert crippled["C1"].get("specificity") is None, (
+        "scored an external row on 1.5 of 4.5 weight against a 4.5-weight "
+        "candidate scale, which is the fault that produced 144/240")
+    assert "not comparable" in capsys.readouterr().out, (
+        "the refusal must say why, or it looks like missing data")

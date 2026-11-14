@@ -439,6 +439,35 @@ def score_external(conn, target: str, external: list[dict]) -> dict[str, dict]:
         if not used:
             continue
 
+        # A component the candidates were scored on but no external row
+        # carries leaves this axis measuring something else for the external
+        # rows than `scores.axis_*` measures for the candidates. Both sides
+        # are then internally consistent and mutually meaningless, which is
+        # the worst of the three possibilities because nothing looks wrong.
+        #
+        # On 2026-11-14 at 00:31 this scored the control set before TNP had
+        # produced anything, so `psh` (weight 2.0 of 4.5) and `tnp_flags`
+        # (1.0) were dropped for the controls and kept for the candidates.
+        # The paired specificity test then read 144 of 240, 60 per cent, and
+        # that number reached DECISIONS 53 and the About page as a finding
+        # about the axis. With TNP present the same 250 controls give 181 of
+        # 216. The axis was never weak; the measurement was.
+        #
+        # So an axis is reported for external rows only on exactly the
+        # components the candidates themselves were scored on. Short of that
+        # it yields nothing, which the app shows as pending: a missing number
+        # invites the question, a wrong one answers it.
+        candidate_used = {c.field for c in axis_values(records, axis)[1]}
+        if {c.field for c in used} != candidate_used:
+            missing = sorted(candidate_used - {c.field for c in used})
+            log(f"score_external: {target} {axis} is not comparable and "
+                f"stays empty: the candidates were scored on {missing} and no "
+                f"external row carries {'it' if len(missing) == 1 else 'them'}. "
+                f"A percentile here would rank a {len(used)}-component score "
+                f"against the {len(candidate_used)}-component scale in "
+                f"scores.axis_{axis}.")
+            continue
+
         floor = MIN_WEIGHT_FRACTION * sum(c.weight for c in used)
 
         def combine(source: dict) -> float | None:

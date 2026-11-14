@@ -75,25 +75,31 @@
       {%- set sp = pooled.get('specificity', {}) %}
       <li><strong>Thermostability earns the top rating.</strong> The real
           candidate scores above its own shuffled twin in
-          {{ th.pooled_wins or 210 }} of {{ th.pooled_n or 250 }} pairs, and
+          {{ th.pooled_wins or 837 }} of {{ th.pooled_n or 1000 }} pairs, and
           every one of the five targets clears that test on its own.</li>
-      <li><strong>Non-specific binding separates real from shuffled, but
-          weakly.</strong> The real candidate wins
-          {{ sp.pooled_wins or 144 }} of {{ sp.pooled_n or 240 }} pairs, around
-          {{ ((sp.pooled_fraction or 0.6) * 100) | round | int }} per cent
-          against thermostability's
-          {{ ((th.pooled_fraction or 0.84) * 100) | round | int }}. One rating
-          covers all five targets, and an earlier version of this page gave a
-          different answer per target: it reported the axis as working on PRLR
-          and doing nothing on EGFR and TNFa. That was a mistake, and the
-          reason is worth stating because it is the commonest way a control
-          set misleads. An effect this size cannot be resolved by the number of
-          pairs each target had. At a 60 per cent win rate, fifty pairs reach
-          the conventional significance threshold about a fifth of the time, so
-          asking each target separately returned five answers that differed by
-          luck and not by biology, and the page published them as a finding
-          about the targets. The control set is being enlarged so that the
-          per-target question can be asked properly.</li>
+      <li><strong>Non-specific binding separates real from shuffled.</strong>
+          The real candidate wins {{ sp.pooled_wins or 679 }} of
+          {{ sp.pooled_n or 839 }} pairs, around
+          {{ ((sp.pooled_fraction or 0.81) * 100) | round | int }} per cent,
+          and every one of the five targets clears the test on its own. An
+          earlier version of this page rated this axis weak at 60 per cent and
+          explained the rating at length. That was wrong, and the fault was in
+          the measurement rather than in the axis. The control sequences had
+          been scored before the non-specific-binding predictor had run on
+          them, so the heaviest component of the axis, patch surface
+          hydrophobicity, was missing from the control side and present on the
+          candidate side. Each side was internally consistent, which is why
+          nothing looked broken: a control scored on a third of the axis was
+          being ranked against candidates scored on all of it, and the
+          comparison returned a number that looked like a weak effect. With
+          the predictor run on the controls, the same sequences give
+          {{ ((sp.pooled_fraction or 0.81) * 100) | round | int }} per cent.
+          The scoring code now refuses to place a control against the
+          candidates at all unless it used exactly the components the
+          candidates were scored on, so this particular silence cannot recur.
+          The control set was also enlarged from fifty to
+          {{ meta.scrambled_per_target or 200 }} shuffles per target, which is
+          what makes the per-target answers above worth reading.</li>
       <li><strong>Expression cannot be tested this way at all, and is marked
           untested rather than good or bad.</strong> Two thirds of what it
           reads is amino-acid makeup, which the shuffle leaves identical, so
