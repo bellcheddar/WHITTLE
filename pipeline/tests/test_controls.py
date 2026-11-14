@@ -99,3 +99,55 @@ def test_sign_test_is_two_sided_in_both_directions():
         p = sign_test(wins, 50)
         assert 0.0 < p <= 1.0, f"{wins}/50 gave p = {p}"
     assert sign_test(0, 0) is None
+
+
+def test_raising_the_control_count_does_not_move_the_original_fifty():
+    """Adding controls must extend the set, never redraw it.
+
+    250 scrambled controls have been scored and 240 pairs measured. The draw
+    is `rng.sample`, and `rng.sample(pop, 50)` is not a prefix of
+    `rng.sample(pop, 200)`, so widening the original call would hand
+    SCRAM-EGFR-001 a different parent. `controls.main()` carries predictions
+    across a rebuild by id, so the old blind prediction would then be attached
+    to a new sequence with nothing failing and nothing warning.
+    """
+    import random
+    import sqlite3
+
+    from pipeline import common, controls, schema
+
+    conn = sqlite3.connect(":memory:")
+    conn.row_factory = sqlite3.Row
+    conn.executescript(schema.SCHEMA)
+    conn.execute("INSERT INTO targets (target) VALUES (?)",
+                 (common.TARGETS[0],))
+    rng = random.Random(1)
+    for n in range(300):
+        seq = "".join(rng.choice("ACDEFGHIKLMNPQRSTVWY") for _ in range(120))
+        conn.execute(
+            "INSERT INTO candidates (id, target, sequence, seq_md5, length, "
+            "cdr1, cdr2, cdr3) VALUES (?,?,?,?,?,?,?,?)",
+            (f"X-{n:04d}", common.TARGETS[0], seq, f"md5{n}", len(seq),
+             seq[25:33], seq[50:58], seq[95:110]))
+    conn.commit()
+
+    cfg = common.targets_config()
+    original = cfg["run"].get("scrambled_per_target")
+    try:
+        cfg["run"]["scrambled_per_target"] = 50
+        small = {r["id"]: r["sequence"] for r in
+                 controls.build_scrambled(conn, random.Random(controls.SEED))}
+        cfg["run"]["scrambled_per_target"] = 200
+        large = {r["id"]: r["sequence"] for r in
+                 controls.build_scrambled(conn, random.Random(controls.SEED))}
+    finally:
+        if original is None:
+            cfg["run"].pop("scrambled_per_target", None)
+        else:
+            cfg["run"]["scrambled_per_target"] = original
+
+    assert len(small) > 0 and len(large) > len(small)
+    for control_id, sequence in small.items():
+        assert large[control_id] == sequence, (
+            f"{control_id} changed sequence when the total was raised, which "
+            f"invalidates every pair already measured against it")

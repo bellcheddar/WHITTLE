@@ -32,10 +32,20 @@ import json
 import random
 import sys
 
-from pipeline.common import (TARGETS, connect, log, manifest_write, write_json)
+from pipeline.common import (TARGETS, connect, log, manifest_write,
+                             targets_config, write_json)
 
+# The original draw, which must never change: 250 of these have been scored
+# and 240 pairs measured, and `rng.sample(pop, k)` is not a prefix of
+# `rng.sample(pop, k + n)`, so raising this number would silently re-point
+# SCRAM-EGFR-001 at a different parent while the carry-over below kept its old
+# predictions. The target total is config-driven and the extra rows are drawn
+# separately, from the candidates the first draw did not take.
 SCRAMBLED_PER_TARGET = 50
 SEED = 20261113
+# A separate stream for the extension, so adding rows cannot disturb the shared
+# `rng` whose sequence determines the first fifty and their shuffles.
+EXTRA_SEED = 20261114
 
 # Spec 5.1 item 4: only these two targets have known nanobodies in SAbDab-nano.
 TARGETS_WITH_REFERENCES = ("EGFR", "TNFa")
@@ -66,6 +76,29 @@ def scramble_cdrs(sequence: str, cdrs: dict[str, str], rng: random.Random) -> st
 
 
 def build_scrambled(conn, rng: random.Random) -> list[dict]:
+    """The CDR-shuffled negative controls, in two draws that do not interfere.
+
+    `run.scrambled_per_target` in `targets.yaml` sets the total. The first
+    fifty are the original draw and are reproduced exactly, because fifty pairs
+    per target cannot resolve the effects these axes have and the fix was to
+    add controls rather than to replace them: pooled over five targets the
+    specificity axis separates at 60 per cent, p = 0.0024, while no single
+    target reaches significance alone (DECISIONS 53). Raising the total to
+    about 200 per target is what makes a per-target verdict mean anything.
+
+    The two draws are kept apart deliberately. `rng.sample(pop, k)` is not a
+    prefix of `rng.sample(pop, k + n)`, so widening the original call would
+    hand SCRAM-EGFR-001 a different parent, and `main()` carries predictions
+    across a rebuild by id, which would then attach an old blind prediction to
+    a new sequence without anything failing. The extension therefore draws from
+    the candidates the first draw did not take, on its own seeded stream, and
+    it shuffles with that stream too: `scramble_cdrs` consumes `rng`, so
+    shuffling the extra rows with the shared one would change the first fifty
+    of every later target.
+    """
+    total = int(targets_config()["run"].get("scrambled_per_target",
+                                            SCRAMBLED_PER_TARGET))
+    extra_rng = random.Random(EXTRA_SEED)
     rows = []
     for target in TARGETS:
         candidates = conn.execute(
@@ -75,9 +108,18 @@ def build_scrambled(conn, rng: random.Random) -> list[dict]:
             continue
         chosen = rng.sample(list(candidates), min(SCRAMBLED_PER_TARGET,
                                                   len(candidates)))
+        want_extra = max(0, total - len(chosen))
+        if want_extra:
+            taken = {row["id"] for row in chosen}
+            pool = [row for row in candidates if row["id"] not in taken]
+            chosen = list(chosen) + extra_rng.sample(
+                pool, min(want_extra, len(pool)))
         for i, row in enumerate(chosen, 1):
             cdrs = {k: row[k] for k in ("cdr1", "cdr2", "cdr3")}
-            scrambled = scramble_cdrs(row["sequence"], cdrs, rng)
+            # The shared stream for the original fifty, the separate one past
+            # that, so the two draws stay independent of each other's size.
+            draw = rng if i <= SCRAMBLED_PER_TARGET else extra_rng
+            scrambled = scramble_cdrs(row["sequence"], cdrs, draw)
             if scrambled == row["sequence"]:
                 continue
             rows.append({

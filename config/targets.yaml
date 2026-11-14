@@ -29,6 +29,14 @@ run:
   # Set it true only with a component that beats its own shuffled control, and
   # expect to have to deal with the coverage problem separately.
   tier2_reorders_shortlist: false
+  # CDR-shuffled negative controls per target. Raised from 50 to 200 on
+  # 2026-11-14 (DECISIONS 55) because 50 cannot resolve the effects these axes
+  # have: at a true 60 per cent win rate the expected sign-test p-value at
+  # n = 50 is 0.20, so a per-target verdict was a coin toss and the specificity
+  # axis read non-discriminating on EGFR and informative on PRLR for the same
+  # evidence. The first 50 per target are the original draw and are reproduced
+  # byte for byte; the rest are drawn separately. See `build_scrambled`.
+  scrambled_per_target: 200
   cache_antigen_msa: true           # compute once per target, reuse across all candidates
 
 upstream:

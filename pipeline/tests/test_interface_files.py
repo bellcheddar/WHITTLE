@@ -94,3 +94,58 @@ def test_chain_plddt_returns_none_for_a_chain_that_is_absent(tmp_path):
     nanobody, antigen = chain_plddt(path, ["A", "B", "C"])
     assert nanobody == pytest.approx(77.0)
     assert antigen is None
+
+
+def test_the_cofold_write_is_an_upsert_that_spares_other_stages(tmp_path):
+    """Re-running interface must not null `sc` or the interaction columns.
+
+    INSERT OR REPLACE deletes the conflicting row and inserts a fresh one, so
+    every column this stage does not name reverts to its default. On
+    2026-11-14 that discarded an hour of pipeline.interactions and twenty
+    minutes of pipeline.complementarity across all 1700 rows, with no error
+    and no warning: the loss showed up only by counting non-null values.
+    """
+    import sqlite3
+    from pipeline import schema
+
+    conn = sqlite3.connect(tmp_path / "t.sqlite")
+    conn.executescript(schema.SCHEMA)
+    conn.execute("INSERT INTO targets (target) VALUES ('EGFR')")
+    conn.execute("INSERT INTO candidates (id, target, sequence, seq_md5, length) "
+                 "VALUES ('EGFR-0001', 'EGFR', 'QVQLV', 'deadbeef', 5)")
+
+    # interface writes the row, then the later stages fill their own columns.
+    conn.execute("INSERT INTO cofolds (candidate_id, target, seed, iptm) "
+                 "VALUES ('EGFR-0001', 'EGFR', 0, 0.5)")
+    conn.execute("UPDATE cofolds SET sc = 0.61, n_interactions = 17 "
+                 "WHERE candidate_id = 'EGFR-0001' AND seed = 0")
+    conn.commit()
+
+    # interface runs again, as it legitimately may: the statement must be the
+    # upsert form, naming only its own columns in the conflict clause.
+    columns = ["candidate_id", "target", "seed", "iptm"]
+    updates = [c for c in columns if c not in ("candidate_id", "target", "seed")]
+    conn.executemany(
+        f"INSERT INTO cofolds ({', '.join(columns)}) VALUES "
+        f"({', '.join(':' + c for c in columns)}) "
+        f"ON CONFLICT(candidate_id, target, seed) DO UPDATE SET "
+        + ", ".join(f"{c} = excluded.{c}" for c in updates),
+        [{"candidate_id": "EGFR-0001", "target": "EGFR", "seed": 0,
+          "iptm": 0.9}])
+    conn.commit()
+
+    row = conn.execute("SELECT iptm, sc, n_interactions FROM cofolds").fetchone()
+    assert row[0] == 0.9, "interface must still update its own columns"
+    assert row[1] == 0.61, "complementarity's sc was discarded by the re-run"
+    assert row[2] == 17, "the interaction counts were discarded by the re-run"
+    conn.close()
+
+
+def test_interface_does_not_use_insert_or_replace_on_cofolds():
+    """Guard the statement itself, not just an equivalent of it."""
+    from pathlib import Path
+    source = (Path(__file__).resolve().parent.parent / "interface.py").read_text()
+    assert "INSERT OR REPLACE INTO cofolds" not in source, (
+        "INSERT OR REPLACE on cofolds nulls every column belonging to "
+        "pipeline.interactions and pipeline.complementarity")
+    assert "ON CONFLICT(candidate_id, target, seed) DO UPDATE SET" in source

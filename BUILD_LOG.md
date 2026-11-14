@@ -1773,3 +1773,21 @@ through to the drawer.
 - 2026-11-14 15:18 vacuous_tests: PASS thermo [pooled 210/250, p = 5.1e-29] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 210 of 250 pairs (84%, sign test p = 5.1e-29). Per target: EGFR 42/50, GLP1R 39/50, PRLR 47/50, TL1A 40/50, TNFa 42/50, every one of which is significant on its own.
 - 2026-11-14 15:18 interface: PRLR published 58 co-folded complexes for the drawer, the highest-ipTM sample of each
 - 2026-11-14 15:18 interface: PRLR 340 samples across 68 candidates, 6 epitope bins
+- 2026-11-14 15:25 interface: TL1A published 58 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 15:25 interface: TL1A 340 samples across 68 candidates, 6 epitope bins, 58 of 68 contact more than one subunit
+- 2026-11-14 15:32 interface: TNFa published 58 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 15:32 interface: TNFa 340 samples across 68 candidates, 5 epitope bins, 61 of 68 contact more than one subunit
+- 2026-11-14 16:18 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-14 16:18 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-14 16:18 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-14 16:18 controls: 1117 control rows written {'scrambled': 1000, 'known': 94, 'multi_target': 23}; 290 carry predictions from an earlier blind run
+- 2026-11-14 16:18 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-14 16:18 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-14 16:18 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-14 16:18 controls: PENDING control_5_scrambled_EGFR: pending the affinity axis
+- 2026-11-14 16:18 controls: PENDING control_5_scrambled_GLP1R: pending the affinity axis
+- 2026-11-14 16:18 controls: PENDING control_5_scrambled_PRLR: pending the affinity axis
+- 2026-11-14 16:18 controls: PENDING control_5_scrambled_TL1A: pending the affinity axis
+- 2026-11-14 16:18 controls: PENDING control_5_scrambled_TNFa: pending the affinity axis
+- 2026-11-14 16:18 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-14 16:18 tm_predict: 1117 sequences, ESM-2 esm2_t33_650M_UR50D

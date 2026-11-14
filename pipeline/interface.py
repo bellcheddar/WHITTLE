@@ -587,9 +587,27 @@ def main() -> int:
                    "cdr_interface_detail_json", "pose_consensus",
                    "iptm_spread", "nanobody_plddt", "antigen_plddt",
                    "interface_plddt", "is_control", "path", "status"]
+        # Upsert that touches only this stage's own columns. INSERT OR
+        # REPLACE deletes the conflicting row and inserts a new one, so every
+        # column outside `columns` reverts to its default: re-running this
+        # stage on 2026-11-14 silently nulled `sc` and the ten
+        # interaction columns for all 1700 rows, discarding an hour of
+        # `pipeline.interactions` and twenty minutes of
+        # `pipeline.complementarity`. Nothing failed and nothing warned; the
+        # loss was visible only by counting non-null values afterwards.
+        # `pipeline.interactions` and `pipeline.complementarity` were already
+        # written as UPDATE for this reason and were unaffected.
+        #
+        # Every stage after this one writes into rows this stage creates, so
+        # this stage must be the only one that may insert, and it must never
+        # clobber on the way.
+        updates = [c for c in columns
+                   if c not in ("candidate_id", "target", "seed")]
         conn.executemany(
-            f"INSERT OR REPLACE INTO cofolds ({', '.join(columns)}) VALUES "
-            f"({', '.join(':' + c for c in columns)})",
+            f"INSERT INTO cofolds ({', '.join(columns)}) VALUES "
+            f"({', '.join(':' + c for c in columns)}) "
+            f"ON CONFLICT(candidate_id, target, seed) DO UPDATE SET "
+            + ", ".join(f"{c} = excluded.{c}" for c in updates),
             [{c: rec.get(c) for c in columns} for rec in records])
         conn.commit()
         multi = sum(1 for r in best.values()
