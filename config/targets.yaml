@@ -14,6 +14,21 @@ run:
   # co-folds. 50 gives a 2:1 triage at this tier.
   tier2_top_n_per_target: 50
   shortlist_per_target: 24     # hard requirement: 24 designs per target, final
+  # May the Tier 2 axis reorder the shortlist, or only annotate it?
+  #
+  # False, set 2026-11-14 on the paired control evidence (DECISIONS 50). No
+  # affinity component separates a candidate from the control shuffled from it,
+  # and two of the seven are significantly inverted, so the axis is shown and
+  # never ranked on: the 24 are the Tier 1 ranking's 24. Two reasons, and either
+  # alone is sufficient. The evidence is the first. The second is mechanical:
+  # every affinity component is Tier 2, so the axis has values only for the 50
+  # co-folded candidates per target, and an axis that enters `required` gives no
+  # desirability to a row that lacks it. Letting affinity rank would therefore
+  # drop the other 450 rows per target to the bottom of the table unranked.
+  #
+  # Set it true only with a component that beats its own shuffled control, and
+  # expect to have to deal with the coverage problem separately.
+  tier2_reorders_shortlist: false
   cache_antigen_msa: true           # compute once per target, reuse across all candidates
 
 upstream:

@@ -179,6 +179,15 @@ CREATE TABLE IF NOT EXISTS cofolds (
     n_his_contacts           INTEGER,   -- design intent of the His-enriched libraries
     polar_fraction           REAL,
     sc                       REAL,      -- Lawrence-Colman shape complementarity
+    -- Fold confidence split by chain. `plddt` above is boltz's complex_plddt,
+    -- which averages a 125-residue nanobody in with an antigen several times
+    -- its size, and the split is what makes it interpretable: pooled over the
+    -- paired controls the whole-complex figure moves by 0.018 while the
+    -- nanobody chain moves by 5.1 pLDDT. Displayed, never ranked on, because
+    -- a co-fold exists for 290 candidates of 2500. DECISIONS 49 and 51.
+    nanobody_plddt           REAL,      -- mean CA pLDDT over the nanobody chain
+    antigen_plddt            REAL,      -- mean CA pLDDT over the antigen chains
+    interface_plddt          REAL,      -- boltz complex_iplddt for this sample
     -- 1 when candidate_id names a row in `controls` rather than `candidates`.
     -- Spec 8.2 wants the controls through the same code path as the
     -- candidates, so they share this table; every candidate-facing query

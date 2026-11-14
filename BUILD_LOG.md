@@ -1535,3 +1535,205 @@ through to the drawer.
 - 2026-11-14 14:03 interactions: PRLR profiled 340 samples across 68 candidates, median 12 interactions per sample
 - 2026-11-14 14:22 interactions: TL1A profiled 340 samples across 68 candidates, median 16 interactions per sample
 - 2026-11-14 14:43 interactions: TNFa profiled 340 samples across 68 candidates, median 16 interactions per sample
+- 2026-11-14 14:48 complementarity: EGFR Sc for 345 samples, median 0.524, range 0.057 to 0.637
+- 2026-11-14 14:52 complementarity: GLP1R Sc for 335 samples, median 0.534, range 0.388 to 0.667
+- 2026-11-14 14:55 complementarity: PRLR Sc for 340 samples, median 0.529, range 0.339 to 0.654
+- 2026-11-14 14:59 complementarity: TL1A Sc for 340 samples, median 0.489, range 0.228 to 0.615
+- 2026-11-14 15:04 complementarity: TNFa Sc for 340 samples, median 0.487, range 0.272 to 0.652
+- 2026-11-14 15:04 calibrate: EGFR, 59 candidates against 10 scrambled controls
+- 2026-11-14 15:04 calibrate:   paired against each control's own parent (10 pairs; this is the unconfounded comparison)
+- 2026-11-14 15:04 calibrate:     iptm                   parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:     pose_consensus         parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     sc                     parent beats its shuffle 7/10  p=0.34
+- 2026-11-14 15:04 calibrate:     prodigy_dg             parent beats its shuffle 1/10  p=1
+- 2026-11-14 15:04 calibrate:     cdr_interface_fraction parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     hbond_per_100a2        parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     bsa_total              parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:   surveyed, NOT in the axis and not weighted below:
+- 2026-11-14 15:04 calibrate:     polar_fraction         parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     interactions_per_100a2 parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     n_saltbridge           parent beats its shuffle 8/9  p=0.039
+- 2026-11-14 15:04 calibrate:     n_his_contacts         parent beats its shuffle 6/9  p=0.51
+- 2026-11-14 15:04 calibrate:     complex_iptm           parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:     plddt                  parent beats its shuffle 8/10  p=0.11
+- 2026-11-14 15:04 calibrate:     iptm_spread            parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     edge_fraction          parent beats its shuffle 0/1  p=1
+- 2026-11-14 15:04 calibrate:   iptm                     AUC 0.251  does not separate
+- 2026-11-14 15:04 calibrate:   pose_consensus           AUC 0.386  does not separate
+- 2026-11-14 15:04 calibrate:   sc                       AUC 0.490  does not separate
+- 2026-11-14 15:04 calibrate:   prodigy_dg               AUC 0.108  does not separate
+- 2026-11-14 15:04 calibrate:   cdr_interface_fraction   AUC 0.620  separates
+- 2026-11-14 15:04 calibrate:   hbond_per_100a2          AUC 0.539  does not separate
+- 2026-11-14 15:04 calibrate:   bsa_total                AUC 0.151  does not separate
+- 2026-11-14 15:04 calibrate:   polar_fraction           AUC 0.736  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   interactions_per_100a2   AUC 0.474  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_saltbridge             AUC 0.671  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_his_contacts           AUC 0.512  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   complex_iptm             AUC 0.251  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   plddt                    AUC 0.693  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   iptm_spread              AUC 0.432  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   edge_fraction            AUC 0.373  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate: GLP1R, 57 candidates against 10 scrambled controls
+- 2026-11-14 15:04 calibrate:   paired against each control's own parent (10 pairs; this is the unconfounded comparison)
+- 2026-11-14 15:04 calibrate:     iptm                   parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     pose_consensus         parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     sc                     parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     prodigy_dg             parent beats its shuffle 3/10  p=1
+- 2026-11-14 15:04 calibrate:     cdr_interface_fraction parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     hbond_per_100a2        parent beats its shuffle 7/10  p=0.34
+- 2026-11-14 15:04 calibrate:     bsa_total              parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:   surveyed, NOT in the axis and not weighted below:
+- 2026-11-14 15:04 calibrate:     polar_fraction         parent beats its shuffle 8/10  p=0.11
+- 2026-11-14 15:04 calibrate:     interactions_per_100a2 parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:     n_saltbridge           parent beats its shuffle 4/10  p=1
+- 2026-11-14 15:04 calibrate:     complex_iptm           parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     plddt                  parent beats its shuffle 7/10  p=0.34
+- 2026-11-14 15:04 calibrate:     iptm_spread            parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     edge_fraction          parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:   iptm                     AUC 0.293  does not separate
+- 2026-11-14 15:04 calibrate:   pose_consensus           AUC 0.431  does not separate
+- 2026-11-14 15:04 calibrate:   sc                       AUC 0.351  does not separate
+- 2026-11-14 15:04 calibrate:   prodigy_dg               AUC 0.461  does not separate
+- 2026-11-14 15:04 calibrate:   cdr_interface_fraction   AUC 0.624  separates
+- 2026-11-14 15:04 calibrate:   hbond_per_100a2          AUC 0.707  separates
+- 2026-11-14 15:04 calibrate:   bsa_total                AUC 0.265  does not separate
+- 2026-11-14 15:04 calibrate:   polar_fraction           AUC 0.834  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   interactions_per_100a2   AUC 0.293  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_saltbridge             AUC 0.581  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_his_contacts           AUC 0.518  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   complex_iptm             AUC 0.293  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   plddt                    AUC 0.832  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   iptm_spread              AUC 0.361  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   edge_fraction            AUC 0.381  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate: PRLR, 58 candidates against 10 scrambled controls
+- 2026-11-14 15:04 calibrate:   paired against each control's own parent (10 pairs; this is the unconfounded comparison)
+- 2026-11-14 15:04 calibrate:     iptm                   parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     pose_consensus         parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     sc                     parent beats its shuffle 7/10  p=0.34
+- 2026-11-14 15:04 calibrate:     prodigy_dg             parent beats its shuffle 3/10  p=1
+- 2026-11-14 15:04 calibrate:     cdr_interface_fraction parent beats its shuffle 4/10  p=1
+- 2026-11-14 15:04 calibrate:     hbond_per_100a2        parent beats its shuffle 8/10  p=0.11
+- 2026-11-14 15:04 calibrate:     bsa_total              parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:   surveyed, NOT in the axis and not weighted below:
+- 2026-11-14 15:04 calibrate:     polar_fraction         parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     interactions_per_100a2 parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     n_saltbridge           parent beats its shuffle 4/10  p=1
+- 2026-11-14 15:04 calibrate:     n_his_contacts         parent beats its shuffle 1/1  p=1
+- 2026-11-14 15:04 calibrate:     complex_iptm           parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     plddt                  parent beats its shuffle 9/10  p=0.021
+- 2026-11-14 15:04 calibrate:     iptm_spread            parent beats its shuffle 8/10  p=0.11
+- 2026-11-14 15:04 calibrate:     edge_fraction          parent beats its shuffle 1/3  p=1
+- 2026-11-14 15:04 calibrate:   iptm                     AUC 0.414  does not separate
+- 2026-11-14 15:04 calibrate:   pose_consensus           AUC 0.483  does not separate
+- 2026-11-14 15:04 calibrate:   sc                       AUC 0.588  separates
+- 2026-11-14 15:04 calibrate:   prodigy_dg               AUC 0.214  does not separate
+- 2026-11-14 15:04 calibrate:   cdr_interface_fraction   AUC 0.466  does not separate
+- 2026-11-14 15:04 calibrate:   hbond_per_100a2          AUC 0.622  separates
+- 2026-11-14 15:04 calibrate:   bsa_total                AUC 0.147  does not separate
+- 2026-11-14 15:04 calibrate:   polar_fraction           AUC 0.694  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   interactions_per_100a2   AUC 0.414  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_saltbridge             AUC 0.236  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_his_contacts           AUC 0.447  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   complex_iptm             AUC 0.414  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   plddt                    AUC 0.843  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   iptm_spread              AUC 0.655  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   edge_fraction            AUC 0.511  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate: TL1A, 58 candidates against 10 scrambled controls
+- 2026-11-14 15:04 calibrate:   paired against each control's own parent (10 pairs; this is the unconfounded comparison)
+- 2026-11-14 15:04 calibrate:     iptm                   parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     pose_consensus         parent beats its shuffle 4/10  p=1
+- 2026-11-14 15:04 calibrate:     sc                     parent beats its shuffle 4/10  p=1
+- 2026-11-14 15:04 calibrate:     prodigy_dg             parent beats its shuffle 3/10  p=1
+- 2026-11-14 15:04 calibrate:     cdr_interface_fraction parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     hbond_per_100a2        parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     bsa_total              parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:   surveyed, NOT in the axis and not weighted below:
+- 2026-11-14 15:04 calibrate:     polar_fraction         parent beats its shuffle 7/10  p=0.34
+- 2026-11-14 15:04 calibrate:     interactions_per_100a2 parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     n_saltbridge           parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     n_his_contacts         parent beats its shuffle 2/3  p=1
+- 2026-11-14 15:04 calibrate:     complex_iptm           parent beats its shuffle 5/10  p=1
+- 2026-11-14 15:04 calibrate:     plddt                  parent beats its shuffle 9/10  p=0.021
+- 2026-11-14 15:04 calibrate:     iptm_spread            parent beats its shuffle 8/10  p=0.11
+- 2026-11-14 15:04 calibrate:     edge_fraction          parent beats its shuffle 1/2  p=1
+- 2026-11-14 15:04 calibrate:   iptm                     AUC 0.522  does not separate
+- 2026-11-14 15:04 calibrate:   pose_consensus           AUC 0.524  does not separate
+- 2026-11-14 15:04 calibrate:   sc                       AUC 0.452  does not separate
+- 2026-11-14 15:04 calibrate:   prodigy_dg               AUC 0.310  does not separate
+- 2026-11-14 15:04 calibrate:   cdr_interface_fraction   AUC 0.550  separates
+- 2026-11-14 15:04 calibrate:   hbond_per_100a2          AUC 0.643  separates
+- 2026-11-14 15:04 calibrate:   bsa_total                AUC 0.247  does not separate
+- 2026-11-14 15:04 calibrate:   polar_fraction           AUC 0.702  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   interactions_per_100a2   AUC 0.512  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_saltbridge             AUC 0.476  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_his_contacts           AUC 0.478  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   complex_iptm             AUC 0.522  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   plddt                    AUC 0.759  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   iptm_spread              AUC 0.696  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   edge_fraction            AUC 0.543  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate: TNFa, 58 candidates against 10 scrambled controls
+- 2026-11-14 15:04 calibrate:   paired against each control's own parent (10 pairs; this is the unconfounded comparison)
+- 2026-11-14 15:04 calibrate:     iptm                   parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     pose_consensus         parent beats its shuffle 8/10  p=0.11
+- 2026-11-14 15:04 calibrate:     sc                     parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:     prodigy_dg             parent beats its shuffle 3/10  p=1
+- 2026-11-14 15:04 calibrate:     cdr_interface_fraction parent beats its shuffle 4/10  p=1
+- 2026-11-14 15:04 calibrate:     hbond_per_100a2        parent beats its shuffle 7/10  p=0.34
+- 2026-11-14 15:04 calibrate:     bsa_total              parent beats its shuffle 2/10  p=1
+- 2026-11-14 15:04 calibrate:   surveyed, NOT in the axis and not weighted below:
+- 2026-11-14 15:04 calibrate:     polar_fraction         parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     interactions_per_100a2 parent beats its shuffle 7/10  p=0.34
+- 2026-11-14 15:04 calibrate:     n_saltbridge           parent beats its shuffle 5/9  p=1
+- 2026-11-14 15:04 calibrate:     n_his_contacts         parent beats its shuffle 4/10  p=1
+- 2026-11-14 15:04 calibrate:     complex_iptm           parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     plddt                  parent beats its shuffle 8/10  p=0.11
+- 2026-11-14 15:04 calibrate:     iptm_spread            parent beats its shuffle 6/10  p=0.75
+- 2026-11-14 15:04 calibrate:     edge_fraction          parent beats its shuffle 3/6  p=1
+- 2026-11-14 15:04 calibrate:   iptm                     AUC 0.534  does not separate
+- 2026-11-14 15:04 calibrate:   pose_consensus           AUC 0.447  does not separate
+- 2026-11-14 15:04 calibrate:   sc                       AUC 0.464  does not separate
+- 2026-11-14 15:04 calibrate:   prodigy_dg               AUC 0.171  does not separate
+- 2026-11-14 15:04 calibrate:   cdr_interface_fraction   AUC 0.534  does not separate
+- 2026-11-14 15:04 calibrate:   hbond_per_100a2          AUC 0.626  separates
+- 2026-11-14 15:04 calibrate:   bsa_total                AUC 0.110  does not separate
+- 2026-11-14 15:04 calibrate:   polar_fraction           AUC 0.738  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   interactions_per_100a2   AUC 0.528  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_saltbridge             AUC 0.463  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   n_his_contacts           AUC 0.331  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   complex_iptm             AUC 0.534  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   plddt                    AUC 0.807  separates  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   iptm_spread              AUC 0.526  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate:   edge_fraction            AUC 0.510  does not separate  [surveyed, not in the axis]
+- 2026-11-14 15:04 calibrate: pooled over 5 targets
+- 2026-11-14 15:04 calibrate: proposed affinity weights
+- 2026-11-14 15:04 calibrate:   iptm                      2.00 ->  0.00  AUC 0.403  (AUC 0.403 below 0.55, drop it)
+- 2026-11-14 15:04 calibrate:   pose_consensus            1.50 ->  0.00  AUC 0.454  (AUC 0.454 below 0.55, drop it)
+- 2026-11-14 15:04 calibrate:   sc                        1.50 ->  0.00  AUC 0.469  (AUC 0.469 below 0.55, drop it)
+- 2026-11-14 15:04 calibrate:   prodigy_dg                1.00 ->  0.00  AUC 0.253  (AUC 0.253 below 0.55, drop it)
+- 2026-11-14 15:04 calibrate:   cdr_interface_fraction    1.00 ->  0.92  AUC 0.559
+- 2026-11-14 15:04 calibrate:   hbond_per_100a2           0.75 ->  2.00  AUC 0.627
+- 2026-11-14 15:04 calibrate:   bsa_total                 0.50 ->  0.00  AUC 0.184  (AUC 0.184 below 0.55, drop it)
+- 2026-11-14 15:04 calibrate: NOT IN THE AXIS and separating better than every metric that is (best component AUC 0.627):
+- 2026-11-14 15:04 calibrate:   plddt                    AUC 0.787  consider adding it
+- 2026-11-14 15:04 calibrate:   polar_fraction           AUC 0.741  consider adding it
+- 2026-11-14 15:04 calibrate: check the paired counts above before acting on these. An unpaired AUC is confounded by Tier 1 selection, and a metric that only separates unpaired has not earned a place.
+- 2026-11-14 15:05 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-14 15:05 vacuous_tests: VACUOUS EGFR specificity: [paired 28/46, p = 0.18] does not separate real candidates from CDR-shuffled ones (AUC 0.600; 0.5 is no separation), and 89% of the axis weight could have moved. Paired against their own parents it is 28 of 46 (61%, p = 0.18), so the more powerful form of the test does not rescue it. The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-14 15:05 vacuous_tests: PASS EGFR thermo: [paired 42/50, p = 1.2e-06] separates a candidate from its own CDR-shuffled twin in 42 of 50 pairs (84%, sign test p = 1e-06). The unpaired AUC of 0.590 is below the 0.6 threshold because comparing one shuffle against all 500 candidates is swamped by the variance between different sequences, not because the axis carries nothing. Informative on the paired evidence.
+- 2026-11-14 15:05 vacuous_tests: PENDING EGFR expression: [paired 29/50, p = 0.32] this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.504 is near chance by construction rather than by failure. No synthetic control settles this either: the two heaviest components are defined from composition, so a deliberately insoluble sequence scores badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. The paired form agrees and adds nothing: 29 of 50 (58%, p = 0.32), which is what a control that cannot move two thirds of the weight should look like.
+- 2026-11-14 15:05 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-14 15:05 vacuous_tests: PENDING GLP1R specificity: [paired 30/47, p = 0.079] weak and unconfirmed: it clears the unpaired bar (AUC 0.616) but beats its own shuffled twin in only 30 of 47 pairs (64%, sign test p = 0.079), which a fair coin reproduces too often to call this separation. Treat its ordering as suggestive, not as evidence.
+- 2026-11-14 15:05 vacuous_tests: PASS GLP1R thermo: [paired 39/50, p = 9e-05] separates a candidate from its own CDR-shuffled twin in 39 of 50 pairs (78%, sign test p = 9e-05). The unpaired AUC of 0.607 is below the 0.6 threshold because comparing one shuffle against all 500 candidates is swamped by the variance between different sequences, not because the axis carries nothing. Informative on the paired evidence.
+- 2026-11-14 15:05 vacuous_tests: PENDING GLP1R expression: [paired 27/50, p = 0.67] this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.522 is near chance by construction rather than by failure. No synthetic control settles this either: the two heaviest components are defined from composition, so a deliberately insoluble sequence scores badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. The paired form agrees and adds nothing: 27 of 50 (54%, p = 0.67), which is what a control that cannot move two thirds of the weight should look like.
+- 2026-11-14 15:05 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-14 15:05 vacuous_tests: PASS PRLR specificity: [paired 32/48, p = 0.029] separates a candidate from its own CDR-shuffled twin in 32 of 48 pairs (67%, sign test p = 0.03). The unpaired AUC of 0.679 is below the 0.6 threshold because comparing one shuffle against all 500 candidates is swamped by the variance between different sequences, not because the axis carries nothing. Informative on the paired evidence.
+- 2026-11-14 15:05 vacuous_tests: PASS PRLR thermo: [paired 47/50, p = 3.7e-11] separates a candidate from its own CDR-shuffled twin in 47 of 50 pairs (94%, sign test p = 4e-11). The unpaired AUC of 0.609 is below the 0.6 threshold because comparing one shuffle against all 500 candidates is swamped by the variance between different sequences, not because the axis carries nothing. Informative on the paired evidence.
+- 2026-11-14 15:05 vacuous_tests: PENDING PRLR expression: [paired 32/50, p = 0.065] this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.521 is near chance by construction rather than by failure. No synthetic control settles this either: the two heaviest components are defined from composition, so a deliberately insoluble sequence scores badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. The paired form agrees and adds nothing: 32 of 50 (64%, p = 0.065), which is what a control that cannot move two thirds of the weight should look like.
+- 2026-11-14 15:05 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-14 15:05 vacuous_tests: PENDING TL1A specificity: [paired 30/50, p = 0.2] weak and unconfirmed: it clears the unpaired bar (AUC 0.614) but beats its own shuffled twin in only 30 of 50 pairs (60%, sign test p = 0.2), which a fair coin reproduces too often to call this separation. Treat its ordering as suggestive, not as evidence.
+- 2026-11-14 15:05 vacuous_tests: PASS TL1A thermo: [paired 40/50, p = 2.4e-05] separates a candidate from its own CDR-shuffled twin in 40 of 50 pairs (80%, sign test p = 2e-05). The unpaired AUC of 0.589 is below the 0.6 threshold because comparing one shuffle against all 500 candidates is swamped by the variance between different sequences, not because the axis carries nothing. Informative on the paired evidence.
+- 2026-11-14 15:05 vacuous_tests: PENDING TL1A expression: [paired 25/50, p = 1] this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.482 is near chance by construction rather than by failure. No synthetic control settles this either: the two heaviest components are defined from composition, so a deliberately insoluble sequence scores badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. The paired form agrees and adds nothing: 25 of 50 (50%, p = 1), which is what a control that cannot move two thirds of the weight should look like.
+- 2026-11-14 15:05 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-14 15:05 vacuous_tests: VACUOUS TNFa specificity: [paired 24/49, p = 1] does not separate real candidates from CDR-shuffled ones (AUC 0.535; 0.5 is no separation), and 89% of the axis weight could have moved. Paired against their own parents it is 24 of 49 (49%, p = 1), so the more powerful form of the test does not rescue it. The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-14 15:05 vacuous_tests: PASS TNFa thermo: [paired 42/50, p = 1.2e-06] separates a candidate from its own CDR-shuffled twin in 42 of 50 pairs (84%, sign test p = 1e-06). The unpaired AUC of 0.629 is below the 0.6 threshold because comparing one shuffle against all 500 candidates is swamped by the variance between different sequences, not because the axis carries nothing. Informative on the paired evidence.
+- 2026-11-14 15:05 vacuous_tests: PENDING TNFa expression: [paired 23/50, p = 0.67] this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.439 is near chance by construction rather than by failure. No synthetic control settles this either: the two heaviest components are defined from composition, so a deliberately insoluble sequence scores badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. The paired form agrees and adds nothing: 23 of 50 (46%, p = 0.67), which is what a control that cannot move two thirds of the weight should look like.

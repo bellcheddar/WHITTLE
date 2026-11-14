@@ -16,6 +16,8 @@ from __future__ import annotations
 
 import random
 
+import pytest
+
 from pipeline import solubility, tier0
 from pipeline.controls import scramble_cdrs
 from pipeline.score import AXIS_COMPONENTS
@@ -71,3 +73,29 @@ def test_an_axis_knows_how_much_of_it_the_control_can_reach() -> None:
     assert reach["expression"] < 0.5
     # Specificity is driven by patch metrics that depend on sequence order.
     assert reach["specificity"] > 0.8
+
+
+def test_sign_test_is_two_sided_in_both_directions():
+    """A metric that runs backwards must be reported, not scored p = 1.
+
+    Until 2026-11-14 this took only the upper tail, so `bsa_total` beating its
+    own parent on 40 of 50 pairs scored p = 1 and read as carrying no signal.
+    An inverted metric is worse than an uninformative one, because its weight
+    moves the ranking away from the candidates it should favour.
+    """
+    import sys
+    sys.path.insert(0, "tools")
+    from vacuous_tests import sign_test
+
+    assert sign_test(10, 50) < 1e-4, "an inverted count must be significant"
+    assert sign_test(41, 50) < 1e-4, "a winning count must be significant"
+    # Symmetric: the same distance either side of the middle, the same p.
+    assert sign_test(10, 50) == pytest.approx(sign_test(40, 50))
+    assert sign_test(0, 50) == pytest.approx(sign_test(50, 50))
+    # The middle is not evidence of anything, and a p-value is a probability.
+    assert sign_test(25, 50) == pytest.approx(1.0)
+    assert sign_test(5, 10) == pytest.approx(1.0)
+    for wins in range(0, 51):
+        p = sign_test(wins, 50)
+        assert 0.0 < p <= 1.0, f"{wins}/50 gave p = {p}"
+    assert sign_test(0, 0) is None

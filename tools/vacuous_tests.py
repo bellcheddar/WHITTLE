@@ -90,17 +90,28 @@ def mann_whitney_auc(a: list[float], b: list[float]) -> float | None:
 
 
 def sign_test(wins: int, n: int) -> float | None:
-    """Two-sided exact binomial tail against p = 0.5. No scipy on the droplet.
+    """Two-sided exact binomial test against p = 0.5. No scipy on the droplet.
 
     A p-value is the right statistic here where an AUC is not, because the
     paired question is a count of 50 and not a comparison of two large
     samples: 30 of 50 looks like separation and is what a fair coin does one
     time in five.
+
+    Both tails are taken, and the smaller one is doubled. Taking only the upper
+    tail, as this did until 2026-11-14, makes the test blind to the one result
+    it most needs to report: a metric that runs backwards. `bsa_total` has the
+    candidate beating the control shuffled from it on 10 of 50 pairs, which is
+    p = 2.4e-05 that the shuffle is better, and the upper tail alone scored it
+    p = 1 and read as no evidence of anything. A metric pointing the wrong way
+    is worse than a metric carrying no signal, because its weight actively
+    moves the ranking away from the candidates it should favour, so reporting
+    the two the same way was the dangerous direction to be wrong in.
     """
     if n == 0:
         return None
-    tail = sum(math.comb(n, k) for k in range(wins, n + 1)) / 2 ** n
-    return min(1.0, 2 * tail)
+    upper = sum(math.comb(n, k) for k in range(wins, n + 1)) / 2 ** n
+    lower = sum(math.comb(n, k) for k in range(0, wins + 1)) / 2 ** n
+    return min(1.0, 2 * min(upper, lower))
 
 
 def paired_against_parents(conn, target: str, control_column: str,
@@ -383,8 +394,14 @@ def main() -> int:
     if failed:
         print(f"VACUOUS AXES: {', '.join(failed)}")
         print("These are findings to report, not failures to hide. The app marks "
-              "a non-discriminating axis wherever it appears and keeps it out of "
-              "the Pareto front.")
+              "a non-discriminating axis wherever it appears.")
+        print("It does NOT currently keep one out of the ranking. A verdict is "
+              "per axis per target, and specificity is non-discriminating on "
+              "two targets and informative on a third, so excluding it means "
+              "ranking different targets on different axes. Affinity is "
+              "excluded because it failed on all five (run."
+              "tier2_reorders_shortlist in config/targets.yaml); the per-target "
+              "case is open and is recorded in PROGRESS.md.")
         return 0  # a finding, not an error exit
     if unresolved:
         print(f"UNRESOLVED: {', '.join(unresolved)} were tested and the control "

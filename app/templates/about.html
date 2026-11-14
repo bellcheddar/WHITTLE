@@ -359,14 +359,33 @@
       unpaired comparison was confounded: the co-folded candidates are the top
       ranks from Tier 1, and that rank is driven by surface hydrophobicity, so
       they differ from a random sample in ways that have nothing to do with
-      shuffling. And the weights on the binding axis are now set from how well
-      each metric separates a real candidate from its own twin, rather than by
-      argument.
+      shuffling. What that paired comparison settled was not the weights on the
+      binding axis but what the axis is allowed to do: no component of it
+      separated a real candidate from its own shuffled twin, and two of the seven
+      separated them backwards, so the axis is shown and is not ranked on.
     </p>
     <p>
-      The shortlist is 24 per target, and 50 per target are co-folded so that the
-      24 are <strong>selected</strong> on the Tier 2 evidence rather than merely
-      annotated with it.
+      The shortlist is 24 per target, and 50 per target were co-folded with the
+      intention that the 24 would be selected on the Tier 2 evidence rather than
+      merely annotated with it. The controls did not support that. Because no
+      binding metric beat its own shuffled twin, the 24 are the 24 the Tier 1
+      ranking gives, and the co-folds describe them rather than choose them:
+      every binding number is computed, shown and excluded from both the Pareto
+      front and the desirability ordering. This is a change from the plan, made
+      on 2026-11-14, and the alternative was to let the shortlist turn on metrics
+      the project's own negative control had just failed.
+    </p>
+    <p>
+      Two of the seven are worth naming, because they are reported in the table
+      and a reader should know what the control said about them. Buried surface
+      area and the predicted interface binding free energy both run the wrong
+      way: pooled over the fifty pairs, the shuffled sequence buries more surface
+      than the candidate it came from on 40 pairs of 50, and scores the better
+      predicted binding energy on 37 of 50. The most likely reading is that a
+      co-folding model will pack a shuffled loop into a large, comfortable
+      looking interface, so those two measure how willingly a peptide is buried
+      rather than whether a designed binder binds. They are shown with that
+      caveat and they carry no weight.
     </p>
   </div>
 

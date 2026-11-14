@@ -13,6 +13,11 @@ Three rules this module exists to enforce:
    patch area feeds non-specificity, aggregation and expression, so the axis
    correlation matrix is computed per target and published on the QC panel. Any
    pair above 0.8 is stated beside the ranking.
+4. **An axis earns the right to order the table.** Displaying an axis and
+   ranking on it are separate decisions, and `ordering_axes()` keeps them
+   separate. Affinity is computed, shown and excluded from both the Pareto
+   front and the desirability ordering, because the paired controls found no
+   component of it that beats the control shuffled from its own candidate.
 
 Each axis is a weighted mean of the z-scores of whichever of its component
 metrics are present, then converted to a percentile. An axis with no component
@@ -27,7 +32,7 @@ import sys
 from dataclasses import dataclass
 
 from pipeline.common import (AXES, STATIC_DATA, TARGETS, connect, log,
-                             manifest_write, write_json)
+                             manifest_write, targets_config, write_json)
 
 
 @dataclass(frozen=True)
@@ -107,11 +112,37 @@ AXIS_COMPONENTS: dict[str, list[Component]] = {
     ],
 }
 
-# What the Pareto front and the desirability function run over. Nativeness is a
-# fifth explorer axis in DESIGN.md but is already a component of expression, so
-# it is plotted and not ranked: including it twice is the double counting spec
-# 6.5 item 4 warns about.
+# Every axis that gets a percentile and a column. Nativeness is a fifth explorer
+# axis in DESIGN.md but is already a component of expression, so it is plotted
+# and not ranked: including it twice is the double counting spec 6.5 item 4
+# warns about.
 RANK_AXES = list(AXES)
+
+# The highest component tier in each axis. An axis of Tier 2 components has
+# values only for the candidates that were co-folded.
+AXIS_MAX_TIER = {axis: max(c.tier for c in comps)
+                 for axis, comps in AXIS_COMPONENTS.items()}
+
+
+def ordering_axes() -> list[str]:
+    """The axes that set the ordering, which is not the same as those shown.
+
+    An axis can be worth displaying and not worth ranking on. `targets.yaml`
+    sets `run.tier2_reorders_shortlist`, false since 2026-11-14 (DECISIONS 50):
+    the paired controls found no affinity component that beats the control
+    shuffled from its own candidate, so affinity is annotation rather than
+    evidence of rank, and the shortlist stays the Tier 1 ranking's.
+
+    Separating the two also fixes a mechanical problem. Affinity is Tier 2
+    throughout, so it has values for 50 candidates per target and not the other
+    450; an axis in `required` yields no desirability to a row missing it, so
+    ranking on affinity would push every un-co-folded row to the bottom of the
+    table. The flag therefore governs ordering alone: the percentile, the
+    column and the drawer are unaffected, and no displayed number disappears.
+    """
+    if targets_config()["run"].get("tier2_reorders_shortlist", False):
+        return list(RANK_AXES)
+    return [a for a in RANK_AXES if AXIS_MAX_TIER.get(a, 0) < 2]
 
 
 # ----------------------------------------------------------------------- statistics
@@ -435,6 +466,12 @@ def score_external(conn, target: str, external: list[dict]) -> dict[str, dict]:
 def main() -> int:
     conn = connect()
     weights = {axis: 1.0 for axis in RANK_AXES}  # the UI re-weights client side
+    ordering = ordering_axes()
+    annotate_only = [a for a in RANK_AXES if a not in ordering]
+    if annotate_only:
+        log(f"score: {annotate_only} is computed, displayed and NOT ranked on; "
+            f"the ordering is {ordering}. See run.tier2_reorders_shortlist in "
+            f"config/targets.yaml and DECISIONS 50.")
     axis_tiers: dict[str, dict] = {}
     correlations: dict[str, dict] = {}
     conn.execute("DELETE FROM scores")
@@ -469,11 +506,14 @@ def main() -> int:
 
         points = [{axis: pct[axis][i] for axis in RANK_AXES}
                   for i in range(len(records))]
-        ranks = pareto_fronts(points, RANK_AXES)
+        # Both of these take `ordering`, not every axis that has a percentile:
+        # an annotate-only axis must not dominate a candidate out of the front
+        # any more than it may move it down the desirability ordering.
+        ranks = pareto_fronts(points, ordering)
         # Only the axes this run actually computed are required: an axis that
         # is pending for everyone (affinity, before Tier 2) must not disqualify
         # the whole table.
-        required = [a for a in RANK_AXES
+        required = [a for a in ordering
                     if axis_tiers.get(a, {}).get("available")]
         desir = [desirability(p, weights, required) for p in points]
         unranked = sum(1 for d in desir if d is None)
@@ -538,7 +578,9 @@ def main() -> int:
     conn.commit()
     write_json(STATIC_DATA / "axes.json",
                {"axes": axis_tiers, "correlations": correlations,
-                "rank_axes": RANK_AXES})
+                "rank_axes": RANK_AXES,
+                "ordering_axes": ordering,
+                "annotate_only_axes": annotate_only})
     conn.close()
     return 0
 

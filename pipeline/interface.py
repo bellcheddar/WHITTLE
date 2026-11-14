@@ -62,6 +62,39 @@ def read_complex(path: Path) -> dict[str, list[tuple]]:
     return dict(chains)
 
 
+def chain_plddt(path: Path, antigen_chains: set[str] | list[str]
+                ) -> tuple[float | None, float | None]:
+    """Mean CA pLDDT for the nanobody chain and for the antigen chains.
+
+    boltz stores pLDDT in the B-factor column and writes no per-chain summary,
+    so the split is read off the coordinates. It is worth reading because
+    `complex_plddt` is an average over the whole complex and the antigen is
+    several times the nanobody's size, which dilutes anything that happens to
+    the nanobody by roughly the ratio of their lengths. Pooled over the paired
+    controls the whole-complex figure separates a candidate from the control
+    shuffled from it by 0.018 and the nanobody chain alone by 5.1 pLDDT, and
+    the antigen chain, which is the same sequence from the same MSA inside a
+    pair, sits at chance. See `tools/plddt_locus.py` and DECISIONS 49.
+
+    CA atoms only: every residue has exactly one, so the mean is per residue
+    rather than weighted by how many atoms a side chain happens to have.
+    """
+    antigen = set(antigen_chains)
+    nanobody: list[float] = []
+    antigen_values: list[float] = []
+    for line in path.read_text().splitlines():
+        if not line.startswith("ATOM") or line[12:16].strip() != "CA":
+            continue
+        try:
+            value = float(line[60:66])
+        except ValueError:
+            continue
+        chain = line[21].strip() or "A"
+        (antigen_values if chain in antigen else nanobody).append(value)
+    mean = lambda xs: sum(xs) / len(xs) if xs else None  # noqa: E731
+    return mean(nanobody), mean(antigen_values)
+
+
 CONFIDENCE_KEYS = ("confidence_score", "ptm", "iptm", "complex_plddt",
                    "complex_iplddt", "complex_pde", "complex_ipde",
                    "ligand_iptm", "protein_iptm")
@@ -470,6 +503,7 @@ def main() -> int:
                 continue
             for sample, model in enumerate(models):
                 conf = confidence_for(model)
+                nb_plddt, ag_plddt = chain_plddt(model, antigen_chains)
                 chains = read_complex(model)
                 iface = interface_residues(chains, antigen_chains)
                 areas = buried_area(model, antigen_chains)
@@ -477,6 +511,9 @@ def main() -> int:
                     "candidate_id": cid, "target": target, "seed": sample,
                     "iptm": conf.get("iptm"), "ptm": conf.get("ptm"),
                     "plddt": conf.get("complex_plddt"),
+                    "nanobody_plddt": nb_plddt,
+                    "antigen_plddt": ag_plddt,
+                    "interface_plddt": conf.get("complex_iplddt"),
                     "pae": conf.get("complex_pde"),
                     "complex_iptm": conf.get("protein_iptm") or conf.get("iptm"),
                     "prodigy_dg": prodigy_dg(model, antigen_chains),
@@ -548,7 +585,8 @@ def main() -> int:
                    "epitope_bin", "interface_residues_json",
                    "nanobody_residues_json", "cdr_interface_fraction",
                    "cdr_interface_detail_json", "pose_consensus",
-                   "iptm_spread", "is_control", "path", "status"]
+                   "iptm_spread", "nanobody_plddt", "antigen_plddt",
+                   "interface_plddt", "is_control", "path", "status"]
         conn.executemany(
             f"INSERT OR REPLACE INTO cofolds ({', '.join(columns)}) VALUES "
             f"({', '.join(':' + c for c in columns)})",

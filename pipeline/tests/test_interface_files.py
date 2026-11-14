@@ -16,6 +16,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from pipeline.interface import structures
 
 
@@ -53,3 +55,42 @@ def test_nested_run_layout_is_searched(tmp_path: Path) -> None:
     nested.mkdir(parents=True)
     _sample(nested, "T__T-0001_model_0.pdb")
     assert len(structures(tmp_path)) == 1
+
+
+def test_chain_plddt_splits_the_nanobody_from_the_antigen(tmp_path):
+    """The whole point of the split is that the two chains differ.
+
+    A whole-complex average would return one number near 60 for this input and
+    hide that the nanobody is the unconfident chain, which is the dilution
+    DECISIONS 49 turns on.
+    """
+    from pipeline.interface import chain_plddt
+    pdb = tmp_path / "m_model_0.pdb"
+    lines = []
+    for n in range(1, 4):           # antigen chain A, confident
+        lines.append(f"ATOM  {n:5d}  CA  ALA A{n:4d}    "
+                     f"{0.0:8.3f}{0.0:8.3f}{0.0:8.3f}  1.00 90.00           C")
+    for n in range(1, 3):           # nanobody chain N, not confident
+        lines.append(f"ATOM  {n:5d}  CA  ALA N{n:4d}    "
+                     f"{0.0:8.3f}{0.0:8.3f}{0.0:8.3f}  1.00 30.00           C")
+    # A side-chain atom that must not be counted: CA only keeps the mean per
+    # residue rather than weighting by side-chain size.
+    lines.append("ATOM    999  CB  ALA N   1       0.000   0.000   0.000"
+                 "  1.00  1.00           C")
+    pdb.write_text("\n".join(lines) + "\n")
+
+    nanobody, antigen = chain_plddt(pdb, ["A", "B", "C"])
+    assert antigen == pytest.approx(90.0)
+    assert nanobody == pytest.approx(30.0), (
+        "a CB atom was counted, so the mean is no longer per residue")
+
+
+def test_chain_plddt_returns_none_for_a_chain_that_is_absent(tmp_path):
+    """A nanobody-only prediction has no antigen, and must not divide by zero."""
+    from pipeline.interface import chain_plddt
+    path = tmp_path / "nanobody_only_model_0.pdb"
+    path.write_text("ATOM      1  CA  ALA N   1       0.000   0.000   0.000"
+                    "  1.00 77.00           C\n")
+    nanobody, antigen = chain_plddt(path, ["A", "B", "C"])
+    assert nanobody == pytest.approx(77.0)
+    assert antigen is None

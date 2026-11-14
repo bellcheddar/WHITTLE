@@ -196,3 +196,34 @@ def test_desirability_ignores_an_axis_nobody_has() -> None:
     # `required` is derived from the axes actually computed, so an all-null
     # axis is simply not in it.
     assert desirability({"a": 70.0, "b": 60.0}, weights, ["a", "b"]) is not None
+
+
+def test_affinity_is_displayed_and_not_ranked_on():
+    """Affinity has a percentile and no say in the ordering (DECISIONS 50).
+
+    The guard is against a change that quietly lets Tier 2 back into the
+    ranking, which would move the 24 that Marc's hard requirement fixes.
+    """
+    from pipeline.score import RANK_AXES, ordering_axes
+    ordering = ordering_axes()
+    assert "affinity" in RANK_AXES, "affinity must still be computed and shown"
+    assert "affinity" not in ordering, (
+        "affinity must not order the table while run.tier2_reorders_shortlist "
+        "is false: no component of it beats its own shuffled control")
+    for axis in ("specificity", "thermo", "expression"):
+        assert axis in ordering, f"{axis} is Tier 1 and must keep ordering"
+
+
+def test_an_annotate_only_axis_cannot_remove_a_candidate_from_the_front():
+    """A row dominated on affinity alone stays on the Pareto front."""
+    from pipeline.score import ordering_axes, pareto_fronts
+    ordering = ordering_axes()
+    # Identical on every ordering axis, far apart on affinity.
+    points = [{"affinity": 99.0, "specificity": 50.0, "thermo": 50.0,
+               "expression": 50.0},
+              {"affinity": 1.0, "specificity": 50.0, "thermo": 50.0,
+               "expression": 50.0}]
+    ranks = pareto_fronts(points, ordering)
+    assert ranks == [1, 1], (
+        "affinity is annotation, so it must not dominate a candidate off the "
+        f"front; got {ranks}")
