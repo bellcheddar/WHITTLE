@@ -148,6 +148,9 @@ def interface_residues(chains: dict[str, list[tuple]], antigen_chains: list[str]
     return {
         "per_chain": {c: sorted(r) for c, r in contacts.items() if r},
         "n_antigen_residues": sum(len(r) for r in contacts.values()),
+        # The paratope. Needed to ask whether the CDRs are doing the binding,
+        # which the antigen side of the interface cannot answer on its own.
+        "nanobody_residues": sorted(nano_contacts),
         "n_nanobody_residues": len(nano_contacts),
         "n_subunits_contacted": len(touched),
         "chains_contacted": touched,
@@ -162,6 +165,59 @@ def interface_residues(chains: dict[str, list[tuple]], antigen_chains: list[str]
         # chain B is the same epitope.
         "epitope_key": sorted({r for residues in contacts.values()
                                for r in residues}),
+    }
+
+
+def cdr_spans(sequence: str, cdrs: dict[str, str]) -> dict[str, tuple[int, int]]:
+    """Residue ranges of each CDR in chain N, 1-based and inclusive.
+
+    Chain N is numbered 1..len(sequence) and carries the candidate sequence
+    exactly, checked across the run, so a substring search is enough. The CDRs
+    occur in order, so when a short CDR1 or CDR2 matches in more than one place
+    the search continues from the end of the previous one. One candidate in
+    2500 needs that tie-break.
+    """
+    spans: dict[str, tuple[int, int]] = {}
+    cursor = 0
+    for name in ("cdr1", "cdr2", "cdr3"):
+        motif = (cdrs.get(name) or "").strip()
+        if not motif:
+            continue
+        at = sequence.find(motif, cursor)
+        if at < 0:                      # out of order: fall back to anywhere
+            at = sequence.find(motif)
+        if at < 0:
+            continue
+        spans[name] = (at + 1, at + len(motif))
+        cursor = at + len(motif)
+    return spans
+
+
+def paratope_composition(nanobody_residues: list[int],
+                         spans: dict[str, tuple[int, int]]) -> dict:
+    """How much of the paratope is CDR rather than framework.
+
+    A nanobody modelled binding through its framework is either a modelling
+    artefact or a contact that would not be specific, because the framework is
+    the conserved part. Scale-free by construction: a fraction, not a count, so
+    it does not simply restate interface size the way the existing affinity
+    components do.
+    """
+    if not nanobody_residues or not spans:
+        return {}
+    detail = {name: 0 for name in spans}
+    detail["framework"] = 0
+    for resnum in nanobody_residues:
+        for name, (lo, hi) in spans.items():
+            if lo <= resnum <= hi:
+                detail[name] += 1
+                break
+        else:
+            detail["framework"] += 1
+    in_cdr = sum(v for k, v in detail.items() if k != "framework")
+    return {
+        "cdr_interface_fraction": round(in_cdr / len(nanobody_residues), 3),
+        "cdr_interface_detail": detail,
     }
 
 
@@ -239,6 +295,35 @@ def prodigy_dg(path: Path, antigen_chains: list[str]) -> float | None:
 
 # ------------------------------------------------------------ epitope binning
 
+def pose_consensus(samples: list[dict]) -> dict:
+    """Do the independent diffusion samples agree about where this binds?
+
+    Mean pairwise Jaccard over the epitope of each seed. This is the one
+    interface measure that costs nothing and is genuinely orthogonal to
+    interface size: a candidate can bury a lot of surface in a different place
+    every time, and that is a pose the ranking should not trust. A single
+    good-looking sample out of five is a lucky draw, not evidence.
+
+    Returned with the ipTM spread, which says the same thing in the model's
+    own confidence terms.
+    """
+    keys = [set(s.get("epitope_key") or ()) for s in samples]
+    keys = [k for k in keys if k]
+    out: dict[str, float | None] = {"pose_consensus": None, "iptm_spread": None}
+    if len(keys) >= 2:
+        scores = []
+        for i in range(len(keys)):
+            for j in range(i + 1, len(keys)):
+                union = keys[i] | keys[j]
+                scores.append(len(keys[i] & keys[j]) / len(union) if union else 0.0)
+        if scores:
+            out["pose_consensus"] = round(sum(scores) / len(scores), 3)
+    iptms = [s["iptm"] for s in samples if s.get("iptm") is not None]
+    if len(iptms) >= 2:
+        out["iptm_spread"] = round(max(iptms) - min(iptms), 4)
+    return out
+
+
 def publish_complex(candidate_id: str, target: str, model: Path) -> str | None:
     """Copy the best co-folded complex where the drawer can load it.
 
@@ -313,6 +398,11 @@ def main() -> int:
     for target in targets:
         stoich = int(cfg[target]["stoichiometry"])
         antigen_chains = ["A", "B", "C"][:stoich]
+        # CDR spans come from the candidate's own sequence: chain N is numbered
+        # 1..len(sequence) and carries that sequence exactly.
+        seqs = {r["id"]: dict(r) for r in conn.execute(
+            "SELECT id, sequence, cdr1, cdr2, cdr3 FROM candidates WHERE target = ?",
+            (target,))}
         records: list[dict] = []
         for cid, run in done_runs.items():
             if run.get("target") != target:
@@ -345,10 +435,21 @@ def main() -> int:
                     "edge_artefact": iface.get("edge_artefact"),
                     "interface_residues_json": json.dumps(
                         iface.get("per_chain") or {}),
+                    "nanobody_residues_json": json.dumps(
+                        iface.get("nanobody_residues") or []),
                     "epitope_key": iface.get("epitope_key") or [],
                     "path": str(model),
                     "status": "ok",
                 }
+                meta = seqs.get(cid)
+                if meta:
+                    spans = cdr_spans(meta["sequence"], meta)
+                    comp = paratope_composition(
+                        iface.get("nanobody_residues") or [], spans)
+                    record["cdr_interface_fraction"] = comp.get(
+                        "cdr_interface_fraction")
+                    record["cdr_interface_detail_json"] = json.dumps(
+                        comp.get("cdr_interface_detail") or {})
                 records.append(record)
         if not records:
             log(f"interface: no co-folds for {target} yet")
@@ -361,8 +462,15 @@ def main() -> int:
             if current is None or (rec.get("iptm") or 0) > (current.get("iptm") or 0):
                 best[rec["candidate_id"]] = rec
         bins = bin_epitopes(list(best.values()))
+        by_candidate: dict[str, list[dict]] = defaultdict(list)
+        for rec in records:
+            by_candidate[rec["candidate_id"]].append(rec)
+        consensus = {cid: pose_consensus(samples)
+                     for cid, samples in by_candidate.items()}
         for rec in records:
             rec["epitope_bin"] = bins.get(rec["candidate_id"])
+            # Per candidate, repeated on each of its rows, like epitope_bin.
+            rec.update(consensus.get(rec["candidate_id"]) or {})
 
         published = 0
         for cid, rec in best.items():
@@ -376,7 +484,10 @@ def main() -> int:
                    "pae", "complex_iptm", "prodigy_dg", "bsa_total",
                    "bsa_per_subunit_json", "n_subunits_contacted",
                    "edge_fraction", "edge_artefact",
-                   "epitope_bin", "interface_residues_json", "path", "status"]
+                   "epitope_bin", "interface_residues_json",
+                   "nanobody_residues_json", "cdr_interface_fraction",
+                   "cdr_interface_detail_json", "pose_consensus",
+                   "iptm_spread", "path", "status"]
         conn.executemany(
             f"INSERT OR REPLACE INTO cofolds ({', '.join(columns)}) VALUES "
             f"({', '.join(':' + c for c in columns)})",

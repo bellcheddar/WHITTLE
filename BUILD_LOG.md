@@ -811,3 +811,55 @@ attribute alone never hid either placeholder because `display` outranks it.
 
 TNP over all 367 controls (none had it; the earlier pass lost it to a PATH
 fault), then the Tier 2 queue of 120 complexes under its supervisor.
+- 2026-11-13 19:57 controls_run: TNP finished for 320 controls in 5.5 minutes
+- 2026-11-13 19:59 cofold: 1/120 (1 ok, 0 failed), 6.8 min for GLP1R-0049, about 13.4 hours left
+- 2026-11-13 20:00 controls_run: sequence metrics computed for 367 controls
+- 2026-11-13 20:00 controls_run: 59 EGFR controls placed against the EGFR candidate distribution
+- 2026-11-13 20:00 controls_run: 56 GLP1R controls placed against the GLP1R candidate distribution
+- 2026-11-13 20:00 controls_run: 57 PRLR controls placed against the PRLR candidate distribution
+- 2026-11-13 20:00 controls_run: 52 TL1A controls placed against the TL1A candidate distribution
+- 2026-11-13 20:00 controls_run: 66 TNFa controls placed against the TNFa candidate distribution
+- 2026-11-13 20:00 controls_run: 290 control rows carry axis percentiles
+- 2026-11-13 20:00 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 20:00 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-13 20:00 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-13 20:00 controls: 367 control rows written {'scrambled': 250, 'known': 94, 'multi_target': 23}; 290 carry predictions from an earlier blind run
+- 2026-11-13 20:00 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-13 20:00 controls: PENDING control_4_trimer_TNFa: no co-folds yet
+- 2026-11-13 20:00 controls: PENDING control_4_trimer_TL1A: no co-folds yet
+- 2026-11-13 20:00 controls: PENDING control_5_scrambled_EGFR: pending the affinity axis
+- 2026-11-13 20:00 controls: PENDING control_5_scrambled_GLP1R: pending the affinity axis
+- 2026-11-13 20:00 controls: PENDING control_5_scrambled_PRLR: pending the affinity axis
+- 2026-11-13 20:00 controls: PENDING control_5_scrambled_TL1A: pending the affinity axis
+- 2026-11-13 20:00 controls: PENDING control_5_scrambled_TNFa: pending the affinity axis
+- 2026-11-13 20:00 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-13 20:00 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 20:00 vacuous_tests: PASS EGFR specificity: informative
+- 2026-11-13 20:00 vacuous_tests: PASS EGFR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 20:00 vacuous_tests: VACUOUS EGFR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.504; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:00 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 20:00 vacuous_tests: PASS GLP1R specificity: informative
+- 2026-11-13 20:00 vacuous_tests: PASS GLP1R thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 20:00 vacuous_tests: VACUOUS GLP1R expression: does not separate real candidates from CDR-shuffled ones (AUC 0.522; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:00 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 20:00 vacuous_tests: PASS PRLR specificity: informative
+- 2026-11-13 20:00 vacuous_tests: PASS PRLR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 20:00 vacuous_tests: VACUOUS PRLR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.521; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:00 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 20:00 vacuous_tests: PASS TL1A specificity: informative
+- 2026-11-13 20:00 vacuous_tests: PASS TL1A thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 20:00 vacuous_tests: VACUOUS TL1A expression: does not separate real candidates from CDR-shuffled ones (AUC 0.482; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:00 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 20:00 vacuous_tests: PASS TNFa specificity: informative
+- 2026-11-13 20:00 vacuous_tests: PASS TNFa thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 20:00 vacuous_tests: VACUOUS TNFa expression: does not separate real candidates from CDR-shuffled ones (AUC 0.439; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:00 build-db: EGFR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 20:00 build-db: GLP1R bundle, 500 rows, 38 columns with data, 2 pending
+- 2026-11-13 20:00 build-db: PRLR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 20:00 build-db: TL1A bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 20:00 build-db: TNFa bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 20:00 build-db: 15 bundles, 2528 kB total
+- 2026-11-13 20:00 findings: FINDINGS.md written, 88 lines
+- 2026-11-13 20:04 cofold: 2/120 (2 ok, 0 failed), 4.5 min for GLP1R-0007, about 11.1 hours left
+- 2026-11-13 20:07 interface: GLP1R published 3 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-13 20:07 interface: GLP1R 15 samples across 3 candidates, 3 epitope bins

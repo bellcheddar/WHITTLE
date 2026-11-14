@@ -160,6 +160,15 @@ CREATE TABLE IF NOT EXISTS cofolds (
     edge_artefact            INTEGER,   -- the pose needs the truncation to exist
     epitope_bin              INTEGER,
     interface_residues_json  TEXT,
+    -- Nanobody side of the interface. Stored because the antigen side alone
+    -- cannot say whether the CDRs are doing the binding.
+    nanobody_residues_json   TEXT,
+    cdr_interface_fraction   REAL,      -- share of the paratope that is CDR, not framework
+    cdr_interface_detail_json TEXT,     -- contacts per CDR and framework
+    -- Per candidate, repeated on each of its rows like epitope_bin: do the
+    -- independent diffusion samples agree about where this binds?
+    pose_consensus           REAL,      -- mean pairwise Jaccard of epitopes across seeds
+    iptm_spread              REAL,      -- max minus min ipTM across seeds
     path                     TEXT,
     status                   TEXT,
     PRIMARY KEY (candidate_id, target, seed)

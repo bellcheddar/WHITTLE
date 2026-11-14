@@ -76,7 +76,7 @@ No axis pair correlates above 0.8 in any target for this run.
 
 Every axis is checked for the ways a column can look like a measurement while carrying no information: no variance, a degenerate distribution, being a restatement of another column, having no low tail, or not separating real sequences from shuffled ones.
 
-Axes flagged as vacuous: none.
+Axes flagged as vacuous: expression.
 
 ## The thermostability model
 
