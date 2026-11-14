@@ -119,7 +119,16 @@
     </div>
 
     <div class="panel" id="panel-structure" role="tabpanel">
-      <div id="viewer">
+      <div class="vmode" id="vmode" role="group" aria-label="What the viewer shows">
+        <button type="button" data-mode="model" aria-pressed="true">Nanobody</button>
+        <button type="button" data-mode="complex" aria-pressed="false" disabled>Complex</button>
+      </div>
+      <!-- The caption and the placeholder are siblings of #viewer, not
+           children. Mol* takes ownership of the element it mounts into and
+           replaces its children, which silently deleted both the moment the
+           viewer initialised. -->
+      <div class="viewerwrap">
+        <div id="viewer"></div>
         <p class="placeholder" id="viewerplaceholder">No model yet for this candidate. The structural tier has not run.</p>
         <p class="vcap"><span id="vcapleft"></span><span id="vcapright"></span></p>
       </div>

@@ -184,6 +184,12 @@ def api_candidate(cid: str):
         if (STRUCTURES / rec["target"] / f"{cid}.sup.pdb.gz").exists():
             rec["superposed_url"] = url_for("structure", target=rec["target"],
                                             name=f"{cid}.sup.pdb")
+    # The co-folded complex: the nanobody docked on the real antigen construct,
+    # which is the thing Tier 2 exists to show.
+    rec["complex_url"] = None
+    if (STRUCTURES / rec["target"] / f"{cid}.complex.pdb.gz").exists():
+        rec["complex_url"] = url_for("structure", target=rec["target"],
+                                     name=f"{cid}.complex.pdb")
     # The neighbour chain on its own, shared by every candidate that matches
     # it, so the viewer loads two local files and never calls out to RCSB.
     rec["reference_url"] = None

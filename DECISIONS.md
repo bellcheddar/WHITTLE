@@ -30,3 +30,33 @@ Decisions 1-8 of Appendix B are pre-taken and are not relitigated here.
 | 31 | A candidate with no value on one of the axes this run computed gets no desirability score and sorts below every fully scored row. | Score each candidate on whichever axes it happens to have | A geometric mean over fewer terms is systematically higher, so rows missing an axis were being advantaged by the thing meant to penalise weakness. Two candidates held rank 1 for their target on two axes each while carrying no specificity value at all, and one of them was not even on the Pareto front. Caught by reading the top of the table before starting a three and a half day co-folding queue that takes its input from it. Axes pending for the whole run, affinity before Tier 2, are not required, or the table would empty. | Drop the `required` argument in `pipeline/score.py:desirability` |
 | 32 | Tier 2 takes 24 designs per target, not 20. | The 20 in `config/targets.yaml` and spec 6.4 | Marc set 24 as a hard requirement. 120 complexes rather than 100. | Set `tier2_top_n_per_target` back to 20 |
 | 33 | Tier 2 runs at full quality: recycling 3, five diffusion samples, 200 sampling steps. The documented EGFR domain-III cut is held in reserve rather than taken. | Reduce recycling, samples or sampling steps to shorten the queue | The 3.65-day estimate came from a single smoke measurement that included a one-time model-weight download of about a gigabyte. Measured warm, a 238 aa complex takes 1.13 minutes rather than 9.3, which puts 120 complexes between half a day and 1.35 days depending on how the cost scales with length, so nothing needs cutting. The knobs were measured rather than guessed, and the result inverts the intuition: dropping recycling from 3 to 1 saves only 15 percent and collapses ipTM from 0.64 to 0.24, destroying the very axis Tier 2 exists to produce, while halving the sampling steps saves 32 percent for an ipTM change of -0.004. If the large targets turn out to scale cubically, sampling steps is the lever to use and recycling is never touched. | Set `--sampling_steps 100` in `pipeline/cofold.py`, or add `tier2_subscope` to EGFR |
+
+## 2026-11-13 Co-folded complexes reach the drawer
+
+- Tier 2's co-folded complexes are published to `data/structures/<target>/<id>.complex.pdb.gz`
+  (highest-ipTM sample per candidate) rather than served from `data/runs/`.
+  `data/runs/` holds every diffusion sample, the MSA and boltz's processed
+  inputs and is deliberately not deployed; `data/structures/` already rides the
+  deploy rsync and the existing `.pdb` to `.gz` nginx rule. 32 kB gz for a
+  GLP1R complex, so roughly 10 MB for the full 120.
+- The complex is shown by a Nanobody/Complex toggle inside the existing
+  Structure sub-tab, not a fifth sub-tab: DESIGN 3.5 fixes the four sub-tabs
+  (Structure, Metrics, Sequence, Neighbours).
+- ipTM is written into the viewer caption beside the picture, with
+  "(pose unreliable)" below 0.5. A reader looking at a docked pose has to see
+  the confidence in the same glance; spec 6.3 and the limitations statement.
+- Chain naming is load-bearing for the reader: chain N is the nanobody, A (and
+  B, C for the trimers) the antigen. Stated in a REMARK in the published file
+  and in the viewer caption.
+
+### Two viewer bugs found while testing, both pre-existing
+
+- Mol* replaces the children of the element it mounts into, so the caption and
+  the placeholder, which were inside `#viewer`, were destroyed the moment the
+  viewer initialised. The caption had therefore never once displayed. Both are
+  now siblings of `#viewer` inside a `.viewerwrap`.
+- Hiding the placeholder with the `hidden` attribute alone does not work: both
+  placeholders set `display` (one in the stylesheet, one inline) and any
+  `display` beats the user agent's `[hidden] { display: none }`. The viewer now
+  sets `style.display` explicitly. This only became visible once the
+  placeholder survived long enough to be hidden.

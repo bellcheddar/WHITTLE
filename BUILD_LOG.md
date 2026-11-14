@@ -784,3 +784,10 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 19:29 Each co-folding knob measured on a real complex rather than reasoned about, and the result inverts the intuition. Recycling 3 to 1 looks like the big structural saving and is the one that must not be touched: 15 percent faster, and ipTM collapses from 0.64 to 0.24, destroying the axis Tier 2 exists to produce. Halving the sampling steps saves 32 percent for an ipTM change of -0.004. Subsampling the MSA to 256 saves 16 percent and costs 0.11 ipTM. Five samples to two saves 32 percent but throws away the sampling spread, which is itself a statement about the interface.
 - 2026-11-13 19:37 EGFR, the worst case at 745 aa, measured at 4.88 minutes against the 11 minutes a quadratic extrapolation predicted and the 35 minutes a cubic one did. The real exponent is well under 2, so the whole queue runs at full quality in hours rather than days and nothing needs cutting.
 - 2026-11-13 19:38 The closeout chain destroyed its own work: `pipeline.controls` is both the builder and the assertions step, and it deletes and rebuilds the table, so running it after `controls_run` threw away all 290 blind predictions and left 23. It now carries existing predictions across a rebuild.
+- 2026-11-13 19:41 cofold_bench: steps 100                4.23 min  ipTM 0.3589  pTM 0.6919  pLDDT 0.8811
+- 2026-11-13 19:41 cofold_bench: saving against baseline
+- 2026-11-13 19:41 cofold_bench:   steps 100               13.4% faster, ipTM change -0.0543
+- 2026-11-13 19:45 interface: GLP1R published 1 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-13 19:45 interface: GLP1R 5 samples across 1 candidates, 1 epitope bins
+- 2026-11-13 19:51 controls_run: 367 control sequences, run blind. No published measurement is read by anything below.
+- 2026-11-13 19:51 controls_run: TNP over 367 control sequences on 12 cores

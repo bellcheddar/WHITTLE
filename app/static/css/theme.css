@@ -431,6 +431,19 @@ main {
 .panel { padding: 14px; }
 .panel[hidden] { display: none; }
 
+.vmode { display: flex; gap: 0; margin-bottom: 8px; }
+.vmode button {
+  font: inherit; font-size: 11px; letter-spacing: 0.02em;
+  padding: 4px 11px; cursor: pointer;
+  background: var(--panel); color: var(--muted);
+  border: 1px solid var(--line);
+}
+.vmode button:first-child { border-radius: 3px 0 0 3px; }
+.vmode button:last-child { border-radius: 0 3px 3px 0; border-left: none; }
+.vmode button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.vmode button[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+.viewerwrap { position: relative; }
 #viewer {
   height: 236px;
   background: var(--viewer);
@@ -438,18 +451,22 @@ main {
   position: relative;
   overflow: hidden;
 }
-#viewer .vcap {
+.viewerwrap .vcap {
   position: absolute;
   left: 8px; right: 8px; bottom: 6px;
   display: flex; justify-content: space-between;
   font-size: 10px; color: #C3CBD9;
   pointer-events: none;
 }
-#viewer .placeholder {
+.viewerwrap .placeholder {
   position: absolute; inset: 0;
   display: grid; place-items: center;
   color: #8A93A5; font-size: 11px; text-align: center; padding: 0 20px;
 }
+/* `display: grid` above outranks the user agent's `[hidden] { display: none }`,
+   so the placeholder has to be hidden explicitly or it paints over the model
+   it was standing in for. */
+.viewerwrap .placeholder[hidden] { display: none; }
 
 .tiles {
   display: grid;

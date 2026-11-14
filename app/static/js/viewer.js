@@ -34,6 +34,28 @@
 
   const CSS_ID = 'molstar-css';
 
+  /* Mol* replaces the children of the element it mounts into, so anything the
+     page put inside the container is gone once the viewer starts. The
+     placeholder therefore lives beside the container, and this looks in both
+     places so an older layout still works. */
+  /* `hidden` alone is not enough: both placeholders set `display` (one in the
+     stylesheet, one inline) and any `display` beats the user agent's
+     `[hidden] { display: none }`. Without the explicit style the placeholder
+     paints on top of the model it was standing in for. */
+  function setPlaceholder(node, visible, text) {
+    if (!node) return;
+    node.hidden = !visible;
+    node.style.display = visible ? 'grid' : 'none';
+    if (text !== undefined) node.textContent = text;
+  }
+
+  function placeholderFor(container) {
+    return container.querySelector('.placeholder')
+      || (container.parentElement
+          && container.parentElement.querySelector(':scope > .placeholder'))
+      || null;
+  }
+
   async function ensureLibrary() {
     if (window.molstar) return window.molstar;
     if (libraryPromise) return libraryPromise;
@@ -125,9 +147,9 @@
      `entries`: [{url, format, binary} | {pdbId}]: the model first, then the
      experimental neighbour for the superposition panel. */
   async function show(container, entries) {
-    const placeholder = container.querySelector('.placeholder');
+    const placeholder = placeholderFor(container);
     if (!entries || !entries.length) {
-      if (placeholder) placeholder.hidden = false;
+      setPlaceholder(placeholder, true);
       return { ok: false, reason: 'nothing to show' };
     }
     try {
@@ -148,13 +170,11 @@
           // neighbour should still leave the model on screen.
         }
       }
-      if (placeholder) placeholder.hidden = loaded > 0;
+      setPlaceholder(placeholder, loaded === 0);
       return { ok: loaded > 0, loaded, contexts: created - disposed };
     } catch (err) {
-      if (placeholder) {
-        placeholder.hidden = false;
-        placeholder.textContent = 'The 3D viewer could not start in this browser.';
-      }
+      setPlaceholder(placeholder, true,
+        'The 3D viewer could not start in this browser.');
       return { ok: false, reason: String(err && err.message) };
     }
   }

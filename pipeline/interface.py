@@ -28,8 +28,8 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from pipeline.common import (RUNS, TARGETS, connect, log, manifest_read,
-                             manifest_write, targets_config)
+from pipeline.common import (RUNS, STRUCTURES, TARGETS, connect, log,
+                             manifest_read, manifest_write, targets_config)
 
 CONTACT_CUTOFF = 5.0          # heavy-atom distance, angstroms
 EPITOPE_JACCARD = 0.5         # two candidates share a bin above this overlap
@@ -239,6 +239,33 @@ def prodigy_dg(path: Path, antigen_chains: list[str]) -> float | None:
 
 # ------------------------------------------------------------ epitope binning
 
+def publish_complex(candidate_id: str, target: str, model: Path) -> str | None:
+    """Copy the best co-folded complex where the drawer can load it.
+
+    Tier 2's whole point is showing where a candidate binds, and the complexes
+    live under `data/runs/`, which is deliberately not deployed: it holds every
+    diffusion sample, the MSA and boltz's processed inputs, and is far too
+    large to ship. Without this step the site would carry ipTM, interface
+    energies and epitope bins with no picture to attach them to.
+
+    One file per candidate, the highest-ipTM sample, gzipped beside the Tier 1
+    model so the same nginx rule and the same deploy already handle it.
+    """
+    import gzip
+
+    out = STRUCTURES / target / f"{candidate_id}.complex.pdb.gz"
+    try:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        raw = model.read_bytes()
+        with gzip.open(out, "wb", compresslevel=9) as fh:
+            fh.write(b"REMARK  CO-FOLDED COMPLEX: CHAIN N IS THE NANOBODY, "
+                     b"A (AND B, C) THE ANTIGEN\n")
+            fh.write(raw)
+        return out.name
+    except Exception:
+        return None
+
+
 def bin_epitopes(records: list[dict]) -> dict[str, int]:
     """Single-linkage clustering of candidates by interface residue overlap."""
     keys = {r["candidate_id"]: set(r.get("epitope_key") or []) for r in records}
@@ -336,6 +363,14 @@ def main() -> int:
         bins = bin_epitopes(list(best.values()))
         for rec in records:
             rec["epitope_bin"] = bins.get(rec["candidate_id"])
+
+        published = 0
+        for cid, rec in best.items():
+            if rec.get("path") and publish_complex(cid, target, Path(rec["path"])):
+                published += 1
+        if published:
+            log(f"interface: {target} published {published} co-folded complexes "
+                f"for the drawer, the highest-ipTM sample of each")
 
         columns = ["candidate_id", "target", "seed", "iptm", "ptm", "plddt",
                    "pae", "complex_iptm", "prodigy_dg", "bsa_total",

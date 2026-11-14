@@ -424,6 +424,7 @@
     const detail = await W.loadJson(`/api/candidate/${encodeURIComponent(id)}.json`);
     if (!detail) { el('panel-metrics').innerHTML = '<p>Could not load this candidate.</p>'; return; }
     currentDetail = detail;
+    viewerMode = 'model';
 
     el('drawerchips').innerHTML = (detail.on_front
       ? '<span class="chip good">On front</span> ' : '')
@@ -438,6 +439,79 @@
     selectPanel(W.state.panel || 'structure');
   }
 
+  // Which of the two structures the Structure panel is showing. Reset per
+  // candidate, because a candidate with no co-fold has no Complex to stay on.
+  let viewerMode = 'model';
+
+  /* The Structure panel shows one of two things, and the toggle, the first
+     render and the deferred render for a panel that was hidden all have to
+     agree about which. One function owns the decision, so switching to
+     Complex, leaving the sub-tab and coming back cannot quietly reload the
+     monomer while the toggle still reads Complex. */
+  async function loadStructureView(d) {
+    const container = el('viewer');
+    if (!container || !window.WViewer) return;
+    const complex = viewerMode === 'complex' && d.complex_url;
+    const url = complex ? d.complex_url : d.structure_url;
+    if (!url) return;
+    delete container.dataset.pending;
+    await window.WViewer.show(container, [{ url, format: 'pdb', binary: false }]);
+    writeViewerCaption(d);
+  }
+
+  function bestCofold(d) {
+    const rows = (d.cofolds || []).filter((r) => r.iptm !== null
+                                                 && r.iptm !== undefined);
+    if (!rows.length) return null;
+    return rows.reduce((a, b) => (b.iptm > a.iptm ? b : a));
+  }
+
+  function writeViewerCaption(d) {
+    const left = el('vcapleft');
+    const right = el('vcapright');
+    if (!left || !right) return;
+    if (viewerMode === 'complex') {
+      const best = bestCofold(d);
+      // ipTM belongs on the picture, not three panels away: a complex at 0.3
+      // is a guess at the pose, and the reader has to see that while they are
+      // looking at it. Spec 6.3 and the limitations statement.
+      el('vcapleft').textContent = best && best.iptm !== null
+        ? `co-folded complex · ipTM ${best.iptm.toFixed(2)}`
+          + (best.iptm < 0.5 ? ' (pose unreliable)' : '')
+        : 'co-folded complex';
+      el('vcapright').textContent = 'chain N = nanobody';
+      return;
+    }
+    el('vcapleft').textContent = d.nearest_pdb
+      ? `model vs ${d.nearest_pdb}${d.nearest_tm ? ` · TM ${d.nearest_tm.toFixed(2)}` : ''}`
+      : '';
+    right.textContent = d.cdr1 ? 'CDR1 / 2 / 3' : '';
+  }
+
+  function showPlaceholder(text) {
+    const node = el('viewerplaceholder');
+    if (!node) return;
+    node.hidden = false;
+    node.style.display = 'grid';
+    node.textContent = text;
+  }
+
+  function syncViewerMode(d) {
+    const row = el('vmode');
+    if (!row) return;
+    const hasComplex = Boolean(d.complex_url);
+    if (!hasComplex) viewerMode = 'model';
+    row.hidden = !d.structure_url;
+    row.querySelectorAll('button').forEach((btn) => {
+      const mine = btn.dataset.mode;
+      btn.setAttribute('aria-pressed', String(mine === viewerMode));
+      btn.disabled = (mine === 'complex' && !hasComplex);
+      btn.title = (mine === 'complex' && !hasComplex)
+        ? 'This candidate was not taken through to co-folding.'
+        : '';
+    });
+  }
+
   async function renderStructurePanel(d) {
     el('axistiles').innerHTML = [
       tile('Affinity', d.axis_affinity === null ? null : Math.round(d.axis_affinity),
@@ -450,10 +524,8 @@
         'pct', d.axis_expression),
     ].join('');
 
-    el('vcapleft').textContent = d.nearest_pdb
-      ? `model vs ${d.nearest_pdb}${d.nearest_tm ? ` · TM ${d.nearest_tm.toFixed(2)}` : ''}`
-      : '';
-    el('vcapright').textContent = d.cdr1 ? 'CDR1 / 2 / 3' : '';
+    syncViewerMode(d);
+    writeViewerCaption(d);
 
     const notes = [];
     if (d.model_note) notes.push(d.model_note);
@@ -479,22 +551,13 @@
     // (DESIGN 3.6).
     const structureVisible = (W.state.panel || 'structure') === 'structure';
     if (d.structure_url && window.WViewer && structureVisible) {
-      await window.WViewer.show(container, [{ url: d.structure_url, format: 'pdb',
-        binary: false }]);
+      await loadStructureView(d);
     } else if (d.structure_url && !structureVisible) {
-      const placeholder = container.querySelector('.placeholder');
-      if (placeholder) {
-        placeholder.hidden = false;
-        placeholder.textContent = 'Select this tab to load the model.';
-      }
+      showPlaceholder('Select this tab to load the model.');
       container.dataset.pending = '1';
     } else {
-      const placeholder = container.querySelector('.placeholder');
-      if (placeholder) {
-        placeholder.hidden = false;
-        placeholder.textContent = 'No predicted model for this candidate yet. '
-          + 'The structural tier has not run.';
-      }
+      showPlaceholder('No predicted model for this candidate yet. '
+        + 'The structural tier has not run.');
     }
   }
 
@@ -652,8 +715,11 @@
     const parts = [];
     if (d.nearest_pdb) {
       const canSuperpose = Boolean(d.superposed_url);
-      parts.push(`<div id="nviewer" style="height:236px;background:var(--viewer);`
-        + `border-radius:4px;position:relative;overflow:hidden">`
+      // Placeholder outside #nviewer for the same reason as the Structure
+      // panel: Mol* owns its mount point's children.
+      parts.push(`<div class="viewerwrap">`
+        + `<div id="nviewer" style="height:236px;background:var(--viewer);`
+        + `border-radius:4px;position:relative;overflow:hidden"></div>`
         + `<p class="placeholder" style="position:absolute;inset:0;display:grid;`
         + `place-items:center;color:#8A93A5;font-size:11px;text-align:center;`
         + `padding:0 20px">${canSuperpose
@@ -733,9 +799,7 @@
         && currentDetail.structure_url && window.WViewer) {
       const container = el('viewer');
       if (container && container.dataset.pending) {
-        delete container.dataset.pending;
-        window.WViewer.show(container,
-          [{ url: currentDetail.structure_url, format: 'pdb' }]);
+        loadStructureView(currentDetail);
       }
     }
     if (name === 'neighbours' && currentDetail && currentDetail.nearest_pdb
@@ -886,6 +950,17 @@
       el('explorercard').classList.remove('collapsed');
     });
 
+    const vmode = el('vmode');
+    if (vmode) {
+      vmode.addEventListener('click', (event) => {
+        const btn = event.target.closest('button[data-mode]');
+        if (!btn || btn.disabled || !currentDetail) return;
+        if (btn.dataset.mode === viewerMode) return;
+        viewerMode = btn.dataset.mode;
+        syncViewerMode(currentDetail);
+        loadStructureView(currentDetail);
+      });
+    }
     el('drawerclose').addEventListener('click', closeDrawer);
     document.querySelectorAll('.subtabs button').forEach((btn) => {
       btn.addEventListener('click', () => selectPanel(btn.dataset.panel));
