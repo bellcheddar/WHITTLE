@@ -791,3 +791,23 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 19:45 interface: GLP1R 5 samples across 1 candidates, 1 epitope bins
 - 2026-11-13 19:51 controls_run: 367 control sequences, run blind. No published measurement is read by anything below.
 - 2026-11-13 19:51 controls_run: TNP over 367 control sequences on 12 cores
+- 2026-11-13 19:53 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 19:53 cofold: 120 complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
+
+## 2026-11-13 19:45 Co-folded complexes in the drawer
+
+Tier 2's complexes were being written to `data/runs/` and read only for
+metrics. Published the best sample per candidate to
+`data/structures/<target>/<id>.complex.pdb.gz`, exposed it as `complex_url`,
+and added a Nanobody/Complex toggle to the Structure sub-tab. Verified end to
+end on GLP1R-0478 (ipTM 0.76, chain A antigen 953 atoms, chain N nanobody 825
+atoms), locally and on https://whittle.mdeller.com.
+
+Two pre-existing viewer bugs fixed on the way: Mol* was destroying the caption
+and the placeholder by replacing its mount point's children, and the `hidden`
+attribute alone never hid either placeholder because `display` outranks it.
+
+## 2026-11-13 19:51 Control set and Tier 2 queue started
+
+TNP over all 367 controls (none had it; the earlier pass lost it to a PATH
+fault), then the Tier 2 queue of 120 complexes under its supervisor.

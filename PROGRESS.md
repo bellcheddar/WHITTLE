@@ -76,8 +76,25 @@ only on the co-folding results.
 
 ---
 
+## In flight (started 2026-11-13 19:53)
+
+- **Tier 2 co-folding queue**: 120 complexes, 24 per target, cheapest target
+  first (GLP1R, PRLR, TNFa, TL1A, EGFR), full quality (recycling 3, 5 samples,
+  200 steps). Running under `tools/supervise_tier2.sh`, which restarts the
+  queue on a non-zero exit, backs off, and stands down on an empty queue, on
+  `tools/tier2.stop`, or after 20 consecutive failures with no progress.
+  Progress: `data/tier2_supervisor.log` and `data/manifests/cofold.jsonl`.
+- **Control set**: TNP over all 367 controls, then the assertions, the vacuous
+  tests and the bundles. Until this lands, every vacuous test reports
+  "no scrambled control scored yet, so the strongest check has not run",
+  because none of the 250 scrambled controls carried a prediction.
+
 ## Open items carried forward
 
+- Mol* fetches the RCSB entry list from the viewer's own UI on every
+  initialisation, which fails and logs a console error on the live site. It is
+  cosmetic and predates the complex viewer, but it is an outbound call from
+  each visitor's browser that the read-only display layer does not need.
 - The affinity axis is null until Tier 2 completes. The banner, the caption and
   the drawer footnote all say so.
 - One candidate, TNFa-0500, has no structural model: its J region is corrupt and
