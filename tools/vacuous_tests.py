@@ -308,8 +308,14 @@ def pooled_separation(axis: str, results: list[dict]) -> dict:
     per_target = {r["target"]: f"{r.get('paired_wins')}/{r.get('paired_n')}"
                   for r in results if r.get("paired_p") is not None}
 
+    # How many pairs were available against how many were usable. A control
+    # TNP could not number carries no specificity axis and takes its whole
+    # pair out, at 11 to 13 per cent, and the sample size must be stated
+    # rather than left for a reader to infer from the counts.
+    offered = sum(r.get("n_scrambled") or 0 for r in results)
     out = {"pooled_wins": wins, "pooled_n": n, "per_target": per_target,
            "testable_weight_fraction": testable,
+           "pairs_offered": offered, "pairs_used": n,
            "auc_range": [min(aucs), max(aucs)] if aucs else None}
     if not n:
         out["verdict"] = "pending"
@@ -332,9 +338,18 @@ def pooled_separation(axis: str, results: list[dict]) -> dict:
     else:
         tail = (f", of which {', '.join(sorted(resolved))} "
                 f"{'is' if len(resolved) == 1 else 'are'} significant alone.")
+    shortfall = ""
+    if offered and n < offered:
+        shortfall = (f" {offered - n} of {offered} available pairs are unusable "
+                     f"because the control carries no value on this axis, "
+                     f"which for specificity is TNP declining to number the "
+                     f"shuffled sequence. The dropout acts on the pair and not "
+                     f"inside it, since a shuffle has its parent's exact "
+                     f"length, so it costs sample size rather than skewing the "
+                     f"comparison.")
     spread = (" Per target: "
               + ", ".join(f"{t} {c}" for t, c in sorted(per_target.items()))
-              + tail)
+              + tail + shortfall)
 
     if testable < 0.5:
         out["verdict"] = "untestable"

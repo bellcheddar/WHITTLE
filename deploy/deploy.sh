@@ -37,6 +37,13 @@ python3 tools/secret_scan.py --tree
 echo "==> JavaScript parses"
 python3 tools/js_check.py
 
+# Same class of fault one layer up: a template that compiles can still raise
+# at request time, and `{{ meta.axis_verdicts | tojson }}` did exactly that
+# whenever the key was absent. Renders every page against both states the app
+# serves, the pre-build stub and the built meta.json.
+echo "==> Templates render"
+python3 tools/template_check.py
+
 # Target from config/deploy.toml, which is gitignored and whose ssh_target was
 # resolved at write time from the sibling AlphaFraud/.env (spec 4.4).
 read_toml() {

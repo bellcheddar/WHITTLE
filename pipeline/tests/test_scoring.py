@@ -227,3 +227,43 @@ def test_an_annotate_only_axis_cannot_remove_a_candidate_from_the_front():
     assert ranks == [1, 1], (
         "affinity is annotation, so it must not dominate a candidate off the "
         f"front; got {ranks}")
+
+
+def test_app_meta_fallback_covers_every_template_key():
+    """The pre-build fallback must provide every `meta.X` a template reads.
+
+    `app.meta()` substitutes a stub when the built bundle is absent, so the
+    site renders a shell rather than a 500 before the first build-db run. That
+    only works while the stub has every key the templates touch, and it
+    drifted: `axis_verdicts` went into meta.json and into candidates.html
+    without going in here, and `{{ Undefined | tojson }}` raises, so the page
+    the fallback exists to protect would not have rendered at all.
+    """
+    import ast
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent.parent
+    source = (root / "app/app.py").read_text()
+    # The fallback dict literal inside meta(), parsed rather than imported, so
+    # the test needs neither Flask nor the built bundles.
+    tree = ast.parse(source)
+    provided: set[str] = set()
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.FunctionDef) and node.name == "meta"):
+            for inner in ast.walk(node):
+                if isinstance(inner, ast.Dict):
+                    for key in inner.keys:
+                        if isinstance(key, ast.Constant) and isinstance(key.value, str):
+                            provided.add(key.value)
+    assert "run_id" in provided, "did not find the fallback dict in app.meta()"
+
+    used: set[str] = set()
+    for template in (root / "app/templates").glob("*.html"):
+        used |= set(re.findall(r"meta\.([a-z_][a-z0-9_]*)", template.read_text()))
+
+    missing = sorted(used - provided)
+    assert not missing, (
+        f"templates read meta keys the pre-build fallback does not provide: "
+        f"{missing}. Add them to app.meta() or the shell 500s before the "
+        f"first build-db run.")

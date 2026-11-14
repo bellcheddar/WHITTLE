@@ -29,23 +29,40 @@
       <caption class="sr-only">The four axes in plain terms</caption>
       <thead><tr><th>Axis</th><th>The question it asks</th><th>Confidence</th></tr></thead>
       <tbody>
+        {#- The chip is read from the control set's own verdict, not typed
+            here. Typed ratings went stale twice in one day: once when the
+            paired test moved thermostability from moderate to strongest, and
+            once when pooling moved non-specific binding off "mixed". -#}
+        {% set CHIP = {
+             'informative': ('good', 'strongest'),
+             'weak': ('warn', 'weak but measurable'),
+             'vacuous': ('warn', 'no separation'),
+             'inverted': ('warn', 'runs backwards'),
+             'untestable': ('', 'untested'),
+             'pending': ('', 'not yet tested')} %}
+        {% macro chip(axis) -%}
+          {%- set v = (meta.axis_verdict_pooled or {}).get(axis, {}).get('verdict', 'pending') -%}
+          {%- set cls, word = CHIP.get(v, ('', v)) -%}
+          <span class="chip {{ cls }}">{{ word }}</span>
+        {%- endmacro %}
         <tr><td><strong>Binding</strong></td>
             <td>Does it look like it will stick to the thing it was designed for?</td>
-            <td><span class="chip warn">weak</span></td></tr>
+            <td>{{ chip('affinity') }}</td></tr>
         <tr><td><strong>Non-specific binding</strong></td>
             <td>Will it also stick to everything else it meets?</td>
-            <td><span class="chip warn">mixed</span></td></tr>
+            <td>{{ chip('specificity') }}</td></tr>
         <tr><td><strong>Thermostability</strong></td>
             <td>Will it survive being warmed, frozen, shipped and stored?</td>
-            <td><span class="chip good">strongest</span></td></tr>
+            <td>{{ chip('thermo') }}</td></tr>
         <tr><td><strong>Expression</strong></td>
             <td>Can it actually be made, and will it stay dissolved?</td>
-            <td><span class="chip">untested</span></td></tr>
+            <td>{{ chip('expression') }}</td></tr>
       </tbody>
     </table>
     <p>
-      Those confidence ratings are not opinions. Each axis is scored for 250
-      deliberately broken sequences as well as for the real candidates: the
+      Those confidence ratings are not opinions. Each axis is scored for
+      {{ meta.n_scrambled_controls or 250 }} deliberately broken sequences as
+      well as for the real candidates: the
       control takes a real candidate and shuffles the order of its three
       binding loops, which should make it worse at binding while leaving its
       length, its amino-acid makeup and its scaffold untouched. An axis that
@@ -53,14 +70,30 @@
       anything, whatever it looks like.
     </p>
     <ul>
+      {%- set pooled = meta.axis_verdict_pooled or {} %}
+      {%- set th = pooled.get('thermo', {}) %}
+      {%- set sp = pooled.get('specificity', {}) %}
       <li><strong>Thermostability earns the top rating.</strong> The real
-          candidate scores above its own shuffled twin in 210 of 250 pairs,
-          and every one of the five targets clears that test on its own.</li>
-      <li><strong>Non-specific binding is mixed, and worst where it matters
-          most.</strong> It separates real from shuffled on PRLR, is too weak
-          to call on GLP1R and TL1A, and does nothing at all on EGFR and
-          TNFa. The site marks the axis per target rather than once overall,
-          because the answer genuinely differs between them.</li>
+          candidate scores above its own shuffled twin in
+          {{ th.pooled_wins or 210 }} of {{ th.pooled_n or 250 }} pairs, and
+          every one of the five targets clears that test on its own.</li>
+      <li><strong>Non-specific binding separates real from shuffled, but
+          weakly.</strong> The real candidate wins
+          {{ sp.pooled_wins or 144 }} of {{ sp.pooled_n or 240 }} pairs, around
+          {{ ((sp.pooled_fraction or 0.6) * 100) | round | int }} per cent
+          against thermostability's
+          {{ ((th.pooled_fraction or 0.84) * 100) | round | int }}. One rating
+          covers all five targets, and an earlier version of this page gave a
+          different answer per target: it reported the axis as working on PRLR
+          and doing nothing on EGFR and TNFa. That was a mistake, and the
+          reason is worth stating because it is the commonest way a control
+          set misleads. An effect this size cannot be resolved by the number of
+          pairs each target had. At a 60 per cent win rate, fifty pairs reach
+          the conventional significance threshold about a fifth of the time, so
+          asking each target separately returned five answers that differed by
+          luck and not by biology, and the page published them as a finding
+          about the targets. The control set is being enlarged so that the
+          per-target question can be asked properly.</li>
       <li><strong>Expression cannot be tested this way at all, and is marked
           untested rather than good or bad.</strong> Two thirds of what it
           reads is amino-acid makeup, which the shuffle leaves identical, so
@@ -111,7 +144,8 @@
       reports what a negative control did to it.
     </p>
     <p>
-      That control is the test that matters. Fifty sequences per target have their
+      That control is the test that matters. {{ meta.scrambled_per_target or 50 }}
+      sequences per target have their
       binding loops shuffled, which keeps every amino acid and changes only the
       order, and they are then run through exactly the same code as the real
       candidates. If a metric cannot separate a real candidate from its own

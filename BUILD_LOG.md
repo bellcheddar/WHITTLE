@@ -1791,3 +1791,50 @@ through to the drawer.
 - 2026-11-14 16:18 controls: PENDING control_5_scrambled_TNFa: pending the affinity axis
 - 2026-11-14 16:18 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
 - 2026-11-14 16:18 tm_predict: 1117 sequences, ESM-2 esm2_t33_650M_UR50D
+- 2026-11-14 16:19 tm_model: 87 embeddings cached, 150 to compute
+- 2026-11-14 16:19 tm_model: ESM-2 embedded 8/150
+- 2026-11-14 16:20 tm_model: ESM-2 embedded 88/150
+- 2026-11-14 16:20 tm_predict: 250/1117
+- 2026-11-14 16:22 tm_model: 90 embeddings cached, 160 to compute
+- 2026-11-14 16:22 tm_model: ESM-2 embedded 8/160
+- 2026-11-14 16:23 tm_model: ESM-2 embedded 88/160
+- 2026-11-14 16:24 tm_predict: 500/1117
+- 2026-11-14 16:26 tm_model: 50 embeddings cached, 200 to compute
+- 2026-11-14 16:26 tm_model: ESM-2 embedded 8/200
+- 2026-11-14 16:26 tm_model: ESM-2 embedded 88/200
+- 2026-11-14 16:27 tm_model: ESM-2 embedded 168/200
+- 2026-11-14 16:27 tm_predict: 750/1117
+- 2026-11-14 16:29 tm_model: 50 embeddings cached, 200 to compute
+- 2026-11-14 16:29 tm_model: ESM-2 embedded 8/200
+- 2026-11-14 16:30 tm_model: ESM-2 embedded 88/200
+- 2026-11-14 16:31 tm_model: ESM-2 embedded 168/200
+- 2026-11-14 16:31 tm_predict: 1000/1117
+- 2026-11-14 16:32 tm_model: 77 embeddings cached, 40 to compute
+- 2026-11-14 16:32 tm_model: ESM-2 embedded 8/40
+- 2026-11-14 16:32 tm_predict: 1117/1117
+- 2026-11-14 16:32 tm_predict: TemStaPro is not installed; the cross-check column stays pending
+- 2026-11-14 16:32 tm_predict: 1117 predictions in 14.6 minutes. Tm 40.1 to 94.1 deg C, mean error bar 15.7 deg C, 0 above 95 deg C (spec 9 item 3 wants none)
+- 2026-11-14 16:32 controls_run: 1117 control sequences, run blind. No published measurement is read by anything below.
+- 2026-11-14 16:32 controls_run: TNP over 797 control sequences on 12 cores
+- 2026-11-14 16:37 interactions: EGFR profiled 345 samples across 69 candidates, median 17 interactions per sample
+- 2026-11-14 16:42 controls_run: TNP finished for 652 controls in 10.1 minutes
+- 2026-11-14 16:42 controls_run: AbLang2 nativeness for 750 control sequences
+- 2026-11-14 16:54 interactions: GLP1R profiled 335 samples across 67 candidates, median 19 interactions per sample
+- 2026-11-14 16:54 vacuous_tests: PENDING affinity [no controls] PENDING: no scrambled control has been scored on this axis, so its strongest check has not run
+- 2026-11-14 16:54 vacuous_tests:   EGFR also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   GLP1R also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   PRLR also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   TL1A also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   TNFa also: not computed yet
+- 2026-11-14 16:54 vacuous_tests: PENDING expression [pooled 136/250, p = 0.18] UNTESTABLE: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so a result near chance is expected by construction rather than by failure. No synthetic control settles it either, because the two heaviest components are defined from composition and a deliberately insoluble sequence would score badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. Pooled over all five targets it is 136 of 250 (54%, p = 0.18), which is what a control that cannot move two thirds of the weight looks like.
+- 2026-11-14 16:54 vacuous_tests: PASS specificity [pooled 144/240, p = 0.0023] WEAK: weakly but measurably separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 144 of 240 pairs (60%, sign test p = 0.0023). Per target: EGFR 28/46, GLP1R 30/47, PRLR 32/48, TL1A 30/50, TNFa 24/49, of which PRLR is significant alone. 10 of 250 available pairs are unusable because the control carries no value on this axis, which for specificity is TNP declining to number the shuffled sequence. The dropout acts on the pair and not inside it, since a shuffle has its parent's exact length, so it costs sample size rather than skewing the comparison.
+- 2026-11-14 16:54 vacuous_tests: PASS thermo [pooled 210/250, p = 5.1e-29] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 210 of 250 pairs (84%, sign test p = 5.1e-29). Per target: EGFR 42/50, GLP1R 39/50, PRLR 47/50, TL1A 40/50, TNFa 42/50, every one of which is significant on its own.
+- 2026-11-14 16:54 vacuous_tests: PENDING affinity [no controls] PENDING: no scrambled control has been scored on this axis, so its strongest check has not run
+- 2026-11-14 16:54 vacuous_tests:   EGFR also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   GLP1R also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   PRLR also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   TL1A also: not computed yet
+- 2026-11-14 16:54 vacuous_tests:   TNFa also: not computed yet
+- 2026-11-14 16:54 vacuous_tests: PENDING expression [pooled 136/250, p = 0.18] UNTESTABLE: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so a result near chance is expected by construction rather than by failure. No synthetic control settles it either, because the two heaviest components are defined from composition and a deliberately insoluble sequence would score badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. Pooled over all five targets it is 136 of 250 (54%, p = 0.18), which is what a control that cannot move two thirds of the weight looks like.
+- 2026-11-14 16:54 vacuous_tests: PASS specificity [pooled 144/240, p = 0.0023] WEAK: weakly but measurably separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 144 of 240 pairs (60%, sign test p = 0.0023). Per target: EGFR 28/46, GLP1R 30/47, PRLR 32/48, TL1A 30/50, TNFa 24/49, of which PRLR is significant alone. 10 of 250 available pairs are unusable because the control carries no value on this axis, which for specificity is TNP declining to number the shuffled sequence. The dropout acts on the pair and not inside it, since a shuffle has its parent's exact length, so it costs sample size rather than skewing the comparison.
+- 2026-11-14 16:54 vacuous_tests: PASS thermo [pooled 210/250, p = 5.1e-29] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 210 of 250 pairs (84%, sign test p = 5.1e-29). Per target: EGFR 42/50, GLP1R 39/50, PRLR 47/50, TL1A 40/50, TNFa 42/50, every one of which is significant on its own.

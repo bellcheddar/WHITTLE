@@ -78,10 +78,20 @@ def meta() -> dict:
     if not data:
         # The app must still render before the first build-db run, so a visitor
         # sees the shell and a plain "data pending" line rather than a 500.
-        data = {"run_id": "pending", "built_date": "", "n_candidates": 0,
+        # Every key a template reads must appear here, or the pre-build page
+        # is the 500 this fallback exists to prevent. It drifted once:
+        # `axis_verdicts` was added to meta and to candidates.html without
+        # being added here, and `{{ Undefined | tojson }}` raises, so the
+        # shell this block promises would not have rendered at all before the
+        # first build-db run. `test_app_meta_fallback_covers_every_template_key`
+        # holds the two in step.
+        data = {"run_id": "pending", "built_date": "", "built_at": "",
+                "git_sha": "", "n_candidates": 0,
                 "n_targets": 0, "targets": [], "columns": {"total": 0, "groups": [],
                 "columns": [], "defaults": []}, "axes": {}, "axes_pending": [],
-                "tier_counts": {}}
+                "tier_counts": {}, "axis_verdicts": {},
+                "axis_verdict_pooled": {}, "n_scrambled_controls": 0,
+                "scrambled_per_target": 0}
     return data
 
 

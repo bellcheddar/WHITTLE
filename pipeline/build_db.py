@@ -275,6 +275,15 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
         "axes_pending": provisional,
         "axis_verdicts": verdicts,
         "axis_verdict_pooled": pooled,
+        # The About page used to hard-code "250 deliberately broken
+        # sequences" and "Fifty sequences per target", both of which went
+        # stale the moment the control set was scaled. Statistics a reader is
+        # asked to trust must come from the database that produced them.
+        "n_scrambled_controls": conn.execute(
+            "SELECT COUNT(*) FROM controls WHERE kind = 'scrambled'"
+        ).fetchone()[0],
+        "scrambled_per_target": int(targets_config()["run"].get(
+            "scrambled_per_target", 50)),
         "ranking_scope": "within_target",
         "upstream_caveat": "not comparable between targets",
         # The hero draws the shortlist cut and the gates solve for it, so the

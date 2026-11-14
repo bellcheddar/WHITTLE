@@ -89,6 +89,36 @@ def run_tnp(rows: list[dict], ncores: int) -> dict[str, dict]:
         done[cid] = record
     log(f"controls_run: TNP finished for {len(payload)} controls in "
         f"{(time.time() - started) / 60:.1f} minutes")
+    # TNP returns nothing for a sequence it cannot number, and says nothing
+    # about it: the entry is simply absent from the multi-entry JSON. Left
+    # unlogged that is silent attrition in a control set, which is the one
+    # place it must not be silent. It runs at 11 to 13 per cent on the
+    # CDR-shuffled controls, evenly across targets.
+    #
+    # It does not bias the paired test. A shuffle that TNP drops takes its
+    # whole pair out, and a shuffle preserves its parent's length exactly, so
+    # the dropout acts on a property the two members of a pair share rather
+    # than on the difference between them. What it costs is n, and it narrows
+    # the population the result generalises to: the sequences TNP declines
+    # have slightly longer CDR3 loops (16.7 against 17.4 residues).
+    dropped = [r["id"] for r in todo if r["id"] not in payload]
+    if dropped:
+        by_target: dict[str, int] = {}
+        for cid in dropped:
+            parts = cid.split("-")
+            key = parts[1] if len(parts) > 2 else "other"
+            by_target[key] = by_target.get(key, 0) + 1
+        log(f"controls_run: TNP returned nothing for {len(dropped)} of "
+            f"{len(todo)} sequences ({len(dropped) / len(todo):.0%}), which it "
+            f"does without reporting a failure: {by_target}. Those controls "
+            f"carry no specificity axis and drop out of the paired test with "
+            f"their parents. The paired comparison stays unbiased, because a "
+            f"shuffle has its parent's exact length and the dropout therefore "
+            f"acts on the pair rather than inside it.")
+        manifest_write("tnp_controls_dropped",
+                       {"id": f"run-{int(started)}", "status": "ok",
+                        "n_dropped": len(dropped), "n_submitted": len(todo),
+                        "per_target": by_target, "ids": sorted(dropped)})
     return done
 
 
