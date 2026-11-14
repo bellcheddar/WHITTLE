@@ -142,6 +142,19 @@ def main() -> int:
     native = ({} if args.skip_nativeness
               else run_nativeness(rows, args.workers, max(2, cores // args.workers)))
 
+    # The thermostability model's own prediction for each control, written by
+    # `pipeline.tm_predict --controls`. Without it the thermo axis has only
+    # 2.0 of its 5.0 component weight and is withheld, which is why the
+    # thermo vacuous test reported "no scrambled control scored yet" for the
+    # whole run: the axis was never scored for a control, so the one check
+    # that could falsify it never ran.
+    control_tm = {r["id"]: r["predicted_tm"] for r in conn.execute(
+        "SELECT id, predicted_tm FROM controls WHERE predicted_tm IS NOT NULL")}
+    if not control_tm:
+        log("controls_run: no control Tm predictions; run "
+            "`python -m pipeline.tm_predict --controls` first or the thermo "
+            "axis stays untestable")
+
     # Sequence-level metrics, identical code to Tier 0 and Tier 1.
     metrics: dict[str, dict] = {}
     for row in rows:
@@ -153,7 +166,14 @@ def main() -> int:
         liabs = tier0.find_liabilities(seq, regions)
         charge, _pi = tier0.charge_and_pi(seq)
         sol = solubility.both(seq)
+        # The remaining thermo components, by the same functions Tier 0 uses.
+        _intact, hallmark_n, _detail = nb.hallmark(numbered)
+        canonical, _extra = tier0.disulfides(numbered, seq)
         metrics[row["id"]] = {
+            "tm_pred": control_tm.get(row["id"]),
+            "hallmark_n": hallmark_n,
+            "canonical_disulfide": canonical,
+            "cdr3_len": len(regions.get("cdr3") or ""),
             "n_liabilities": len(liabs),
             "n_cdr_liabilities": sum(1 for l in liabs if l["region"] != "framework"),
             "abs_charge": abs(charge),

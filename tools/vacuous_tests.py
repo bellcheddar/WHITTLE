@@ -159,8 +159,16 @@ def check_axis(conn, target: str, name: str, column: str) -> dict:
                 f"non-discriminating and must be labelled as such wherever it "
                 f"appears.")
     else:
+        # A check that did not run is not a check that passed. Leaving
+        # `passed` True here reported PASS for an axis whose decisive test had
+        # never executed, which is a stronger claim than "we have not looked"
+        # and the opposite of what this file exists to do. Only downgrade a
+        # would-be pass: a failure found by the other checks still stands.
+        if result["passed"]:
+            result["passed"] = None
         result["findings"].append(
-            "no scrambled control scored yet, so the strongest check has not run")
+            "no scrambled control scored yet, so the strongest check has not "
+            "run and this axis is untested, not passing")
     return result
 
 

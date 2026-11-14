@@ -955,3 +955,27 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:44 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
 - 2026-11-13 20:44 build-db: 15 bundles, 2882 kB total
 - 2026-11-13 20:44 cofold: 4/20 (4 ok, 0 failed), 0.9 min for SCRAM-GLP1R-004, about 0.2 hours left
+- 2026-11-13 20:45 cofold: 5/20 (5 ok, 0 failed), 0.9 min for SCRAM-GLP1R-005, about 0.2 hours left
+- 2026-11-13 20:46 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 20:46 vacuous_tests: PASS EGFR specificity: informative
+- 2026-11-13 20:46 vacuous_tests: PENDING EGFR thermo: no scrambled control scored yet, so the strongest check has not run and this axis is untested, not passing
+- 2026-11-13 20:46 vacuous_tests: VACUOUS EGFR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.504; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:46 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 20:46 vacuous_tests: PASS GLP1R specificity: informative
+- 2026-11-13 20:46 vacuous_tests: PENDING GLP1R thermo: no scrambled control scored yet, so the strongest check has not run and this axis is untested, not passing
+- 2026-11-13 20:46 vacuous_tests: VACUOUS GLP1R expression: does not separate real candidates from CDR-shuffled ones (AUC 0.522; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:46 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 20:46 vacuous_tests: PASS PRLR specificity: informative
+- 2026-11-13 20:46 vacuous_tests: PENDING PRLR thermo: no scrambled control scored yet, so the strongest check has not run and this axis is untested, not passing
+- 2026-11-13 20:46 vacuous_tests: VACUOUS PRLR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.521; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:46 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 20:46 vacuous_tests: PASS TL1A specificity: informative
+- 2026-11-13 20:46 vacuous_tests: PENDING TL1A thermo: no scrambled control scored yet, so the strongest check has not run and this axis is untested, not passing
+- 2026-11-13 20:46 vacuous_tests: VACUOUS TL1A expression: does not separate real candidates from CDR-shuffled ones (AUC 0.482; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:46 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 20:46 vacuous_tests: PASS TNFa specificity: informative
+- 2026-11-13 20:46 vacuous_tests: PENDING TNFa thermo: no scrambled control scored yet, so the strongest check has not run and this axis is untested, not passing
+- 2026-11-13 20:46 vacuous_tests: VACUOUS TNFa expression: does not separate real candidates from CDR-shuffled ones (AUC 0.439; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:46 cofold: 6/20 (6 ok, 0 failed), 0.9 min for SCRAM-GLP1R-006, about 0.2 hours left
+- 2026-11-13 20:46 tm_predict: 367 sequences, ESM-2 esm2_t33_650M_UR50D
+- 2026-11-13 20:47 cofold: 7/20 (7 ok, 0 failed), 1.0 min for SCRAM-GLP1R-007, about 0.2 hours left
