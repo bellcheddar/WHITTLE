@@ -257,7 +257,8 @@ def main() -> int:
 
     for target in targets:
         rows = [dict(r) for r in conn.execute(
-            "SELECT candidate_id, seed, path, bsa_total, iptm FROM cofolds "
+            "SELECT candidate_id, seed, path, bsa_total, iptm, "
+            "COALESCE(is_control, 0) AS is_control FROM cofolds "
             "WHERE target = ? AND status = 'ok' ORDER BY candidate_id, seed",
             (target,))]
         if not rows:
@@ -300,9 +301,14 @@ def main() -> int:
                 "AND seed = :seed", updates)
             conn.commit()
 
+        # Controls are profiled for the calibration but never published:
+        # there is no page to show them on.
+        control_ids = {r["candidate_id"] for r in rows if r["is_control"]}
         out_dir = STRUCTURES / target
         out_dir.mkdir(parents=True, exist_ok=True)
         for cid, (iptm, metrics, records) in best.items():
+            if cid in control_ids:
+                continue
             payload = {
                 "candidate_id": cid, "target": target,
                 "iptm": iptm, "counts": metrics, "interactions": records,

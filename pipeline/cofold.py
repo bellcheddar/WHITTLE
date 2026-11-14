@@ -237,6 +237,47 @@ def queue_controls(conn, targets: list[str], per_target: int
     return jobs
 
 
+def queue_parents(conn, targets: list[str], limit: int | None = None
+                  ) -> list[tuple[str, str, str]]:
+    """The candidates the scrambled controls were made from.
+
+    Without these the comparison is confounded. The co-folded candidates are
+    the top N by Tier 1 rank, and that rank is driven by patch surface
+    hydrophobicity, so they are markedly less hydrophobic than the population:
+    median PSH 93.6 against 106.4 across all 500 GLP1R candidates. The
+    controls were shuffled from a random sample, whose parents sit at 107.9.
+    Comparing the two therefore measures Tier 1 selection as much as it
+    measures scrambling.
+
+    Co-folding each control's own parent makes the comparison paired, so the
+    only difference left within a pair is the CDR order, which is the question
+    the control was built to ask.
+    """
+    import re
+
+    done = {str(r["id"]) for r in manifest_read("cofold")
+            if r.get("status") == "ok"}
+    jobs: list[tuple[str, str, str]] = []
+    for target in targets:
+        wanted: list[str] = []
+        for row in conn.execute(
+                "SELECT notes FROM controls WHERE kind = 'scrambled' "
+                "AND target = ? ORDER BY id", (target,)):
+            found = re.search(r"derived from ([A-Za-z0-9]+-\d+)", row[0] or "")
+            if found:
+                wanted.append(found.group(1))
+        if limit:
+            wanted = wanted[:limit]
+        for cid in wanted:
+            if cid in done:
+                continue
+            row = conn.execute(
+                "SELECT id, sequence FROM candidates WHERE id = ?", (cid,)).fetchone()
+            if row and row["sequence"]:
+                jobs.append((target, row["id"], row["sequence"]))
+    return jobs
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", action="append", default=None)
@@ -246,6 +287,11 @@ def main() -> int:
     parser.add_argument("--smoke", action="store_true",
                         help="one GLP1R complex, timed, before anything is queued")
     parser.add_argument("--msa-only", action="store_true")
+    parser.add_argument("--parents", type=int, default=None, metavar="N",
+                        help="co-fold the candidates the first N scrambled "
+                             "controls per target were shuffled from, so the "
+                             "comparison is paired rather than confounded by "
+                             "Tier 1 selection")
     parser.add_argument("--controls", type=int, default=None, metavar="N",
                         help="co-fold N scrambled controls per target instead "
                              "of candidates, as the negative control for every "
@@ -313,7 +359,9 @@ def main() -> int:
         conn.close()
         return 0
 
-    if args.controls:
+    if args.parents:
+        jobs = queue_parents(conn, order, args.parents)
+    elif args.controls:
         jobs = queue_controls(conn, order, args.controls)
     else:
         jobs = queue(conn, order, per_target)
@@ -323,7 +371,8 @@ def main() -> int:
         return 0
     tuned = {t: sampling_steps(t) for t in order if sampling_steps(t)}
     log(f"cofold: {len(jobs)} "
-        f"{'scrambled control' if args.controls else ''} complexes queued, "
+        f"{'scrambled control' if args.controls else ''}"
+        f"{'control-parent' if args.parents else ''} complexes queued, "
         f"cheapest target first: {', '.join(order)}"
         + (f"; reduced sampling steps for {tuned}" if tuned else
            "; full quality, no reduced settings"))

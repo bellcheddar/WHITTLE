@@ -1102,3 +1102,119 @@ through to the drawer.
 - 2026-11-13 21:04 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
 - 2026-11-13 21:04 cofold: 250  complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
 - 2026-11-13 21:05 cofold: 1/250 (1 ok, 0 failed), 0.9 min for GLP1R-0049, about 3.7 hours left
+- 2026-11-13 21:06 cofold: 2/250 (2 ok, 0 failed), 0.9 min for GLP1R-0007, about 3.7 hours left
+- 2026-11-13 21:07 cofold: 3/250 (3 ok, 0 failed), 0.9 min for GLP1R-0167, about 3.7 hours left
+- 2026-11-13 21:08 cofold: 4/250 (4 ok, 0 failed), 0.9 min for GLP1R-0264, about 3.7 hours left
+- 2026-11-13 21:09 cofold: 5/250 (5 ok, 0 failed), 0.9 min for GLP1R-0196, about 3.7 hours left
+- 2026-11-13 21:10 cofold: 6/250 (6 ok, 0 failed), 0.9 min for GLP1R-0160, about 3.7 hours left
+- 2026-11-13 21:10 cofold: 7/250 (7 ok, 0 failed), 0.9 min for GLP1R-0280, about 3.7 hours left
+- 2026-11-13 21:11 cofold: 8/250 (8 ok, 0 failed), 0.9 min for GLP1R-0297, about 3.6 hours left
+- 2026-11-13 21:12 cofold: 9/250 (9 ok, 0 failed), 0.9 min for GLP1R-0015, about 3.6 hours left
+- 2026-11-13 21:13 cofold: 10/250 (10 ok, 0 failed), 0.9 min for GLP1R-0004, about 3.6 hours left
+- 2026-11-13 21:14 cofold: 11/250 (11 ok, 0 failed), 0.9 min for GLP1R-0040, about 3.6 hours left
+- 2026-11-13 21:15 cofold: 12/250 (12 ok, 0 failed), 0.9 min for GLP1R-0193, about 3.6 hours left
+- 2026-11-13 21:16 cofold: 13/250 (13 ok, 0 failed), 0.9 min for GLP1R-0480, about 3.6 hours left
+- 2026-11-13 21:17 cofold: 14/250 (14 ok, 0 failed), 0.9 min for GLP1R-0475, about 3.5 hours left
+- 2026-11-13 21:18 cofold: 15/250 (15 ok, 0 failed), 0.9 min for GLP1R-0325, about 3.5 hours left
+- 2026-11-13 21:19 cofold: 16/250 (16 ok, 0 failed), 0.9 min for GLP1R-0287, about 3.5 hours left
+- 2026-11-13 21:19 cofold: 17/250 (17 ok, 0 failed), 0.9 min for GLP1R-0426, about 3.5 hours left
+- 2026-11-13 21:20 cofold: 18/250 (18 ok, 0 failed), 0.9 min for GLP1R-0095, about 3.5 hours left
+- 2026-11-13 21:21 cofold: 19/250 (19 ok, 0 failed), 0.9 min for GLP1R-0217, about 3.5 hours left
+- 2026-11-13 21:22 cofold: 20/250 (20 ok, 0 failed), 0.9 min for GLP1R-0072, about 3.5 hours left
+- 2026-11-13 21:23 cofold: 21/250 (21 ok, 0 failed), 0.9 min for GLP1R-0294, about 3.4 hours left
+- 2026-11-13 21:24 cofold: 22/250 (22 ok, 0 failed), 0.9 min for GLP1R-0173, about 3.4 hours left
+- 2026-11-13 21:25 cofold: 23/250 (23 ok, 0 failed), 0.9 min for GLP1R-0383, about 3.4 hours left
+- 2026-11-13 21:26 cofold: 24/250 (24 ok, 0 failed), 0.9 min for GLP1R-0205, about 3.4 hours left
+- 2026-11-13 21:27 cofold: 25/250 (25 ok, 0 failed), 0.9 min for GLP1R-0114, about 3.4 hours left
+- 2026-11-13 21:28 cofold: 26/250 (26 ok, 0 failed), 0.9 min for GLP1R-0228, about 3.4 hours left
+- 2026-11-13 21:28 cofold: 27/250 (27 ok, 0 failed), 0.9 min for GLP1R-0043, about 3.4 hours left
+- 2026-11-13 21:29 cofold: 28/250 (28 ok, 0 failed), 0.9 min for GLP1R-0281, about 3.3 hours left
+- 2026-11-13 21:30 cofold: 29/250 (29 ok, 0 failed), 0.9 min for GLP1R-0209, about 3.3 hours left
+- 2026-11-13 21:31 cofold: 30/250 (30 ok, 0 failed), 0.9 min for GLP1R-0189, about 3.3 hours left
+- 2026-11-13 21:32 cofold: 31/250 (31 ok, 0 failed), 0.9 min for GLP1R-0404, about 3.3 hours left
+- 2026-11-13 21:33 cofold: 32/250 (32 ok, 0 failed), 0.9 min for GLP1R-0089, about 3.3 hours left
+- 2026-11-13 21:34 cofold: 33/250 (33 ok, 0 failed), 0.9 min for GLP1R-0443, about 3.3 hours left
+- 2026-11-13 21:35 cofold: 34/250 (34 ok, 0 failed), 0.9 min for GLP1R-0155, about 3.3 hours left
+- 2026-11-13 21:36 cofold: 35/250 (35 ok, 0 failed), 0.9 min for GLP1R-0202, about 3.2 hours left
+- 2026-11-13 21:37 cofold: 36/250 (36 ok, 0 failed), 0.9 min for GLP1R-0019, about 3.2 hours left
+- 2026-11-13 21:37 cofold: 37/250 (37 ok, 0 failed), 0.9 min for GLP1R-0003, about 3.2 hours left
+- 2026-11-13 21:38 cofold: 38/250 (38 ok, 0 failed), 0.9 min for GLP1R-0496, about 3.2 hours left
+- 2026-11-13 21:39 cofold: 39/250 (39 ok, 0 failed), 0.9 min for GLP1R-0034, about 3.2 hours left
+- 2026-11-13 21:40 cofold: 40/250 (40 ok, 0 failed), 0.9 min for GLP1R-0370, about 3.2 hours left
+- 2026-11-13 21:41 cofold: 41/250 (41 ok, 0 failed), 0.9 min for GLP1R-0394, about 3.1 hours left
+- 2026-11-13 21:42 cofold: 42/250 (42 ok, 0 failed), 0.9 min for GLP1R-0368, about 3.1 hours left
+- 2026-11-13 21:43 cofold: 43/250 (43 ok, 0 failed), 0.9 min for GLP1R-0178, about 3.1 hours left
+- 2026-11-13 21:44 cofold: 44/250 (44 ok, 0 failed), 0.9 min for GLP1R-0186, about 3.1 hours left
+- 2026-11-13 21:45 cofold: 45/250 (45 ok, 0 failed), 0.9 min for GLP1R-0138, about 3.1 hours left
+- 2026-11-13 21:46 cofold: 46/250 (46 ok, 0 failed), 0.9 min for GLP1R-0073, about 3.1 hours left
+- 2026-11-13 21:47 cofold: 47/250 (47 ok, 0 failed), 0.9 min for GLP1R-0303, about 3.1 hours left
+- 2026-11-13 21:48 cofold: 48/250 (48 ok, 0 failed), 0.9 min for GLP1R-0156, about 3.0 hours left
+- 2026-11-13 21:48 cofold: 49/250 (49 ok, 0 failed), 0.9 min for GLP1R-0310, about 3.0 hours left
+- 2026-11-13 21:49 cofold: 50/250 (50 ok, 0 failed), 0.9 min for GLP1R-0090, about 3.0 hours left
+- 2026-11-13 21:51 cofold: 51/250 (51 ok, 0 failed), 1.3 min for PRLR-0302, about 3.0 hours left
+- 2026-11-13 21:52 cofold: 52/250 (52 ok, 0 failed), 1.3 min for PRLR-0342, about 3.0 hours left
+- 2026-11-13 21:53 interface: GLP1R published 60 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-13 21:53 interface: GLP1R 6 of 60 candidates place more than 30% of their interface on the construct's cut edges. Those poses are artefacts of the truncation and cannot be epitopes on the intact protein
+- 2026-11-13 21:53 interface: GLP1R 300 samples across 60 candidates, 4 epitope bins
+- 2026-11-13 21:53 cofold: 53/250 (53 ok, 0 failed), 1.3 min for PRLR-0005, about 3.0 hours left
+- 2026-11-13 21:55 cofold: 54/250 (54 ok, 0 failed), 1.3 min for PRLR-0041, about 3.1 hours left
+- 2026-11-13 21:56 cofold: 55/250 (55 ok, 0 failed), 1.3 min for PRLR-0378, about 3.1 hours left
+- 2026-11-13 21:57 cofold: 56/250 (56 ok, 0 failed), 1.3 min for PRLR-0300, about 3.1 hours left
+- 2026-11-13 21:58 cofold: 57/250 (57 ok, 0 failed), 1.3 min for PRLR-0254, about 3.1 hours left
+- 2026-11-13 22:00 cofold: 58/250 (58 ok, 0 failed), 1.3 min for PRLR-0156, about 3.1 hours left
+- 2026-11-13 22:01 cofold: 59/250 (59 ok, 0 failed), 1.3 min for PRLR-0223, about 3.1 hours left
+- 2026-11-13 22:02 cofold: 60/250 (60 ok, 0 failed), 1.3 min for PRLR-0177, about 3.1 hours left
+- 2026-11-13 22:04 cofold: 61/250 (61 ok, 0 failed), 1.3 min for PRLR-0069, about 3.1 hours left
+- 2026-11-13 22:05 cofold: 62/250 (62 ok, 0 failed), 1.3 min for PRLR-0087, about 3.1 hours left
+- 2026-11-13 22:06 cofold: 63/250 (63 ok, 0 failed), 1.3 min for PRLR-0214, about 3.1 hours left
+- 2026-11-13 22:07 interactions: GLP1R profiled 300 samples across 60 candidates, median 19 interactions per sample
+- 2026-11-13 22:08 cofold: 64/250 (64 ok, 0 failed), 1.3 min for PRLR-0278, about 3.1 hours left
+- 2026-11-13 22:09 cofold: 65/250 (65 ok, 0 failed), 1.3 min for PRLR-0454, about 3.1 hours left
+- 2026-11-13 22:10 cofold: 66/250 (66 ok, 0 failed), 1.3 min for PRLR-0435, about 3.1 hours left
+- 2026-11-13 22:11 complementarity: GLP1R Sc for 300 samples, median 0.533, range 0.388 to 0.667
+- 2026-11-13 22:11 calibrate: EGFR skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:11 calibrate: GLP1R, 50 candidates against 10 scrambled controls
+- 2026-11-13 22:11 calibrate:   iptm                     AUC 0.264  does not separate
+- 2026-11-13 22:11 calibrate:   pose_consensus           AUC 0.402  does not separate
+- 2026-11-13 22:11 calibrate:   sc                       AUC 0.316  does not separate
+- 2026-11-13 22:11 calibrate:   prodigy_dg               AUC 0.474  does not separate
+- 2026-11-13 22:11 calibrate:   cdr_interface_fraction   AUC 0.613  separates
+- 2026-11-13 22:11 calibrate:   hbond_per_100a2          AUC 0.694  separates
+- 2026-11-13 22:11 calibrate:   bsa_total                AUC 0.270  does not separate
+- 2026-11-13 22:11 calibrate: PRLR skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:11 calibrate: TL1A skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:11 calibrate: TNFa skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:11 calibrate: pooled over 1 targets
+- 2026-11-13 22:11 calibrate: proposed affinity weights
+- 2026-11-13 22:11 calibrate:   iptm                      2.00 ->  0.00  AUC 0.264  (AUC 0.264 below 0.55, drop it)
+- 2026-11-13 22:11 calibrate:   pose_consensus            1.50 ->  0.00  AUC 0.402  (AUC 0.402 below 0.55, drop it)
+- 2026-11-13 22:11 calibrate:   sc                        1.50 ->  0.00  AUC 0.316  (AUC 0.316 below 0.55, drop it)
+- 2026-11-13 22:11 calibrate:   prodigy_dg                1.00 ->  0.00  AUC 0.474  (AUC 0.474 below 0.55, drop it)
+- 2026-11-13 22:11 calibrate:   cdr_interface_fraction    1.00 ->  1.16  AUC 0.613
+- 2026-11-13 22:11 calibrate:   hbond_per_100a2           0.75 ->  2.00  AUC 0.694
+- 2026-11-13 22:11 calibrate:   bsa_total                 0.50 ->  0.00  AUC 0.270  (AUC 0.270 below 0.55, drop it)
+- 2026-11-13 22:11 cofold: 67/250 (67 ok, 0 failed), 1.3 min for PRLR-0472, about 3.1 hours left
+- 2026-11-13 22:13 cofold: 68/250 (68 ok, 0 failed), 1.3 min for PRLR-0389, about 3.1 hours left
+- 2026-11-13 22:14 cofold: 69/250 (69 ok, 0 failed), 1.3 min for PRLR-0493, about 3.1 hours left
+- 2026-11-13 22:14 calibrate: EGFR skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:14 calibrate: GLP1R, 50 candidates against 10 scrambled controls
+- 2026-11-13 22:14 calibrate:   only 3 control-parent pairs co-folded, so the paired comparison is skipped and the unpaired one below is confounded by Tier 1 selection. Run `pipeline.cofold --parents 10`.
+- 2026-11-13 22:14 calibrate:   iptm                     AUC 0.264  does not separate
+- 2026-11-13 22:14 calibrate:   pose_consensus           AUC 0.402  does not separate
+- 2026-11-13 22:14 calibrate:   sc                       AUC 0.316  does not separate
+- 2026-11-13 22:14 calibrate:   prodigy_dg               AUC 0.474  does not separate
+- 2026-11-13 22:14 calibrate:   cdr_interface_fraction   AUC 0.613  separates
+- 2026-11-13 22:14 calibrate:   hbond_per_100a2          AUC 0.694  separates
+- 2026-11-13 22:14 calibrate:   bsa_total                AUC 0.270  does not separate
+- 2026-11-13 22:14 calibrate: PRLR skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:14 calibrate: TL1A skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:14 calibrate: TNFa skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 22:14 calibrate: pooled over 1 targets
+- 2026-11-13 22:14 calibrate: proposed affinity weights
+- 2026-11-13 22:14 calibrate:   iptm                      2.00 ->  0.00  AUC 0.264  (AUC 0.264 below 0.55, drop it)
+- 2026-11-13 22:14 calibrate:   pose_consensus            1.50 ->  0.00  AUC 0.402  (AUC 0.402 below 0.55, drop it)
+- 2026-11-13 22:14 calibrate:   sc                        1.50 ->  0.00  AUC 0.316  (AUC 0.316 below 0.55, drop it)
+- 2026-11-13 22:14 calibrate:   prodigy_dg                1.00 ->  0.00  AUC 0.474  (AUC 0.474 below 0.55, drop it)
+- 2026-11-13 22:14 calibrate:   cdr_interface_fraction    1.00 ->  1.16  AUC 0.613
+- 2026-11-13 22:14 calibrate:   hbond_per_100a2           0.75 ->  2.00  AUC 0.694
+- 2026-11-13 22:14 calibrate:   bsa_total                 0.50 ->  0.00  AUC 0.270  (AUC 0.270 below 0.55, drop it)

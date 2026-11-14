@@ -45,6 +45,59 @@ METRICS = {c.field: c.sign for c in AXIS_COMPONENTS["affinity"]}
 
 AGGREGATE = {"pose_consensus": "MAX"}      # already one value per candidate
 MIN_PER_GROUP = 8
+MIN_PAIRS = 5
+
+
+def control_parents(conn, target: str) -> dict[str, str]:
+    """Control id to the candidate it was shuffled from."""
+    import re
+
+    out: dict[str, str] = {}
+    for row in conn.execute(
+            "SELECT id, notes FROM controls WHERE kind = 'scrambled' "
+            "AND target = ?", (target,)):
+        found = re.search(r"derived from ([A-Za-z0-9]+-\d+)", row["notes"] or "")
+        if found:
+            out[row["id"]] = found.group(1)
+    return out
+
+
+def paired(conn, target: str) -> dict[str, tuple[int, int, int]]:
+    """Per metric: (control better, parent better, ties), within pairs.
+
+    The unpaired comparison is confounded. The co-folded candidates are the
+    top N by Tier 1 rank, a rank driven by patch surface hydrophobicity, so
+    they are much less hydrophobic than the population the controls were
+    shuffled from. Comparing those two groups measures Tier 1 selection as
+    much as scrambling. Inside a pair the only difference is CDR order, which
+    is the question the control exists to ask.
+    """
+    parents = control_parents(conn, target)
+    if not parents:
+        return {}
+    selects = ", ".join(
+        f"{AGGREGATE.get(f, 'AVG')}(f.{f}) AS {f}" for f in METRICS)
+    rows = {r["candidate_id"]: dict(r) for r in conn.execute(
+        f"SELECT f.candidate_id, {selects} FROM cofolds f "
+        f"WHERE f.target = ? AND f.status = 'ok' GROUP BY f.candidate_id",
+        (target,))}
+    tally: dict[str, list[int]] = {f: [0, 0, 0] for f in METRICS}
+    for control_id, parent_id in parents.items():
+        a, b = rows.get(control_id), rows.get(parent_id)
+        if not a or not b:
+            continue
+        for field, sign in METRICS.items():
+            x, y = a.get(field), b.get(field)
+            if x is None or y is None:
+                continue
+            better = (x - y) * sign       # positive means the control wins
+            if abs(better) < 1e-12:
+                tally[field][2] += 1
+            elif better > 0:
+                tally[field][0] += 1
+            else:
+                tally[field][1] += 1
+    return {f: tuple(v) for f, v in tally.items()}
 
 
 def collect(conn, target: str, is_control: int) -> dict[str, list[float]]:
@@ -92,6 +145,25 @@ def main() -> int:
         usable_targets.append(target)
         log(f"calibrate: {target}, {n_real} candidates against {n_scram} "
             f"scrambled controls")
+
+        # The paired view first, because the unpaired one is confounded.
+        pairs = paired(conn, target)
+        n_pairs = max((sum(v) for v in pairs.values()), default=0)
+        if n_pairs >= MIN_PAIRS:
+            log(f"calibrate:   paired against each control's own parent "
+                f"({n_pairs} pairs; this is the unconfounded comparison)")
+            for field in METRICS:
+                wins, losses, ties = pairs.get(field, (0, 0, 0))
+                decided = wins + losses
+                if not decided:
+                    continue
+                log(f"calibrate:     {field:22} parent beats its shuffle "
+                    f"{losses}/{decided}")
+        else:
+            log(f"calibrate:   only {n_pairs} control-parent pairs co-folded, "
+                f"so the paired comparison is skipped and the unpaired one "
+                f"below is confounded by Tier 1 selection. Run "
+                f"`pipeline.cofold --parents 10`.")
         for field, sign in METRICS.items():
             a = real[field]
             b = scrambled[field]

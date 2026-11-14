@@ -39,6 +39,25 @@ while [[ $attempt -lt 5 ]]; do
   sleep $((attempt * 30))
 done
 
+# The comparison is confounded without these. The co-folded candidates are the
+# top N by Tier 1 rank, and that rank is driven by patch surface
+# hydrophobicity, so they sit well below the population: median PSH 93.6
+# against 106.4 for all 500 GLP1R candidates, while the controls were shuffled
+# from a random sample whose parents sit at 107.9. Comparing the two groups
+# measures Tier 1 selection as much as it measures scrambling. Co-folding each
+# control's own parent makes it paired, leaving CDR order as the only
+# difference inside a pair.
+echo "$(stamp) co-folding the parents each control was shuffled from"
+attempt=0
+while [[ $attempt -lt 5 ]]; do
+  attempt=$((attempt + 1))
+  caffeinate -dimsu "$COFOLD_PY" -m pipeline.cofold --parents "$PER_TARGET"
+  status=$?
+  [[ $status -eq 0 ]] && break
+  echo "$(stamp) parent queue exited $status, attempt $attempt, retrying"
+  sleep $((attempt * 30))
+done
+
 echo "$(stamp) interface metrics over the controls"
 "$PY" -m pipeline.interface
 "$PY" -m pipeline.interactions

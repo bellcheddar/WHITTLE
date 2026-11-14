@@ -504,6 +504,11 @@ def main() -> int:
 
         published = 0
         for cid, rec in best.items():
+            # Controls are scored, not shown. They have no candidate page, so
+            # publishing their complexes would put scrambled-sequence models
+            # on a public site with nothing to explain what they are.
+            if rec.get("is_control"):
+                continue
             if rec.get("path") and publish_complex(cid, target, Path(rec["path"])):
                 published += 1
         if published:
