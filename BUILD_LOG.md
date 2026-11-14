@@ -995,3 +995,79 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:49 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
 - 2026-11-13 20:49 build-db: 15 bundles, 2883 kB total
 - 2026-11-13 20:50 cofold: 10/20 (10 ok, 0 failed), 1.0 min for SCRAM-GLP1R-010, about 0.2 hours left
+- 2026-11-13 20:51 controls_run: sequence metrics computed for 367 controls
+- 2026-11-13 20:51 controls_run: 59 EGFR controls placed against the EGFR candidate distribution
+- 2026-11-13 20:51 controls_run: 56 GLP1R controls placed against the GLP1R candidate distribution
+- 2026-11-13 20:51 controls_run: 57 PRLR controls placed against the PRLR candidate distribution
+- 2026-11-13 20:51 controls_run: 52 TL1A controls placed against the TL1A candidate distribution
+- 2026-11-13 20:51 controls_run: 66 TNFa controls placed against the TNFa candidate distribution
+- 2026-11-13 20:51 controls_run: 290 control rows carry axis percentiles
+- 2026-11-13 20:51 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 20:51 vacuous_tests: VACUOUS EGFR specificity: does not separate real candidates from CDR-shuffled ones (AUC 0.600; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: VACUOUS EGFR thermo: does not separate real candidates from CDR-shuffled ones (AUC 0.590; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: VACUOUS EGFR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.504; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 20:51 vacuous_tests: PASS GLP1R specificity: informative
+- 2026-11-13 20:51 vacuous_tests: PASS GLP1R thermo: informative
+- 2026-11-13 20:51 vacuous_tests: VACUOUS GLP1R expression: does not separate real candidates from CDR-shuffled ones (AUC 0.522; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 20:51 vacuous_tests: PASS PRLR specificity: informative
+- 2026-11-13 20:51 vacuous_tests: PASS PRLR thermo: informative
+- 2026-11-13 20:51 vacuous_tests: VACUOUS PRLR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.521; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 20:51 vacuous_tests: PASS TL1A specificity: informative
+- 2026-11-13 20:51 vacuous_tests: VACUOUS TL1A thermo: does not separate real candidates from CDR-shuffled ones (AUC 0.589; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: VACUOUS TL1A expression: does not separate real candidates from CDR-shuffled ones (AUC 0.482; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 20:51 vacuous_tests: VACUOUS TNFa specificity: does not separate real candidates from CDR-shuffled ones (AUC 0.535; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 vacuous_tests: PASS TNFa thermo: informative
+- 2026-11-13 20:51 vacuous_tests: VACUOUS TNFa expression: does not separate real candidates from CDR-shuffled ones (AUC 0.439; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:51 cofold: 11/20 (11 ok, 0 failed), 1.4 min for SCRAM-PRLR-001, about 0.1 hours left
+- 2026-11-13 20:52 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 20:52 vacuous_tests: VACUOUS EGFR specificity: does not separate real candidates from CDR-shuffled ones (AUC 0.600; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: VACUOUS EGFR thermo: does not separate real candidates from CDR-shuffled ones (AUC 0.590; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: VACUOUS EGFR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.504; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 20:52 vacuous_tests: PASS GLP1R specificity: informative
+- 2026-11-13 20:52 vacuous_tests: PASS GLP1R thermo: informative
+- 2026-11-13 20:52 vacuous_tests: VACUOUS GLP1R expression: does not separate real candidates from CDR-shuffled ones (AUC 0.522; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 20:52 vacuous_tests: PASS PRLR specificity: informative
+- 2026-11-13 20:52 vacuous_tests: PASS PRLR thermo: informative
+- 2026-11-13 20:52 vacuous_tests: VACUOUS PRLR expression: does not separate real candidates from CDR-shuffled ones (AUC 0.521; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 20:52 vacuous_tests: PASS TL1A specificity: informative
+- 2026-11-13 20:52 vacuous_tests: VACUOUS TL1A thermo: does not separate real candidates from CDR-shuffled ones (AUC 0.589; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: VACUOUS TL1A expression: does not separate real candidates from CDR-shuffled ones (AUC 0.482; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 20:52 vacuous_tests: VACUOUS TNFa specificity: does not separate real candidates from CDR-shuffled ones (AUC 0.535; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 vacuous_tests: PASS TNFa thermo: informative
+- 2026-11-13 20:52 vacuous_tests: VACUOUS TNFa expression: does not separate real candidates from CDR-shuffled ones (AUC 0.439; 0.5 is no separation). The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:52 cofold: 12/20 (12 ok, 0 failed), 1.3 min for SCRAM-PRLR-002, about 0.1 hours left
+- 2026-11-13 20:53 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 20:53 vacuous_tests: VACUOUS EGFR specificity: does not separate real candidates from CDR-shuffled ones (AUC 0.600; 0.5 is no separation), and 89% of the axis weight could have moved. The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:53 vacuous_tests: VACUOUS EGFR thermo: does not separate real candidates from CDR-shuffled ones (AUC 0.590; 0.5 is no separation), and 60% of the axis weight could have moved. The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:53 vacuous_tests: PENDING EGFR expression: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.504 is near chance by construction rather than by failure. A negative control that varies composition is needed before this axis can be called informative or not.
+- 2026-11-13 20:53 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 20:53 vacuous_tests: PASS GLP1R specificity: informative
+- 2026-11-13 20:53 vacuous_tests: PASS GLP1R thermo: informative
+- 2026-11-13 20:53 vacuous_tests: PENDING GLP1R expression: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.522 is near chance by construction rather than by failure. A negative control that varies composition is needed before this axis can be called informative or not.
+- 2026-11-13 20:53 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 20:53 vacuous_tests: PASS PRLR specificity: informative
+- 2026-11-13 20:53 vacuous_tests: PASS PRLR thermo: informative
+- 2026-11-13 20:53 vacuous_tests: PENDING PRLR expression: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.521 is near chance by construction rather than by failure. A negative control that varies composition is needed before this axis can be called informative or not.
+- 2026-11-13 20:53 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 20:53 vacuous_tests: PASS TL1A specificity: informative
+- 2026-11-13 20:53 vacuous_tests: VACUOUS TL1A thermo: does not separate real candidates from CDR-shuffled ones (AUC 0.589; 0.5 is no separation), and 60% of the axis weight could have moved. The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:53 vacuous_tests: PENDING TL1A expression: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.482 is near chance by construction rather than by failure. A negative control that varies composition is needed before this axis can be called informative or not.
+- 2026-11-13 20:53 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 20:53 vacuous_tests: VACUOUS TNFa specificity: does not separate real candidates from CDR-shuffled ones (AUC 0.535; 0.5 is no separation), and 89% of the axis weight could have moved. The axis is non-discriminating and must be labelled as such wherever it appears.
+- 2026-11-13 20:53 vacuous_tests: PASS TNFa thermo: informative
+- 2026-11-13 20:53 vacuous_tests: PENDING TNFa expression: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so the measured AUC of 0.439 is near chance by construction rather than by failure. A negative control that varies composition is needed before this axis can be called informative or not.
+- 2026-11-13 20:54 cofold: 13/20 (13 ok, 0 failed), 1.3 min for SCRAM-PRLR-003, about 0.1 hours left
+- 2026-11-13 20:54 build-db: EGFR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:54 build-db: GLP1R bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:54 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:54 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:54 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:54 build-db: 15 bundles, 2885 kB total

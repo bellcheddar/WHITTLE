@@ -32,12 +32,21 @@ from pipeline.common import (AXES, STATIC_DATA, TARGETS, connect, log,
 
 @dataclass(frozen=True)
 class Component:
-    """One contributing metric. `sign` is +1 when more is better."""
+    """One contributing metric. `sign` is +1 when more is better.
+
+    `shuffle_invariant` marks a component that cannot change when a CDR is
+    shuffled, because it reads only amino-acid composition or only the
+    framework. The scrambled control preserves both by design, so such a
+    component contributes exactly nothing to the real-versus-shuffled
+    comparison, and an axis built mostly from them cannot be tested that way
+    at all. Verified by `test_shuffle_invariant_components_really_are`.
+    """
     field: str
     sign: int
     tier: int
     weight: float = 1.0
     note: str = ""
+    shuffle_invariant: bool = False
 
 
 # Component tables. A component is used only when the column has values; this is
@@ -76,17 +85,23 @@ AXIS_COMPONENTS: dict[str, list[Component]] = {
         Component("psh", -1, 1, 2.0, "TNP patch surface hydrophobicity"),
         Component("tnp_flags", -1, 1, 1.0, "TNP metrics outside the clinical-stage range"),
         Component("n_cdr_liabilities", -1, 0, 1.0, "liability motifs inside a CDR"),
-        Component("abs_charge", -1, 0, 0.5, "distance of net charge at pH 7.4 from zero"),
+        Component("abs_charge", -1, 0, 0.5, "distance of net charge at pH 7.4 from zero",
+                  shuffle_invariant=True),
     ],
     "thermo": [
         Component("tm_pred", +1, 1, 3.0, "predicted apparent Tm from the WHITTLE model"),
-        Component("hallmark_n", +1, 0, 1.0, "camelid hallmark residues present, 0-4"),
-        Component("canonical_disulfide", +1, 0, 0.5, "canonical Cys23-Cys104 pair"),
-        Component("cdr3_len", -1, 0, 0.5, "CDR3 length: long loops cost stability"),
+        Component("hallmark_n", +1, 0, 1.0, "camelid hallmark residues present, 0-4",
+                  shuffle_invariant=True),  # framework positions, untouched
+        Component("canonical_disulfide", +1, 0, 0.5, "canonical Cys23-Cys104 pair",
+                  shuffle_invariant=True),  # framework positions, untouched
+        Component("cdr3_len", -1, 0, 0.5, "CDR3 length: long loops cost stability",
+                  shuffle_invariant=True),  # a shuffle preserves length
     ],
     "expression": [
-        Component("swi", +1, 1, 1.5, "Solubility-Weighted Index"),
-        Component("protein_sol", +1, 1, 1.5, "Protein-Sol solubility"),
+        Component("swi", +1, 1, 1.5, "Solubility-Weighted Index",
+                  shuffle_invariant=True),  # composition only
+        Component("protein_sol", +1, 1, 1.5, "Protein-Sol solubility",
+                  shuffle_invariant=True),  # composition only
         Component("nativeness_ppl", -1, 1, 1.0, "pseudo-perplexity under an antibody LM"),
         Component("n_liabilities", -1, 0, 0.5, "liability motifs anywhere in the sequence"),
     ],

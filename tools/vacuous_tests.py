@@ -32,7 +32,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from pipeline.common import TARGETS, connect, log  # noqa: E402
+from pipeline.common import TARGETS, connect, log
+from pipeline.score import AXIS_COMPONENTS  # noqa: E402
 
 AXES = {
     "affinity": "axis_affinity",
@@ -148,14 +149,40 @@ def check_axis(conn, target: str, name: str, column: str) -> dict:
         f"SELECT {control_column} FROM controls WHERE kind = 'scrambled' "
         f"AND target = ? AND {control_column} IS NOT NULL", (target,))]
     auc = mann_whitney_auc(values, shuffled)
-    result["auc_vs_scrambled"] = None if auc is None else round(auc, 3)
+    result["auc_vs_scrambled"] = None if auc is None else round(auc, 4)
+
+    # How much of this axis could the control move at all? The shuffle
+    # preserves amino-acid composition and the framework by design, so a
+    # component reading only those is bit-identical between a candidate and
+    # its scrambled twin and contributes exactly nothing here. Calling such an
+    # axis "non-discriminating" blames the axis for a control that cannot
+    # test it: 67 per cent of the expression axis is composition-only, so its
+    # AUC sits at chance by construction rather than by failure.
+    components = AXIS_COMPONENTS.get(name, [])
+    total_weight = sum(c.weight for c in components) or 1.0
+    testable = sum(c.weight for c in components
+                   if not c.shuffle_invariant) / total_weight
+    result["testable_weight_fraction"] = round(testable, 3)
+
     if auc is not None:
         result["n_scrambled"] = len(shuffled)
-        if auc < 0.6:
+        if testable < 0.5:
+            if result["passed"]:
+                result["passed"] = None
+            result["findings"].append(
+                f"this control cannot test this axis: {1 - testable:.0%} of its "
+                f"component weight reads only amino-acid composition or the "
+                f"framework, both of which a CDR shuffle preserves exactly, so "
+                f"the measured AUC of {auc:.3f} is near chance by construction "
+                f"rather than by failure. A negative control that varies "
+                f"composition is needed before this axis can be called "
+                f"informative or not.")
+        elif auc < 0.6:
             result["passed"] = False
             result["findings"].append(
                 f"does not separate real candidates from CDR-shuffled ones "
-                f"(AUC {auc:.3f}; 0.5 is no separation). The axis is "
+                f"(AUC {auc:.3f}; 0.5 is no separation), and {testable:.0%} of "
+                f"the axis weight could have moved. The axis is "
                 f"non-discriminating and must be labelled as such wherever it "
                 f"appears.")
     else:
