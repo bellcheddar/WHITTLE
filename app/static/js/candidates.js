@@ -983,17 +983,23 @@
     // No unit beside "pending": there is no number for it to qualify.
     const unitSpan = missing ? '' : `<span class="tunit">${W.escape(unit || '')}</span>`;
     const verdict = axis ? axisVerdict(axis) : null;
-    // Four states, not two. "unconfirmed" and "untestable" are things the
-    // control set measured and could not rule on, and flattening either into
-    // the unflagged case would present a weak axis as a working one.
+    // The verdict is one per axis, pooled over all five targets, since fifty
+    // pairs on one target cannot resolve these effects (DECISIONS 53). An
+    // unflagged tile means the axis separates a candidate from its own
+    // shuffled twin; every other state says what the control actually found.
     const FLAGS = {
       vacuous: ['non-discriminating',
         'This axis does not separate real candidates from CDR-shuffled '
         + 'controls, so its ordering carries no evidence.'],
-      unconfirmed: ['weak',
-        'This axis separates real candidates from CDR-shuffled controls on '
-        + 'the unpaired test but not when each control is compared with the '
-        + 'candidate it was shuffled from. Treat its ordering as suggestive.'],
+      inverted: ['runs backwards',
+        'The CDR-shuffled control beats the candidate it was shuffled from on '
+        + 'this axis more often than not. That is signal with the wrong sign, '
+        + 'not an absence of signal, and nothing is ranked on it.'],
+      weak: ['weak',
+        'This axis separates real candidates from their own CDR-shuffled '
+        + 'twins, but by a small margin: around 60 per cent of pairs rather '
+        + 'than the 84 per cent the thermostability axis reaches. Treat its '
+        + 'ordering as suggestive.'],
       untestable: ['untested',
         'The CDR-shuffled control preserves amino-acid composition, which is '
         + 'most of what this axis reads, so the control cannot test it either '
@@ -1001,10 +1007,16 @@
         + 'defined from composition. Deciding it needs measured expression on '
         + 'real nanobodies. This is not a failure of the axis.'],
     };
-    const label = FLAGS[verdict];
-    const flag = label
-      ? `<div class="tflag${verdict === 'vacuous' ? '' : ' soft'}" `
-        + `title="${W.escape(label[1])}">${label[0]}</div>`
+    // Named `flagLabel`, not `label`: `label` is this function's first
+    // parameter and the axis name the tile prints, and redeclaring it with
+    // const is a SyntaxError that takes the whole file down rather than just
+    // this tile. It did, between 2026-11-14 and the same day's fix, which is
+    // why tools/js_check.py now runs before every push.
+    const flagLabel = FLAGS[verdict];
+    const hard = verdict === 'vacuous' || verdict === 'inverted';
+    const flag = flagLabel
+      ? `<div class="tflag${hard ? '' : ' soft'}" `
+        + `title="${W.escape(flagLabel[1])}">${flagLabel[0]}</div>`
       : '';
     return `<div class="tile"><div class="tlabel">${W.escape(label)}</div>
       <div class="tvalue">${shown}${unitSpan}</div>

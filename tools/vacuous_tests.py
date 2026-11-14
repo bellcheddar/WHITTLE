@@ -249,98 +249,23 @@ def check_axis(conn, target: str, name: str, column: str) -> dict:
                    if not c.shuffle_invariant) / total_weight
     result["testable_weight_fraction"] = round(testable, 3)
 
-    if auc is not None:
-        result["n_scrambled"] = len(shuffled)
-        if testable < 0.5:
-            if result["passed"]:
-                result["passed"] = None
-            result["findings"].append(
-                f"this control cannot test this axis: {1 - testable:.0%} of its "
-                f"component weight reads only amino-acid composition or the "
-                f"framework, both of which a CDR shuffle preserves exactly, so "
-                f"the measured AUC of {auc:.3f} is near chance by construction "
-                f"rather than by failure. No synthetic control settles this "
-                f"either: the two heaviest components are defined from "
-                f"composition, so a deliberately insoluble sequence scores "
-                f"badly by arithmetic and not by evidence. Deciding this axis "
-                f"needs measured expression or solubility on real nanobodies, "
-                f"of which this control set has none, so it stays untested "
-                f"rather than informative or non-discriminating."
-                + (f" The paired form agrees and adds nothing: "
-                   f"{result['paired_wins']} of {result['paired_n']} "
-                   f"({result['paired_fraction']:.0%}, p = "
-                   f"{result['paired_p']:.2g}), which is what a control that "
-                   f"cannot move two thirds of the weight should look like."
-                   if result.get("paired_p") is not None else ""))
-            result["verdict"] = "untestable"
-        elif (result.get("paired_p") is not None
-              and result["paired_p"] < 0.05
-              and result["paired_fraction"] > 0.5):
-            # The paired test fires where the unpaired AUC does not. That is
-            # not a contradiction: the unpaired comparison is swamped by the
-            # variance between 500 different sequences, and the paired one
-            # holds composition, length and framework fixed so that CDR order
-            # is the only difference left. Treating the weaker test as the
-            # verdict labelled an informative axis vacuous, which is the more
-            # damaging of the two errors available here: it tells a reader to
-            # ignore a column that works.
-            result["findings"].append(
-                f"separates a candidate from its own CDR-shuffled twin in "
-                f"{result['paired_wins']} of {result['paired_n']} pairs "
-                f"({result['paired_fraction']:.0%}, sign test p = "
-                f"{result['paired_p']:.1g}). The unpaired AUC of {auc:.3f} is "
-                f"below the 0.6 threshold because comparing one shuffle "
-                f"against all 500 candidates is swamped by the variance "
-                f"between different sequences, not because the axis carries "
-                f"nothing. Informative on the paired evidence.")
-            result["verdict"] = "informative"
-        elif auc >= 0.6 and result.get("paired_p") is not None:
-            # Unpaired clears the bar, paired cannot confirm it. Calling this
-            # informative would rest a headline label on the weaker of the two
-            # tests, and calling it vacuous would contradict the number that
-            # was actually measured. It is neither: it is an axis the control
-            # set is not sharp enough to rule on.
-            #
-            # This case exists because a hard threshold at 0.6 was deciding
-            # between axes whose evidence is indistinguishable. EGFR
-            # specificity at 0.600 was labelled non-discriminating while TL1A
-            # at 0.614 was labelled informative, on paired p-values of 0.18
-            # and 0.2. One label told a reader to ignore the column and the
-            # other told them to trust it, for the same evidence.
-            if result["passed"]:
-                result["passed"] = None
-            result["verdict"] = "unconfirmed"
-            result["findings"].append(
-                f"weak and unconfirmed: it clears the unpaired bar (AUC "
-                f"{auc:.3f}) but beats its own shuffled twin in only "
-                f"{result['paired_wins']} of {result['paired_n']} pairs "
-                f"({result['paired_fraction']:.0%}, sign test p = "
-                f"{result['paired_p']:.2g}), which a fair coin reproduces too "
-                f"often to call this separation. Treat its ordering as "
-                f"suggestive, not as evidence.")
-        elif auc < 0.6:
-            result["passed"] = False
-            paired_note = ""
-            if result.get("paired_p") is not None:
-                paired_note = (
-                    f" Paired against their own parents it is "
-                    f"{result['paired_wins']} of {result['paired_n']} "
-                    f"({result['paired_fraction']:.0%}, p = "
-                    f"{result['paired_p']:.2g}), so the more powerful form of "
-                    f"the test does not rescue it.")
-            result["findings"].append(
-                f"does not separate real candidates from CDR-shuffled ones "
-                f"(AUC {auc:.3f}; 0.5 is no separation), and {testable:.0%} of "
-                f"the axis weight could have moved.{paired_note} The axis is "
-                f"non-discriminating and must be labelled as such wherever it "
-                f"appears.")
-            result["verdict"] = "vacuous"
-    else:
-        # A check that did not run is not a check that passed. Leaving
-        # `passed` True here reported PASS for an axis whose decisive test had
-        # never executed, which is a stronger claim than "we have not looked"
-        # and the opposite of what this file exists to do. Only downgrade a
-        # would-be pass: a failure found by the other checks still stands.
+    result["n_scrambled"] = len(shuffled)
+    # The separation verdict is NOT decided here. It is decided once per axis
+    # over all five targets by `pooled_separation`, because fifty pairs cannot
+    # resolve the effect these axes actually have: at a true 60 per cent rate
+    # the expected p-value at n = 50 is 0.20, so a per-target verdict is a coin
+    # toss dressed as a finding. It published specificity as non-discriminating
+    # on EGFR and TNFa, unconfirmed on GLP1R and TL1A and informative on PRLR,
+    # which is one 60 per cent effect wearing three labels. The per-target
+    # counts are kept and displayed; what they no longer do is decide.
+    #
+    # The structural checks above stay per target, because no-variance, modal
+    # degeneracy and restatement of another axis are genuinely properties of
+    # one target's distribution and need no pooling to be seen.
+    if auc is None:
+        # A check that did not run is not a check that passed. Leaving `passed`
+        # True here reported PASS for an axis whose decisive test had never
+        # executed, which is a stronger claim than "we have not looked".
         if result["passed"]:
             result["passed"] = None
         result["findings"].append(
@@ -349,40 +274,181 @@ def check_axis(conn, target: str, name: str, column: str) -> dict:
     return result
 
 
+def pooled_separation(axis: str, results: list[dict]) -> dict:
+    """One separation verdict per axis, decided over all five targets.
+
+    Fifty pairs per target cannot resolve the effect sizes these axes have.
+    At a true 60 per cent win rate the expected sign-test p-value at n = 50 is
+    0.20, so asking each target separately returns noise: specificity came
+    back non-discriminating on EGFR (28 of 46) and TNFa (24 of 49), weak on
+    GLP1R (30 of 47) and TL1A (30 of 50) and informative on PRLR (32 of 48),
+    which is a single 60 per cent effect labelled three different ways by luck.
+    Pooled it is 144 of 240, p = 0.0024: weak, and real. Marc's call,
+    2026-11-14 (DECISIONS 53).
+
+    Pooling settles only whether the axis carries information. It does not
+    pool the rankings, which stay within-target percentiles throughout, and it
+    does not hide the per-target counts, which travel with the verdict so a
+    reader can see both the answer and how thin the evidence is per target.
+
+    Pooling across targets is sound here because both sides of every pair are
+    already within-target percentiles on the same 0 to 100 scale, so a win is
+    the same event on EGFR as on TNFa. What it assumes is that the axis
+    behaves alike across targets, which n = 50 per target cannot confirm; the
+    assumption is stated rather than buried, and the fix is more controls.
+    """
+    wins = sum(r.get("paired_wins") or 0 for r in results
+               if r.get("paired_p") is not None)
+    n = sum(r.get("paired_n") or 0 for r in results
+            if r.get("paired_p") is not None)
+    aucs = [r["auc_vs_scrambled"] for r in results
+            if r.get("auc_vs_scrambled") is not None]
+    testable = next((r["testable_weight_fraction"] for r in results
+                     if r.get("testable_weight_fraction") is not None), 1.0)
+    per_target = {r["target"]: f"{r.get('paired_wins')}/{r.get('paired_n')}"
+                  for r in results if r.get("paired_p") is not None}
+
+    out = {"pooled_wins": wins, "pooled_n": n, "per_target": per_target,
+           "testable_weight_fraction": testable,
+           "auc_range": [min(aucs), max(aucs)] if aucs else None}
+    if not n:
+        out["verdict"] = "pending"
+        out["finding"] = ("no scrambled control has been scored on this axis, "
+                          "so its strongest check has not run")
+        return out
+
+    fraction = wins / n
+    p = sign_test(wins, n)
+    out["pooled_fraction"] = round(fraction, 3)
+    out["pooled_p"] = p
+    # Only say the per-target counts are unresolvable when they are. Thermo
+    # clears p < 0.05 on every target by itself; specificity clears it on none.
+    resolved = [r["target"] for r in results
+                if r.get("paired_p") is not None and r["paired_p"] < 0.05]
+    if not resolved:
+        tail = ", none of which reaches significance alone at this size."
+    elif len(resolved) == len(per_target):
+        tail = ", every one of which is significant on its own."
+    else:
+        tail = (f", of which {', '.join(sorted(resolved))} "
+                f"{'is' if len(resolved) == 1 else 'are'} significant alone.")
+    spread = (" Per target: "
+              + ", ".join(f"{t} {c}" for t, c in sorted(per_target.items()))
+              + tail)
+
+    if testable < 0.5:
+        out["verdict"] = "untestable"
+        out["finding"] = (
+            f"this control cannot test this axis: {1 - testable:.0%} of its "
+            f"component weight reads only amino-acid composition or the "
+            f"framework, both of which a CDR shuffle preserves exactly, so a "
+            f"result near chance is expected by construction rather than by "
+            f"failure. No synthetic control settles it either, because the two "
+            f"heaviest components are defined from composition and a "
+            f"deliberately insoluble sequence would score badly by arithmetic "
+            f"and not by evidence. Deciding this axis needs measured "
+            f"expression or solubility on real nanobodies, of which this "
+            f"control set has none, so it stays untested rather than "
+            f"informative or non-discriminating. Pooled over all five targets "
+            f"it is {wins} of {n} ({fraction:.0%}, p = {p:.2g}), which is what "
+            f"a control that cannot move two thirds of the weight looks like.")
+    elif p < 0.05 and fraction > 0.5:
+        # "weak" is a verdict of its own rather than a modifier on
+        # "informative", so that one value drives every label in the app. A
+        # 60 per cent axis and an 84 per cent axis both separate, and telling a
+        # reader to weigh them equally would be the overstatement this file
+        # exists to prevent.
+        clear = fraction >= 0.70
+        strength = "clearly" if clear else "weakly but measurably"
+        out["verdict"] = "informative" if clear else "weak"
+        out["strength"] = "clear" if clear else "weak"
+        out["finding"] = (
+            f"{strength} separates a candidate from its own CDR-shuffled twin: "
+            f"pooled over all five targets, {wins} of {n} pairs "
+            f"({fraction:.0%}, sign test p = {p:.2g}).{spread}")
+    elif p < 0.05 and fraction < 0.5:
+        # Reachable only since the sign test started reading both tails
+        # (DECISIONS 51). An inverted axis is worse than an empty one, because
+        # its weight moves the ranking away from the candidates it should
+        # favour, so it gets a label of its own rather than sharing one with
+        # "carries no information".
+        out["verdict"] = "inverted"
+        out["finding"] = (
+            f"runs backwards: the CDR-shuffled control beats the candidate it "
+            f"was shuffled from on {n - wins} of {n} pairs (p = {p:.2g}). This "
+            f"is not an absence of signal, it is signal with the wrong sign, "
+            f"and nothing should be ranked on it until the cause is "
+            f"understood.{spread}")
+    else:
+        out["verdict"] = "vacuous"
+        out["finding"] = (
+            f"does not separate real candidates from CDR-shuffled ones: "
+            f"pooled over all five targets, {wins} of {n} pairs "
+            f"({fraction:.0%}, sign test p = {p:.2g}), with {testable:.0%} of "
+            f"the axis weight free to move. At this pooled size the test would "
+            f"have found a 60 per cent effect, so this is a real negative "
+            f"rather than a shortage of controls. The axis is "
+            f"non-discriminating and is labelled as such wherever it "
+            f"appears.{spread}")
+    return out
+
+
+# "weak" passes: it separates, by a small margin that the label states.
+PASSES = {"informative", "weak"}
+FAILS = {"vacuous", "inverted"}
+
+
 def main() -> int:
     conn = connect()
     results: list[dict] = []
     for target in TARGETS:
         for name, column in AXES.items():
-            result = check_axis(conn, target, name, column)
-            results.append(result)
-            state = ("PASS" if result["passed"]
-                     else ("PENDING" if result["passed"] is None else "VACUOUS"))
-            detail = "; ".join(result["findings"]) or "informative"
-            paired = ""
-            if result.get("paired_p") is not None:
-                paired = (f" [paired {result['paired_wins']}/"
-                          f"{result['paired_n']}, p = {result['paired_p']:.2g}]")
-            log(f"vacuous_tests: {state} {target} {name}:{paired} {detail}")
+            results.append(check_axis(conn, target, name, column))
 
-    # The axis-level roll-up. `passed` started as True and was only ever set
-    # False, so an axis whose every target came back unresolved rolled up as
-    # True and the QC panel printed "informative" for it. The expression axis
-    # is exactly that case: untestable on all five targets, reported as
-    # working. None now means unresolved, and the per-target verdicts travel
-    # with it so the panel need not collapse five answers into one.
     by_axis: dict[str, dict] = {}
     for result in results:
-        entry = by_axis.setdefault(result["axis"], {"targets": {}, "passed": True})
+        entry = by_axis.setdefault(result["axis"], {"targets": {}})
         entry["targets"][result["target"]] = result
-    for entry in by_axis.values():
-        states = [r["passed"] for r in entry["targets"].values()]
-        entry["passed"] = (False if any(s is False for s in states)
-                           else (None if any(s is None for s in states) else True))
-        entry["verdicts"] = {t: (r.get("verdict")
-                                 or ("pending" if r["passed"] is None
-                                     else "informative" if r["passed"] else "vacuous"))
-                             for t, r in entry["targets"].items()}
+
+    # One separation verdict per axis, over all five targets. The per-target
+    # structural checks still stand on their own and can fail a single target
+    # by themselves; what pooling replaces is the coin toss that fifty pairs
+    # made of the separation question. See `pooled_separation`.
+    for axis, entry in by_axis.items():
+        per = list(entry["targets"].values())
+        pooled = pooled_separation(axis, per)
+        entry["pooled"] = pooled
+        verdict = pooled["verdict"]
+        entry["verdict"] = verdict
+        entry["passed"] = (True if verdict in PASSES
+                           else False if verdict in FAILS else None)
+        # A structural failure on one target is not overridden by a pooled
+        # pass: it is a different fault and it still stands.
+        structural = [t for t, r in entry["targets"].items()
+                      if r["passed"] is False]
+        if structural:
+            entry["passed"] = False
+            entry["structural_failures"] = structural
+        for result in per:
+            result["verdict"] = verdict
+            result["pooled_finding"] = pooled["finding"]
+        # Kept for the app, which renders a label per target: they now agree
+        # by construction, which is the point.
+        entry["verdicts"] = {t: verdict for t in entry["targets"]}
+
+    for axis, entry in sorted(by_axis.items()):
+        pooled = entry["pooled"]
+        state = ("PASS" if entry["passed"]
+                 else "PENDING" if entry["passed"] is None else "FAIL")
+        counts = (f"pooled {pooled['pooled_wins']}/{pooled['pooled_n']}, "
+                  f"p = {pooled['pooled_p']:.2g}"
+                  if pooled.get("pooled_p") is not None else "no controls")
+        log(f"vacuous_tests: {state} {axis} [{counts}] "
+            f"{pooled['verdict'].upper()}: {pooled['finding']}")
+        for target, result in sorted(entry["targets"].items()):
+            own = [f for f in result["findings"]]
+            if own:
+                log(f"vacuous_tests:   {target} also: {'; '.join(own)}")
 
     failed = [axis for axis, entry in by_axis.items() if entry["passed"] is False]
     unresolved = [axis for axis, entry in by_axis.items() if entry["passed"] is None]
@@ -395,13 +461,11 @@ def main() -> int:
         print(f"VACUOUS AXES: {', '.join(failed)}")
         print("These are findings to report, not failures to hide. The app marks "
               "a non-discriminating axis wherever it appears.")
-        print("It does NOT currently keep one out of the ranking. A verdict is "
-              "per axis per target, and specificity is non-discriminating on "
-              "two targets and informative on a third, so excluding it means "
-              "ranking different targets on different axes. Affinity is "
-              "excluded because it failed on all five (run."
-              "tier2_reorders_shortlist in config/targets.yaml); the per-target "
-              "case is open and is recorded in PROGRESS.md.")
+        print("An axis that fails is excluded from the ranking, which is what "
+              "run.tier2_reorders_shortlist does for affinity. The verdict is "
+              "now one per axis rather than one per target (DECISIONS 53), so "
+              "there is no longer a case where an axis would be ranked on for "
+              "some targets and not others.")
         return 0  # a finding, not an error exit
     if unresolved:
         print(f"UNRESOLVED: {', '.join(unresolved)} were tested and the control "

@@ -234,35 +234,48 @@
       }
 
       if (key === 'vacuous_tests') {
-        // Per target, not rolled up. One axis can be informative on one
-        // target and carry nothing on another, and it does: specificity is
-        // informative on PRLR and non-discriminating on TNFa. Collapsing the
-        // five into a single word for the axis was wrong in both directions,
-        // and an axis that came back unresolved on every target used to print
-        // as "informative" (DECISIONS 46).
+        // One verdict per axis, pooled over all five targets, with the
+        // per-target counts beside it. Fifty pairs on one target cannot
+        // resolve these effects: at a true 60 per cent rate the expected
+        // p-value at n = 50 is 0.20, so the per-target verdicts this used to
+        // print were a coin toss. It published specificity as informative on
+        // PRLR and non-discriminating on TNFa, which is one 60 per cent effect
+        // labelled two ways. The counts stay visible so a reader sees how thin
+        // the evidence is per target (DECISIONS 53).
         const WORD = {
           informative: 'informative',
+          weak: 'weak but measurable',
           vacuous: 'NOT DISCRIMINATING',
-          unconfirmed: 'weak, unconfirmed',
+          inverted: 'RUNS BACKWARDS',
           untestable: 'this control cannot test it',
           pending: 'not computed yet',
         };
         const lines = Object.entries(value).map(([axis, entry]) => {
-          const verdicts = entry.verdicts || {};
-          const targets = entry.targets || {};
-          const per = Object.keys(verdicts).sort().map((t2) => {
-            const v = verdicts[t2];
-            const paired = targets[t2] && targets[t2].paired_n
-              ? ` (${targets[t2].paired_wins}/${targets[t2].paired_n} paired)` : '';
-            return `${W.escape(t2)} ${W.escape(WORD[v] || v)}${paired}`;
-          }).join(', ');
-          const findings = new Set();
-          Object.values(targets).forEach((t2) => (t2.findings || [])
-            .forEach((f) => findings.add(f)));
-          return `<strong>${W.escape(axis)}</strong>: ${per}`
-            + (findings.size
-              ? `<br><span class="qcnote">${W.escape([...findings].join(' '))}</span>`
-              : '');
+          const pooled = entry.pooled || {};
+          const verdict = pooled.verdict || entry.verdict || 'pending';
+          const word = WORD[verdict] || verdict;
+          let head = `<strong>${W.escape(axis)}</strong>: ${W.escape(word)}`;
+          if (pooled.pooled_n) {
+            const pct = Math.round((pooled.pooled_fraction || 0) * 100);
+            head += ` (pooled ${pooled.pooled_wins}/${pooled.pooled_n} paired,`
+              + ` ${pct}%, p = ${Number(pooled.pooled_p).toPrecision(2)})`;
+          }
+          const per = Object.entries(pooled.per_target || {}).sort()
+            .map(([t2, count]) => `${W.escape(t2)} ${W.escape(count)}`)
+            .join(', ');
+          const note = pooled.finding ? W.escape(pooled.finding) : '';
+          // Structural faults are still per target: no variance or a modal
+          // collapse is a property of one target's distribution, so those
+          // stay listed against the target that has them.
+          const own = Object.entries(entry.targets || {})
+            .filter(([, t2]) => (t2.findings || []).length)
+            .map(([t2, block]) => `${W.escape(t2)}: `
+              + W.escape((block.findings || []).join('; ')));
+          return head
+            + (per ? `<br><span class="qcnote">per target ${per}</span>` : '')
+            + (note ? `<br><span class="qcnote">${note}</span>` : '')
+            + (own.length
+              ? `<br><span class="qcnote">${own.join('<br>')}</span>` : '');
         });
         out.innerHTML = lines.join('<br>');
         return;

@@ -29,6 +29,14 @@ done
 echo "==> Secret scan"
 python3 tools/secret_scan.py --tree
 
+# A SyntaxError in one bundle takes a whole page down, and the server cannot
+# tell: it serves a dead static file with a 200 exactly as it serves a healthy
+# one. That shipped once, on 2026-11-14, when `const label` redeclared the
+# `label` parameter of `tile()` and stopped candidates.js parsing. Deploying an
+# unparseable page is worse than failing to deploy, so this gates the upload.
+echo "==> JavaScript parses"
+python3 tools/js_check.py
+
 # Target from config/deploy.toml, which is gitignored and whose ssh_target was
 # resolved at write time from the sibling AlphaFraud/.env (spec 4.4).
 read_toml() {

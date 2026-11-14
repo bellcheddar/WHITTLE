@@ -231,6 +231,11 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
     # reader on the Candidates page saw an Expression percentile with nothing
     # to say it does not separate a real candidate from a shuffled one.
     verdicts: dict[str, dict[str, str]] = {}
+    # The pooled block beside the per-target labels. Since DECISIONS 53 the
+    # verdict is decided once per axis over all five targets, so the five
+    # labels agree by construction and the number worth showing is the pooled
+    # count. Without it the panel would state a verdict and hide the evidence.
+    pooled: dict[str, dict] = {}
     row = conn.execute(
         "SELECT value FROM qc WHERE key='vacuous_tests'").fetchone()
     if row:
@@ -239,6 +244,12 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
         except (TypeError, ValueError):
             payload = {}
         for axis, block in (payload or {}).items():
+            if block.get("pooled"):
+                keep = ("verdict", "strength", "pooled_wins", "pooled_n",
+                        "pooled_fraction", "pooled_p", "per_target", "finding",
+                        "testable_weight_fraction")
+                pooled[axis] = {k: block["pooled"][k] for k in keep
+                                if k in block["pooled"]}
             for target, result in (block.get("targets") or {}).items():
                 # `verdict` is set by the test itself where it has something
                 # more specific to say than pass or fail. "unconfirmed" and
@@ -263,6 +274,7 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
         "axes": axes,
         "axes_pending": provisional,
         "axis_verdicts": verdicts,
+        "axis_verdict_pooled": pooled,
         "ranking_scope": "within_target",
         "upstream_caveat": "not comparable between targets",
         # The hero draws the shortlist cut and the gates solve for it, so the
