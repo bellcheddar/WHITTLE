@@ -1088,3 +1088,17 @@ components at all, so the thermo axis had never been tested on any control;
 and the expression axis was reported non-discriminating when the control
 cannot reach two thirds of it. All three fixed, with the verdicts now carried
 through to the drawer.
+- 2026-11-13 20:56 cofold: 15/20 (15 ok, 0 failed), 1.3 min for SCRAM-PRLR-005, about 0.1 hours left
+- 2026-11-13 20:58 cofold: 16/20 (16 ok, 0 failed), 1.3 min for SCRAM-PRLR-006, about 0.1 hours left
+- 2026-11-13 20:59 cofold: 17/20 (17 ok, 0 failed), 1.3 min for SCRAM-PRLR-007, about 0.1 hours left
+- 2026-11-13 21:00 cofold: 18/20 (18 ok, 0 failed), 1.3 min for SCRAM-PRLR-008, about 0.0 hours left
+- 2026-11-13 21:02 cofold: 19/20 (19 ok, 0 failed), 1.3 min for SCRAM-PRLR-009, about 0.0 hours left
+- 2026-11-13 21:03 cofold: 20/20 (20 ok, 0 failed), 1.3 min for SCRAM-PRLR-010, about 0.0 hours left
+- 2026-11-13 21:03 cofold: finished 20 ok, 0 failed, in 0.4 hours
+- 2026-11-13 21:03 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 21:03 cofold: 250  complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
+- 2026-11-13 21:04 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 21:04 cofold: queue empty, every complex is already done
+- 2026-11-13 21:04 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 21:04 cofold: 250  complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
+- 2026-11-13 21:05 cofold: 1/250 (1 ok, 0 failed), 0.9 min for GLP1R-0049, about 3.7 hours left

@@ -41,7 +41,12 @@ for line in path.read_text().splitlines():
         rec = json.loads(line)
     except json.JSONDecodeError:
         continue
-    if rec.get("status") == "ok" and rec.get("id"):
+    # Candidates only. The scrambled controls share this manifest, so
+    # counting them against EXPECTED made the supervisor declare the queue
+    # complete while that many candidates were still unrun. It only bites on
+    # a restart, which is exactly when a supervisor is supposed to work.
+    if (rec.get("status") == "ok" and rec.get("id")
+            and not str(rec["id"]).startswith("SCRAM")):
         ok.add(rec["id"])
 print(len(ok))
 PYEOF
