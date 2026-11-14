@@ -90,6 +90,26 @@
     boundTo = null;
   }
 
+  /* DESIGN 2: the canvas sits on white, so a structure reads on the same
+     ground as the rest of the page and a screenshot of it drops into a figure
+     without a dark rectangle round it.
+
+     The axis gizmo goes with it. Mol* draws a small red/green/blue triad in
+     the bottom-left corner, which was invisible against the old dark ground
+     and is a distraction on white; nothing on this site asks the reader to
+     think in the viewer's coordinate frame.
+
+     Called after every load as well as at creation, because loading a
+     MolViewSpec state replaces the canvas props. */
+  function applyCanvasProps(view) {
+    try {
+      view.plugin.canvas3d?.setProps({
+        renderer: { backgroundColor: 0xFFFFFF },
+        camera: { helper: { axes: { name: 'off', params: {} } } },
+      });
+    } catch (err) { /* the viewer still works on its own defaults */ }
+  }
+
   function buildPlugin(container) {
     // Everything from here to assigning `plugin` runs inside one promise that
     // is stored in `creating` **synchronously** by the caller. The previous
@@ -114,12 +134,7 @@
       plugin = view;
       boundTo = container;
       created += 1;
-      try {
-        // DESIGN 2: the canvas sits on #0D1117, not the library's white.
-        view.plugin.canvas3d?.setProps({
-          renderer: { backgroundColor: 0x0D1117 },
-        });
-      } catch (err) { /* the viewer still works on its own background */ }
+      applyCanvasProps(view);
       return view;
     })();
   }
@@ -170,6 +185,7 @@
           // neighbour should still leave the model on screen.
         }
       }
+      applyCanvasProps(view);
       setPlaceholder(placeholder, loaded === 0);
       return { ok: loaded > 0, loaded, contexts: created - disposed };
     } catch (err) {
@@ -201,6 +217,7 @@
       build(builder);
       const state = builder.getState();
       await mvs.loadMVS(view.plugin, state, { replaceExisting: true });
+      applyCanvasProps(view);
       setPlaceholder(placeholder, false);
       return { ok: true, contexts: created - disposed };
     } catch (err) {

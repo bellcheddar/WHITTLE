@@ -30,7 +30,13 @@ Masthead, one row, white on `#DDE2EB` bottom border:
 | good | `#1E4D35` on `#DCF0E4` | clean / high percentile |
 | warn | `#B5781C` | mid percentile |
 | poor | `#8A3A28` on `#FBE5E0` | flag / low percentile |
-| viewer | `#0D1117` | Mol* canvas ground |
+| viewer | `#FFFFFF` | Mol* canvas ground |
+| cdr1 | `#2B7FB8` | CDR1 in every structure viewer, and its key |
+| cdr2 | `#E0A458` | CDR2 in every structure viewer, and its key |
+| cdr3 | `#9B2242` | CDR3 in every structure viewer, and its key |
+| framework | `#44506A` | the nanobody outside its CDRs |
+| antigen | `#9AA4B2` | the antigen chains in a complex |
+| reference | `#C3CBD9` | the experimental chain in a superposition |
 
 Inter throughout; tabular numerals on every numeric cell (`font-variant-numeric: tabular-nums`).
 
@@ -120,14 +126,16 @@ Column state persists in the URL.
 
 ### 3.5 Drawer
 
-**Docked beside the table, not overlaid.** `flex: 1 1 400px`; the table takes `flex: 999 1 560px; min-width: 0`, so at phone width the drawer stacks underneath.
+**Slides in over the page, full height.** `position: fixed`, `min(620px, 100vw)` wide, anchored to the right edge, with its own scroll and a left shadow; the table beneath keeps the full width. It was docked beside the table in the first version, which squeezed the table to about half the window on a laptop, and the table is the thing the drawer is about. Open state is a `.open` class rather than `hidden`, because a `display: none` element cannot transition; `inert` and `aria-hidden` keep the closed panel out of the tab order. At phone width it takes the whole screen. The slide respects `prefers-reduced-motion`.
 
 Header: candidate id (17px, 700) · `ON FRONT` chip in good when on the Pareto front · 44px close button.
 
 Four sub-tabs: **Structure · Metrics · Sequence · Neighbours**.
 
 Structure panel, in order:
-1. **Mol\* viewer**, 236px, on `#0D1117`. Caption bottom-left `model vs <PDB> · TM <score>`, bottom-right `CDR1 / 2 / 3`.
+1. **Mol\* viewer**, 236px, on white with a 1px border. **The three CDRs are coloured** and the caption's key is printed in those same colours, because a key naming three colours the picture does not distinguish is worse than no key. Caption bottom-left `model vs <PDB> · TM <score>`, bottom-right the CDR key. Mol*'s axis gizmo is off: it was invisible on the old dark ground and is a distraction on white.
+
+   Two numbering schemes, and swapping them colours the wrong residues. The predicted model and its superposed copy are IMGT-numbered in chain H, so the CDRs sit at fixed positions: 27-38, 56-65, 105-117. Chain N of the co-folded complex is numbered 1..len(sequence) and carries the sequence exactly, so there the CDRs are found by substring. The framework is drawn as the explicit complement of the CDR ranges rather than as a whole-chain cartoon underneath them: two cartoons on the same geometry z-fight and the upper one does not reliably win.
 2. **Four axis tiles**, 2x2 grid: uppercase 10px label, 20px value, unit in ink-3, 4px progress rule beneath.
 3. **Axis strips**, one 38px row per axis: every candidate for this target as a jittered dot, with this candidate marked by an accent needle. This is where the parcoords idea belongs, with the lines taken out. In the drawer the subject is already one candidate, which is the question "where does this one sit" actually asks. An axis with no data is a labelled empty strip, never a missing one.
 4. **Tm against the full set**: histogram of all candidates for this target with this candidate marked by a 2.5px accent rule, labelled `this one`, **and its error bar drawn**. A bare number hides the uncertainty that matters most.

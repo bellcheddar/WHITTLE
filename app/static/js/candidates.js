@@ -1002,10 +1002,28 @@
     }).join('') + '</tbody></table>';
   }
 
+  /* The drawer slides over the page, so its open state is a class rather than
+     `hidden`: a display:none element cannot animate, and the panel has to
+     transition both ways. `inert` and aria-hidden keep the closed panel out of
+     the tab order and off the accessibility tree, which `hidden` was doing. */
+  function setDrawerOpen(open) {
+    const node = el('drawer');
+    if (!node) return;
+    node.classList.toggle('open', open);
+    node.setAttribute('aria-hidden', String(!open));
+    if (open) node.removeAttribute('inert');
+    else node.setAttribute('inert', '');
+  }
+
+  function drawerIsOpen() {
+    const node = el('drawer');
+    return Boolean(node && node.classList.contains('open'));
+  }
+
   async function openDrawer(id) {
     W.state.id = id;
     W.writeUrl(true);
-    el('drawer').hidden = false;
+    setDrawerOpen(true);
     el('drawerid').textContent = id;
     document.querySelectorAll('.tabulator-row').forEach(
       (r) => r.classList.remove('whittle-selected'));
@@ -1055,12 +1073,43 @@
       await showComplex(d, profile);
       renderInteractions(d, profile);
     } else {
-      await window.WViewer.show(container,
-        [{ url, format: 'pdb', binary: false }]);
+      await showModel(d);
       const panel = el('interactions');
       if (panel) panel.hidden = true;
     }
     writeViewerCaption(d);
+  }
+
+  /* The predicted model, with the three CDRs picked out.
+
+     This goes through MolViewSpec rather than a plain load because a plain
+     load cannot colour anything: the whole domain came back one colour, and
+     the caption said "CDR1 / 2 / 3" over a picture that distinguished none of
+     them. If the MVS extension is unavailable the plain load is still better
+     than an empty panel, so it is the fallback. */
+  async function showModel(d) {
+    const container = el('viewer');
+    if (!container || !d.structure_url) return;
+    const result = await window.WViewer.showMvs(container, (builder) => {
+      builder.canvas({ background_color: VIEWER_BG });
+      const structure = builder
+        .download({ url: d.structure_url })
+        .parse({ format: 'pdb' })
+        .modelStructure();
+      structure.component({
+        selector: frameworkRanges(MODEL_CHAIN, IMGT_CDR, IMGT_LAST) })
+        .representation({ type: 'cartoon' })
+        .color({ color: NANOBODY_COLOUR });
+      for (const key of ['cdr1', 'cdr2', 'cdr3']) {
+        structure.component({ selector: cdrSelector(MODEL_CHAIN, IMGT_CDR[key]) })
+          .representation({ type: 'cartoon' })
+          .color({ color: CDR_COLOURS[key] });
+      }
+    });
+    if (!result || !result.ok) {
+      await window.WViewer.show(container,
+        [{ url: d.structure_url, format: 'pdb', binary: false }]);
+    }
   }
 
   /* The complex, with the residues PLIP found in contact picked out.
@@ -1072,10 +1121,14 @@
   async function showComplex(d, profile) {
     const container = el('viewer');
     const byType = highlightResidues(profile && profile.interactions);
+    // Chain N is numbered 1..len(sequence) here, not IMGT, so the CDRs are
+    // found by substring rather than at fixed positions.
+    const spans = cdrSpansFromSequence(d);
+    const last = (d.sequence || '').length;
     await window.WViewer.showMvs(container, (builder) => {
-      // Loading an MVS state resets the canvas, so the dark background has
-      // to be part of the state rather than set once on the plugin.
-      builder.canvas({ background_color: '#0D1117' });
+      // Loading an MVS state resets the canvas, so the background has to be
+      // part of the state rather than set once on the plugin.
+      builder.canvas({ background_color: VIEWER_BG });
       const structure = builder
         .download({ url: d.complex_url })
         .parse({ format: 'pdb' })
@@ -1083,14 +1136,25 @@
       // Disjoint components, one per chain, rather than a `polymer` cartoon
       // with the nanobody drawn over it: two cartoons on the same geometry
       // z-fight and the upper one does not reliably win, which left the whole
-      // complex a single grey.
+      // complex a single grey. The CDRs are carved out of chain N for the
+      // same reason.
       structure.component({ selector: ANTIGEN_CHAINS.map(
         (c) => ({ auth_asym_id: c })) })
         .representation({ type: 'cartoon' })
         .color({ color: ANTIGEN_COLOUR });
-      structure.component({ selector: [{ auth_asym_id: 'N' }] })
+      const framework = last
+        ? frameworkRanges(COMPLEX_NANOBODY_CHAIN, spans, last)
+        : [{ auth_asym_id: COMPLEX_NANOBODY_CHAIN }];
+      structure.component({ selector: framework })
         .representation({ type: 'cartoon' })
         .color({ color: NANOBODY_COLOUR });
+      for (const key of ['cdr1', 'cdr2', 'cdr3']) {
+        if (!spans[key]) continue;
+        structure.component({
+          selector: cdrSelector(COMPLEX_NANOBODY_CHAIN, spans[key]) })
+          .representation({ type: 'cartoon' })
+          .color({ color: CDR_COLOURS[key] });
+      }
       // Weakest first, so a residue drawn twice ends on its strongest type.
       for (let i = IX_TYPES.length - 1; i >= 0; i -= 1) {
         const spec = IX_TYPES[i];
@@ -1159,8 +1223,85 @@
   // A, B and C cover the monomers and the two homotrimers; naming a chain
   // that is not in the file is harmless.
   const ANTIGEN_CHAINS = ['A', 'B', 'C'];
-  const ANTIGEN_COLOUR = '#7E8796';
-  const NANOBODY_COLOUR = '#2F8F7E';
+  const ANTIGEN_COLOUR = '#9AA4B2';
+  const NANOBODY_COLOUR = '#44506A';     // the framework, so the CDRs carry
+  const VIEWER_BG = '#FFFFFF';
+  const REFERENCE_COLOUR = '#C3CBD9';   // the experimental chain
+
+  /* The three CDRs, in colours that step in lightness as well as hue so the
+     key still reads in greyscale and under colour-vision deficiency
+     (DESIGN 2). They are also the colours the legend prints, because a key in
+     a different colour from the picture is worse than no key. */
+  const CDR_COLOURS = { cdr1: '#2B7FB8', cdr2: '#E0A458', cdr3: '#9B2242' };
+  const CDR_LABELS = { cdr1: 'CDR1', cdr2: 'CDR2', cdr3: 'CDR3' };
+
+  /* Two files, two numbering schemes, and getting them the wrong way round
+     colours the wrong residues.
+
+     - The predicted model and its superposed copy are IMGT-numbered in chain
+       H, which is the point of IMGT: the CDRs sit at fixed positions whatever
+       the sequence does. Verified against the run: IMGT 27-38 and 56-65
+       reproduce ANARCI's CDR1 and CDR2 exactly, and 105-117 covers the
+       modelled part of CDR3 (NanoBodyBuilder2 does not always model every
+       residue of a long one).
+     - Chain N of the co-folded complex is numbered 1..len(sequence) and
+       carries the candidate sequence exactly, so there the CDRs are found by
+       substring, mirroring pipeline/interface.py:cdr_spans. */
+  const IMGT_CDR = { cdr1: [27, 38], cdr2: [56, 65], cdr3: [105, 117] };
+  const MODEL_CHAIN = 'H';
+  const COMPLEX_NANOBODY_CHAIN = 'N';
+  const IMGT_LAST = 128;
+
+  function cdrSpansFromSequence(d) {
+    const sequence = d.sequence || '';
+    const spans = {};
+    let cursor = 0;
+    for (const key of ['cdr1', 'cdr2', 'cdr3']) {
+      const motif = (d[key] || '').trim();
+      if (!motif) continue;
+      let at = sequence.indexOf(motif, cursor);
+      if (at < 0) at = sequence.indexOf(motif);
+      if (at < 0) continue;
+      spans[key] = [at + 1, at + motif.length];
+      cursor = at + motif.length;
+    }
+    return spans;
+  }
+
+  /* Everything that is not a CDR, as explicit ranges. The CDR cartoon cannot
+     simply be drawn over a whole-chain one: two cartoons on the same geometry
+     z-fight and the upper one does not reliably win, which is the bug that
+     left the complex a single grey. Disjoint components avoid it. */
+  function frameworkRanges(chain, spans, last) {
+    const ordered = ['cdr1', 'cdr2', 'cdr3']
+      .map((key) => spans[key]).filter(Boolean)
+      .sort((a, b) => a[0] - b[0]);
+    const out = [];
+    let from = 1;
+    for (const [begin, end] of ordered) {
+      if (begin > from) {
+        out.push({ auth_asym_id: chain, beg_auth_seq_id: from,
+          end_auth_seq_id: begin - 1 });
+      }
+      from = end + 1;
+    }
+    if (from <= last) {
+      out.push({ auth_asym_id: chain, beg_auth_seq_id: from,
+        end_auth_seq_id: last });
+    }
+    return out;
+  }
+
+  function cdrSelector(chain, span) {
+    return [{ auth_asym_id: chain, beg_auth_seq_id: span[0],
+      end_auth_seq_id: span[1] }];
+  }
+
+  function cdrLegend() {
+    return '<span class="cdrlegend">' + ['cdr1', 'cdr2', 'cdr3'].map((key) =>
+      `<span class="cdrkey"><i style="background:${CDR_COLOURS[key]}"></i>`
+      + `${CDR_LABELS[key]}</span>`).join('') + '</span>';
+  }
 
   // One fetch per candidate, kept while the drawer stays on it.
   let interactionsFor = { id: null, data: null };
@@ -1218,13 +1359,15 @@
         ? `co-folded complex · ipTM ${best.iptm.toFixed(2)}`
           + (best.iptm < 0.5 ? ' (pose unreliable)' : '')
         : 'co-folded complex';
-      el('vcapright').textContent = 'chain N = nanobody';
+      right.innerHTML = `<span>chain N = nanobody</span><span>${cdrLegend()}</span>`;
       return;
     }
     el('vcapleft').textContent = d.nearest_pdb
       ? `model vs ${d.nearest_pdb}${d.nearest_tm ? ` · TM ${d.nearest_tm.toFixed(2)}` : ''}`
       : '';
-    right.textContent = d.cdr1 ? 'CDR1 / 2 / 3' : '';
+    // The key is printed in the colours the viewer draws the CDRs in, rather
+    // than naming three colours the reader has to guess at.
+    right.innerHTML = d.cdr1 ? cdrLegend() : '';
   }
 
   function showPlaceholder(text) {
@@ -1480,19 +1623,26 @@
       // panel: Mol* owns its mount point's children.
       parts.push(`<div class="viewerwrap">`
         + `<div id="nviewer" style="height:236px;background:var(--viewer);`
-        + `border-radius:4px;position:relative;overflow:hidden"></div>`
+        + `border:1px solid var(--border);border-radius:4px;`
+        + `position:relative;overflow:hidden"></div>`
         + `<p class="placeholder" style="position:absolute;inset:0;display:grid;`
         + `place-items:center;color:#8A93A5;font-size:11px;text-align:center;`
         + `padding:0 20px">${canSuperpose
           ? 'Loading the superposition.'
           : 'No superposed model for this candidate.'}</p>`
-        + `</div><p style="font-size:10px;color:var(--ink-3);margin:4px 0 10px;`
-        + `display:flex;justify-content:space-between"><span>model over `
+        + `</div><p style="font-size:10px;color:var(--ink-3);margin:4px 0 2px;`
+        + `display:flex;justify-content:space-between;gap:10px"><span>model over `
         + `${W.escape(d.nearest_pdb)}`
         + `${d.nearest_chain ? ' chain ' + W.escape(d.nearest_chain) : ''}</span>`
         + `<span>${d.nearest_tm ? 'TM ' + d.nearest_tm.toFixed(2) : ''}`
         + `${d.nearest_rmsd ? ' &middot; RMSD ' + d.nearest_rmsd.toFixed(1) + ' A' : ''}`
-        + `</span></p>`);
+        + `</span></p>`
+        + `<p style="font-size:10px;color:var(--ink-3);margin:0 0 10px;`
+        + `display:flex;gap:12px;align-items:center">`
+        + cdrLegend()
+        + `<span class="cdrlegend"><span class="cdrkey">`
+        + `<i style="background:${REFERENCE_COLOUR}"></i>`
+        + `${W.escape(d.nearest_pdb)}</span></span></p>`);
       parts.push(kvTable([
         ['Nearest experimental structure',
           d.nearest_pdb + (d.nearest_chain ? ` chain ${d.nearest_chain}` : '')],
@@ -1573,19 +1723,64 @@
         // The neighbour is the single extracted chain served from here, not
         // the whole PDB entry from RCSB: a cryo-EM entry is a dozen chains and
         // the nanobody gets lost among them.
-        const entries = [{ url: currentDetail.superposed_url, format: 'pdb' }];
-        if (currentDetail.reference_url) {
-          entries.push({ url: currentDetail.reference_url, format: 'pdb' });
-        } else if (currentDetail.nearest_pdb) {
-          entries.push({ pdbId: currentDetail.nearest_pdb });
-        }
-        window.WViewer.show(node, entries);
+        showSuperposition(node, currentDetail);
       }
     }
   }
 
+  /* The superposition: the predicted model over its nearest experimental
+     neighbour, with the same CDR colours the Structure panel uses, so the
+     reader can see at once whether the loops agree or only the framework
+     does. The framework agreeing is the uninformative case, and it is what
+     almost every pair of VHHs does.
+
+     The superposed copy is IMGT-numbered in chain H like the model it came
+     from. The experimental chain is drawn in one pale colour: it is the
+     reference, not the subject. When the entry is not served from here the
+     browser fetches it from the PDB, and a whole cryo-EM entry cannot be
+     described in MVS without knowing its chains, so that case keeps the plain
+     two-structure load. */
+  async function showSuperposition(node, d) {
+    const reference = d.reference_url;
+    if (!reference) {
+      const entries = [{ url: d.superposed_url, format: 'pdb' }];
+      if (d.nearest_pdb) entries.push({ pdbId: d.nearest_pdb });
+      await window.WViewer.show(node, entries);
+      return;
+    }
+    const result = await window.WViewer.showMvs(node, (builder) => {
+      builder.canvas({ background_color: VIEWER_BG });
+      const experimental = builder
+        .download({ url: reference })
+        .parse({ format: 'pdb' })
+        .modelStructure();
+      experimental.component({ selector: 'polymer' })
+        .representation({ type: 'cartoon' })
+        .color({ color: REFERENCE_COLOUR });
+      const model = builder
+        .download({ url: d.superposed_url })
+        .parse({ format: 'pdb' })
+        .modelStructure();
+      model.component({
+        selector: frameworkRanges(MODEL_CHAIN, IMGT_CDR, IMGT_LAST) })
+        .representation({ type: 'cartoon' })
+        .color({ color: NANOBODY_COLOUR });
+      for (const key of ['cdr1', 'cdr2', 'cdr3']) {
+        model.component({ selector: cdrSelector(MODEL_CHAIN, IMGT_CDR[key]) })
+          .representation({ type: 'cartoon' })
+          .color({ color: CDR_COLOURS[key] });
+      }
+    });
+    if (!result || !result.ok) {
+      await window.WViewer.show(node, [
+        { url: d.superposed_url, format: 'pdb' },
+        { url: reference, format: 'pdb' },
+      ]);
+    }
+  }
+
   function closeDrawer() {
-    el('drawer').hidden = true;
+    setDrawerOpen(false);
     W.state.id = null;
     W.writeUrl(true);
     // Dispose the Mol* instance: browsers cap WebGL contexts near 16 and the
@@ -1637,7 +1832,7 @@
       const btn = event.target.closest('button[data-target]');
       if (!btn) return;
       W.state.id = null;
-      el('drawer').hidden = true;
+      setDrawerOpen(false);
       if (window.WViewer) window.WViewer.dispose();
       selectTarget(btn.dataset.target, true);
     });
@@ -1790,7 +1985,7 @@
       btn.addEventListener('click', () => selectPanel(btn.dataset.panel));
     });
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && !el('drawer').hidden) closeDrawer();
+      if (event.key === 'Escape' && drawerIsOpen()) closeDrawer();
     });
     /* A shared deep link pasted into an open tab, and the back button, both
        arrive here. An earlier version switched target and stopped, so
@@ -1807,10 +2002,10 @@
         await selectTarget(W.state.target, false);
       }
       if (W.state.id) {
-        if (W.state.id !== previousId || el('drawer').hidden) {
+        if (W.state.id !== previousId || !drawerIsOpen()) {
           await openDrawer(W.state.id);
         }
-      } else if (!el('drawer').hidden) {
+      } else if (drawerIsOpen()) {
         closeDrawer();
       }
     };

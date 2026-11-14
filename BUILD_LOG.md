@@ -1456,3 +1456,17 @@ through to the drawer.
 - 2026-11-14 09:23 build-db: 15 bundles, 2912 kB total
 - 2026-11-14 09:23 cofold: 10/30 (10 ok, 0 failed), 3.1 min for SCRAM-TNFa-010, about 1.1 hours left
 - 2026-11-14 09:27 cofold: 11/30 (11 ok, 0 failed), 3.8 min for SCRAM-TL1A-001, about 1.0 hours left
+- 2026-11-14 09:31 cofold: 12/30 (12 ok, 0 failed), 3.8 min for SCRAM-TL1A-002, about 1.0 hours left
+- 2026-11-14 09:35 cofold: 13/30 (13 ok, 0 failed), 3.9 min for SCRAM-TL1A-003, about 0.9 hours left
+- 2026-11-14 09:38 cofold: 14/30 (14 ok, 0 failed), 3.8 min for SCRAM-TL1A-004, about 0.9 hours left
+- 2026-11-14 09:42 cofold: 15/30 (15 ok, 0 failed), 3.8 min for SCRAM-TL1A-005, about 0.8 hours left
+- 2026-11-14 09:46 cofold: 16/30 (16 ok, 0 failed), 3.8 min for SCRAM-TL1A-006, about 0.8 hours left
+- 2026-11-14 09:50 cofold: 17/30 (17 ok, 0 failed), 3.9 min for SCRAM-TL1A-007, about 0.7 hours left
+- 2026-11-14 09:54 cofold: 18/30 (18 ok, 0 failed), 3.9 min for SCRAM-TL1A-008, about 0.7 hours left
+- 2026-11-14 09:58 cofold: 19/30 (19 ok, 0 failed), 3.9 min for SCRAM-TL1A-009, about 0.6 hours left
+- 2026-11-14 10:02 cofold: 20/30 (20 ok, 0 failed), 3.8 min for SCRAM-TL1A-010, about 0.6 hours left
+- 2026-11-14 10:06 cofold: 21/30 (21 ok, 0 failed), 4.8 min for SCRAM-EGFR-001, about 0.5 hours left
+- 2026-11-14 10:11 cofold: 22/30 (22 ok, 0 failed), 4.8 min for SCRAM-EGFR-002, about 0.5 hours left
+- 2026-11-14 10:16 cofold: 23/30 (23 ok, 0 failed), 4.8 min for SCRAM-EGFR-003, about 0.4 hours left
+- 2026-11-14 10:21 cofold: 24/30 (24 ok, 0 failed), 4.9 min for SCRAM-EGFR-004, about 0.4 hours left
+- 2026-11-14 10:26 cofold: 25/30 (25 ok, 0 failed), 4.9 min for SCRAM-EGFR-005, about 0.3 hours left
