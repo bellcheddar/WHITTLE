@@ -139,12 +139,17 @@ is far the more powerful of the two, so it decides the verdict.
   axis is composition-only, so its AUC sits at chance by construction. An
   axis the control cannot reach is reported untestable rather than
   non-discriminating.
-- **Open**: the expression axis needs a composition-varying negative control
-  before anything can be claimed about it either way. Not built, and note that
-  a synthetic one risks circularity: SWI and Protein-Sol are defined from
-  composition, so a deliberately hydrophobic variant scores worse by
-  construction rather than by evidence. There is no observed expression or
-  solubility measurement anywhere in the control set to anchor it against.
+- **Closed, 2026-11-14**: the composition-varying negative control will not
+  be built, and the expression axis is reported untested rather than carrying
+  a promise of validation that is not coming. A synthetic control cannot
+  settle it. SWI and Protein-Sol carry 3.0 of the axis's 4.5 weight and both
+  are defined from amino-acid composition, so a deliberately insoluble variant
+  scores badly by arithmetic rather than by evidence, and the test would
+  confirm only that a function responds to its own inputs. The anchor that
+  would settle it does not exist here: `observed_expression` is null for all
+  367 control rows, against 77 rows that do carry an observed Tm. Deciding
+  this axis needs laboratory expression or solubility on real nanobodies
+  (DECISIONS 47).
 - Four verdict states are now reported, not two: informative, weak and
   unconfirmed, non-discriminating, and untestable by this control. A hard
   threshold at AUC 0.6 had been splitting indistinguishable evidence into

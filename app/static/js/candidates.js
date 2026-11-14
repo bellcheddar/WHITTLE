@@ -997,7 +997,9 @@
       untestable: ['untested',
         'The CDR-shuffled control preserves amino-acid composition, which is '
         + 'most of what this axis reads, so the control cannot test it either '
-        + 'way. This is not a failure of the axis.'],
+        + 'way, and no synthetic control would: its heaviest components are '
+        + 'defined from composition. Deciding it needs measured expression on '
+        + 'real nanobodies. This is not a failure of the axis.'],
     };
     const label = FLAGS[verdict];
     const flag = label

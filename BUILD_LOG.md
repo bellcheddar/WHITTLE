@@ -1513,3 +1513,7 @@ through to the drawer.
 - 2026-11-14 12:13 cofold: 33/40 (33 ok, 0 failed), 4.8 min for EGFR-0428, about 0.3 hours left
 - 2026-11-14 12:18 cofold: 34/40 (34 ok, 0 failed), 4.9 min for EGFR-0067, about 0.3 hours left
 - 2026-11-14 12:23 cofold: 35/40 (35 ok, 0 failed), 4.9 min for EGFR-0187, about 0.2 hours left
+- 2026-11-14 12:28 cofold: 36/40 (36 ok, 0 failed), 4.8 min for EGFR-0471, about 0.2 hours left
+- 2026-11-14 12:32 cofold: 37/40 (37 ok, 0 failed), 4.9 min for EGFR-0327, about 0.1 hours left
+- 2026-11-14 12:37 cofold: 38/40 (38 ok, 0 failed), 4.9 min for EGFR-0467, about 0.1 hours left
+- 2026-11-14 12:42 cofold: 39/40 (39 ok, 0 failed), 4.9 min for EGFR-0005, about 0.0 hours left

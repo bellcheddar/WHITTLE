@@ -34,15 +34,46 @@
             <td><span class="chip warn">weak</span></td></tr>
         <tr><td><strong>Non-specific binding</strong></td>
             <td>Will it also stick to everything else it meets?</td>
-            <td><span class="chip good">strongest</span></td></tr>
+            <td><span class="chip warn">mixed</span></td></tr>
         <tr><td><strong>Thermostability</strong></td>
             <td>Will it survive being warmed, frozen, shipped and stored?</td>
-            <td><span class="chip">moderate</span></td></tr>
+            <td><span class="chip good">strongest</span></td></tr>
         <tr><td><strong>Expression</strong></td>
             <td>Can it actually be made, and will it stay dissolved?</td>
-            <td><span class="chip">moderate</span></td></tr>
+            <td><span class="chip">untested</span></td></tr>
       </tbody>
     </table>
+    <p>
+      Those confidence ratings are not opinions. Each axis is scored for 250
+      deliberately broken sequences as well as for the real candidates: the
+      control takes a real candidate and shuffles the order of its three
+      binding loops, which should make it worse at binding while leaving its
+      length, its amino-acid makeup and its scaffold untouched. An axis that
+      cannot tell a real candidate from its own shuffled twin is not measuring
+      anything, whatever it looks like.
+    </p>
+    <ul>
+      <li><strong>Thermostability earns the top rating.</strong> The real
+          candidate scores above its own shuffled twin in 210 of 250 pairs,
+          and every one of the five targets clears that test on its own.</li>
+      <li><strong>Non-specific binding is mixed, and worst where it matters
+          most.</strong> It separates real from shuffled on PRLR, is too weak
+          to call on GLP1R and TL1A, and does nothing at all on EGFR and
+          TNFa. The site marks the axis per target rather than once overall,
+          because the answer genuinely differs between them.</li>
+      <li><strong>Expression cannot be tested this way at all, and is marked
+          untested rather than good or bad.</strong> Two thirds of what it
+          reads is amino-acid makeup, which the shuffle leaves identical, so
+          the control cannot move it. Nor would a sharper synthetic control
+          settle it: the two main components are defined from amino-acid
+          makeup, so a deliberately insoluble sequence scores badly by
+          arithmetic rather than by evidence. Settling it needs laboratory
+          expression or solubility measurements on real nanobodies, and there
+          are none in this control set.</li>
+      <li><strong>Binding waits on the co-folding tier</strong>, and is
+          calibrated the same way once it lands: against scrambled sequences
+          co-folded through exactly the same pipeline.</li>
+    </ul>
     <p>
       The honest framing is that WHITTLE is <strong>good at throwing things
       away</strong> and only <strong>suggestive about ranking</strong>. A
