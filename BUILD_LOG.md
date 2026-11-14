@@ -931,3 +931,27 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:40 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
 - 2026-11-13 20:40 cofold: 20 scrambled control complexes queued, cheapest target first: GLP1R, PRLR; full quality, no reduced settings
 - 2026-11-13 20:41 cofold: 1/20 (1 ok, 0 failed), 0.9 min for SCRAM-GLP1R-001, about 0.3 hours left
+- 2026-11-13 20:42 cofold: 2/20 (2 ok, 0 failed), 0.9 min for SCRAM-GLP1R-002, about 0.3 hours left
+- 2026-11-13 20:43 cofold: 3/20 (3 ok, 0 failed), 0.9 min for SCRAM-GLP1R-003, about 0.3 hours left
+- 2026-11-13 20:44 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'specificity': 26} of 500
+- 2026-11-13 20:44 score: EGFR 26 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:44 score: EGFR 500 rows, 13 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:44 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'specificity': 27} of 500
+- 2026-11-13 20:44 score: GLP1R 27 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:44 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:44 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'specificity': 15} of 500
+- 2026-11-13 20:44 score: PRLR 15 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:44 score: PRLR 500 rows, 19 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:44 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'specificity': 14} of 500
+- 2026-11-13 20:44 score: TL1A 14 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:44 score: TL1A 500 rows, 25 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:44 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'specificity': 21} of 500
+- 2026-11-13 20:44 score: TNFa 21 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:44 score: TNFa 500 rows, 21 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:44 build-db: EGFR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:44 build-db: GLP1R bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:44 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:44 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:44 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:44 build-db: 15 bundles, 2882 kB total
+- 2026-11-13 20:44 cofold: 4/20 (4 ok, 0 failed), 0.9 min for SCRAM-GLP1R-004, about 0.2 hours left

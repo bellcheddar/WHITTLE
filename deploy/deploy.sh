@@ -59,7 +59,12 @@ sync_data() {
   rsync -az --delete --info=stats1 --chmod=D755,F644 \
     app/static/data/ "${SSH_TARGET}:${APP_DIR}/app/static/data/"
   if [[ -d data/structures ]] && [[ -n "$(ls -A data/structures 2>/dev/null)" ]]; then
-    rsync -az --info=stats1 --chmod=D755,F644 \
+    # --delete so the droplet mirrors the Mac rather than accumulating. A
+    # structure withdrawn here, such as a co-fold recomputed on another
+    # accelerator and discarded, must stop being served; without this the
+    # drawer kept offering a complex whose metrics had been removed from the
+    # database, and the viewer showed a model nothing could describe.
+    rsync -az --delete --info=stats1 --chmod=D755,F644 \
       data/structures/ "${SSH_TARGET}:${APP_DIR}/data/structures/"
   fi
 }
