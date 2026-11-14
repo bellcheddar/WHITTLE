@@ -173,7 +173,8 @@ def api_candidate(cid: str):
         "SELECT kind, region, position, detail FROM liabilities "
         "WHERE candidate_id = ? ORDER BY position", (cid,))]
     rec["cofolds"] = [dict(r) for r in conn.execute(
-        "SELECT seed, iptm, ptm, plddt, pae, prodigy_dg, bsa_total, "
+        "SELECT seed, iptm, ptm, plddt, nanobody_plddt, antigen_plddt, "
+        "interface_plddt, pae, prodigy_dg, bsa_total, "
         "bsa_per_subunit_json, n_subunits_contacted, epitope_bin, "
         "interface_residues_json, status FROM cofolds "
         "WHERE candidate_id = ? ORDER BY seed", (cid,))]

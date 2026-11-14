@@ -45,7 +45,7 @@ calibration and on the final QC pass.
 - [x] Rescored: 13 to 25 candidates on the Pareto front per target
 - [x] Deployed and pushed
 
-## Phase 3: Tier 2 co-folding and the control set: machinery done, compute pending
+## Phase 3: Tier 2 co-folding and the control set: complete
 
 - [x] boltz-community 2.13 installed in its own environment, MPS available
 - [x] The macOS libomp conflict resolved with the fork's own fix
@@ -53,7 +53,7 @@ calibration and on the final QC pass.
 - [x] `pipeline/boltz_input.py`: trimers as one entry with three chain ids, cached antigen MSA, no nanobody MSA
 - [x] `pipeline/cofold.py`: cheapest-first queue, resumable, OOM ladder that never falls back to a monomer
 - [x] `pipeline/interface.py`: BSA per subunit, interface residues, PRODIGY, epitope binning
-- [x] `pipeline/controls.py`: 250 scrambled, 94 known, 10 multi-target; every spec 9 assertion evaluated
+- [x] `pipeline/controls.py`: 1000 scrambled (200 per target), 94 known, 23 multi-target; every spec 9 assertion evaluated
 - [x] 5 anti-EGFR and 13 anti-TNFa nanobodies resolved from SAbDab-nano, not hand-typed
 - [x] `tools/qc_pareto.py`: an independent Pareto implementation, agrees on all five targets
 - [x] `tools/vacuous_tests.py`: five ways an axis can be uninformative, checked per target
@@ -63,12 +63,16 @@ calibration and on the final QC pass.
 - [x] Controls run blind through the same pipeline
 - [x] **30 scrambled controls co-folded**, 2.0 hours, 0 failed
 - [x] Paired tests added for the sequence axes; the thermo verdict changed
-- [~] The 40 paired control parents: 35 of 40 done, 0 failed
-- [ ] Interface, interaction and complementarity metrics over the controls
-- [ ] Affinity weights decided from the paired calibration
-- [ ] Full QC pass
+- [x] The 40 paired control parents co-folded, 0 failed
+- [x] Interface, interaction and complementarity metrics over all 340 complexes
+- [x] Per-chain pLDDT split out of the B-factor column; the gap localised to the nanobody chain (DECISIONS 49)
+- [x] Affinity weights decided from the paired calibration: five components, the two inverted ones dropped (DECISIONS 51)
+- [x] Tier 2 annotates the shortlist rather than reordering it (DECISIONS 50)
+- [x] Control set scaled to 200 shuffles per target, additively, leaving the original 250 rows untouched (DECISIONS 55)
+- [x] The specificity verdict re-measured after the artefact was found and the old one withdrawn (DECISIONS 59)
+- [x] Full QC pass: 44 tests, JS parse, template render, secret scan, style
 
-## Phase 4: about, provenance, polish, public release: about 85 percent
+## Phase 4: about, provenance, polish, public release: about 95 percent
 
 - [x] `config/references.yaml` resolved through Crossref; 29 of 29 DOIs verified
 - [x] Three seed DOIs found resolving to the wrong paper and corrected
@@ -77,63 +81,66 @@ calibration and on the final QC pass.
 - [x] Icon and favicon set in the house style
 - [x] `README.md`
 - [x] `FINDINGS.md`, generated from the database
-- [x] About tab rewritten in lay terms with a glossary for all 48 parameters
+- [x] About tab rewritten in lay terms with a glossary for all 50 parameters
 - [x] Workflow diagram re-laid out tall and made legible
 - [x] Hero panel rebuilt as the shortlist ladder and the whittling gates
 - [x] Drawer slides over the page; white viewer; CDRs coloured in all three views
-- [ ] Final QC pass and secret scan
+- [x] Final QC pass and secret scan
+- [x] `tools/js_check.py` and `tools/template_check.py` gate the deploy
 - [ ] Remove the robots disallow and the noindex tag
 - [ ] Final deploy and push
 
 ---
 
-## In flight as of 2026-11-14 12:25
+## In flight as of 2026-11-14 18:35
 
-- **Paired control parents**: 35 of 40 done, 0 failed, about 25 minutes left.
-  Each scrambled control's own parent is co-folded so the affinity comparison
-  is paired. Without it the comparison is confounded: the co-folded candidates
-  are the top 50 by Tier 1 rank, which is driven by patch surface
-  hydrophobicity, so they sit below the population (median PSH 93.6 against
-  106.4 across all 500 GLP1R candidates) while the controls were shuffled from
-  a random sample whose parents sit at 107.9 (DECISIONS 35).
-- **Then**, straight after, `tools/calibrate_run.sh` runs `pipeline.interface`,
-  `pipeline.interactions` and `pipeline.complementarity` over about 320
-  complexes and then `tools/calibrate_affinity.py`. Roughly 1.5 to 2 hours on
-  CPU, measured from GLP1R's 300 samples last night: interface a few minutes,
-  interactions 14, complementarity 4.
-- **Affinity weights are provisional.** The axis blends seven interface
-  metrics weighted by argument. `tools/calibrate_affinity.py` proposes weights
-  from how well each separates a real candidate from its co-folded shuffled
-  twin. Applying them is a deliberate edit, so the reasoning lands in a commit.
-  `polar_fraction` was the strongest discriminator on the unpaired read at AUC
-  0.841 and is not currently a component; if it survives the paired test it has
-  earned a place in the axis.
+- **Two EGFR shortlist members are being co-folded.** Because Tier 2 now
+  annotates rather than reorders (DECISIONS 50), the ordering dropped the
+  affinity axis, and two candidates moved into EGFR's top 24 after the co-fold
+  set had already been chosen. 22 of EGFR's 24 carry the Tier 2 annotation and
+  the other four targets carry all 24. The shortlist itself is complete and
+  fully scored on the three ordering axes for all five targets.
+- Everything else in the pipeline has run. The affinity axis is populated for
+  the 290 co-folded candidates and displayed; it does not order the table.
 
-## Control-set verdicts as of 2026-11-14 12:23
+## Control-set verdicts as of 2026-11-14 18:25
 
 Each axis is tested twice. **Unpaired** compares every scrambled control
 against all 500 candidates, which is the number spec Section 9 asks for.
 **Paired** compares each control with the one candidate it was shuffled from,
 holding composition, length and framework fixed so CDR order is the only
 difference left. Between-sequence variance drops out of the paired form and it
-is far the more powerful of the two, so it decides the verdict.
+is far the more powerful of the two, so it decides the verdict. The verdict is
+decided once per axis, pooled over all five targets, with the per-target counts
+shown beside it (DECISIONS 53).
 
-| Axis | Unpaired AUC | Paired, parent beats its own shuffle | Verdict |
-|---|---|---|---|
-| Affinity | pending | pending | tonight's co-folded controls decide |
-| Specificity | 0.535 to 0.679 | 144 of 240, p = 0.0023 | informative on PRLR, weak on GLP1R and TL1A, **non-discriminating on EGFR and TNFa** |
-| Thermo | 0.589 to 0.629 | **210 of 250, p = 5e-29** | **informative on all five** |
-| Expression | 0.439 to 0.522 | 136 of 250, p = 0.18 | untestable by this control |
+| Axis | Paired, parent beats its own shuffle | Verdict |
+|---|---|---|
+| Affinity | pending | no scrambled control is scored on this axis yet |
+| Specificity | **679 of 839, 81 per cent, p = 9e-77** | **informative, and every target clears it alone** |
+| Thermo | **837 of 1000, 84 per cent, p = 1e-109** | **informative, and every target clears it alone** |
+| Expression | 982 of 1000, p = 3e-263 | untestable by this control |
 
+- **The 60 per cent specificity result is withdrawn (DECISIONS 59).** It was an
+  artefact, not a finding. `pipeline.controls_run` first ran before the TNP
+  manifest held anything, so `score_external` found no control carrying `psh`
+  (2.0 of the axis's 4.5 weight) or `tnp_flags` (1.0) and dropped both, then
+  rebuilt the candidate reference on that same reduced basis. The control
+  percentiles were internally consistent, so no log looked wrong; but the
+  paired test compares them against `scores.axis_specificity`, built from all
+  4.5 of the weight. A third of the axis was being ranked against all of it.
+  Feeding the two composition components alone back through `score_external`
+  reproduces the old per-target table pair for pair, which is how it was
+  confirmed. `score_external` now refuses to place an external row unless it
+  used exactly the components the candidates were scored on.
 - **The thermo axis is not vacuous.** The unpaired test called it vacuous on
   EGFR (0.591) and TL1A (0.589) and the site said so. Paired, a candidate
   beats its own shuffled twin on 84 per cent of pairs and every target clears
-  p < 1e-4 on its own (PRLR 47 of 50). The unpaired AUC was low because
-  comparing one shuffle against 500 different sequences is swamped by the
-  variance between them, not because the axis carries nothing.
-- **Specificity is weak and target-dependent.** Real on PRLR (32 of 48,
-  p = 0.029), unconfirmed on GLP1R and TL1A, nothing on TNFa (24 of 49). EGFR
-  is non-discriminating, which is the target where it matters most.
+  it on its own. The unpaired AUC was low because comparing one shuffle against
+  500 different sequences is swamped by the variance between them, not because
+  the axis carries nothing. It read 84 per cent before and after the control
+  set was enlarged, which is what first showed the specificity change was in
+  the measurement rather than in the biology.
 - The scrambled control preserves amino-acid composition exactly, so a
   composition-only metric cannot move under it. Two thirds of the expression
   axis is composition-only, so its AUC sits at chance by construction. An
@@ -150,10 +157,10 @@ is far the more powerful of the two, so it decides the verdict.
   367 control rows, against 77 rows that do carry an observed Tm. Deciding
   this axis needs laboratory expression or solubility on real nanobodies
   (DECISIONS 47).
-- Four verdict states are now reported, not two: informative, weak and
-  unconfirmed, non-discriminating, and untestable by this control. A hard
-  threshold at AUC 0.6 had been splitting indistinguishable evidence into
-  opposite labels (DECISIONS 46).
+- TNP silently returns nothing for about 13 per cent of shuffled sequences.
+  That is now logged (DECISIONS 58). It costs sample size and does not bias the
+  paired comparison, because a dropped shuffle takes its whole pair out and
+  shares its parent's exact length.
 
 ## Open items carried forward
 

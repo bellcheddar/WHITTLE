@@ -30,12 +30,14 @@ run:
   # expect to have to deal with the coverage problem separately.
   tier2_reorders_shortlist: false
   # CDR-shuffled negative controls per target. Raised from 50 to 200 on
-  # 2026-11-14 (DECISIONS 55) because 50 cannot resolve the effects these axes
-  # have: at a true 60 per cent win rate the expected sign-test p-value at
-  # n = 50 is 0.20, so a per-target verdict was a coin toss and the specificity
-  # axis read non-discriminating on EGFR and informative on PRLR for the same
-  # evidence. The first 50 per target are the original draw and are reproduced
-  # byte for byte; the rest are drawn separately. See `build_scrambled`.
+  # 2026-11-14 (DECISIONS 55) because 50 cannot resolve an effect near 60 per
+  # cent: the expected sign-test p-value at n = 50 is then 0.20, so a
+  # per-target verdict is close to a coin toss. The specificity axis was the
+  # example that prompted this, and it turned out to be an artefact rather than
+  # a weak effect (DECISIONS 59); the power argument stands on its own and the
+  # larger set is what lets every target be read separately. The first 50 per
+  # target are the original draw and are reproduced byte for byte; the rest are
+  # drawn separately. See `build_scrambled`.
   scrambled_per_target: 200
   cache_antigen_msa: true           # compute once per target, reuse across all candidates
 

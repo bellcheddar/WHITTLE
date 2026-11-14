@@ -1585,11 +1585,29 @@
       sections.push('<h3 style="font-size:11px;text-transform:uppercase;'
         + 'letter-spacing:.07em;color:var(--ink-3);margin:16px 0 6px">Co-folding, per seed</h3>');
       sections.push('<table class="kv"><thead><tr><th>Seed</th><th>ipTM</th>'
-        + '<th>pTM</th><th>dG</th><th>Subunits</th></tr></thead><tbody>'
+        + '<th>pTM</th><th>dG</th><th>Subunits</th><th>Nb pLDDT</th>'
+        + '<th>Ag pLDDT</th></tr></thead><tbody>'
         + d.cofolds.map((f) => `<tr><td>${f.seed}</td><td>${W.fmt(f.iptm, 3)}</td>`
           + `<td>${W.fmt(f.ptm, 3)}</td><td>${W.fmt(f.prodigy_dg, 2)}</td>`
-          + `<td>${f.n_subunits_contacted ?? ''}</td></tr>`).join('')
+          + `<td>${f.n_subunits_contacted ?? ''}</td>`
+          + `<td>${W.fmt(f.nanobody_plddt, 1)}</td>`
+          + `<td>${W.fmt(f.antigen_plddt, 1)}</td></tr>`).join('')
         + '</tbody></table>');
+      /* The two pLDDT columns are shown together on purpose. The nanobody
+         figure is the largest candidate-minus-shuffle difference anywhere in
+         the co-folding tier, 48 of 50 paired wins at about +5, and reading it
+         as evidence of binding is the obvious mistake. The antigen column is
+         the control that rules that out: within a pair it is the identical
+         sequence with the identical MSA, and it comes out level at 31 of 50.
+         So the gap is loop predictability, not interface quality, and neither
+         column is a term in any axis. DECISIONS 49 and 52. */
+      sections.push('<p style="font-size:11px;color:var(--ink-3);'
+        + 'margin:6px 0 0;white-space:normal">Nanobody and antigen confidence '
+        + 'are shown side by side because the nanobody column separates a real '
+        + 'candidate from its shuffled twin in 48 of 50 pairs while the '
+        + 'antigen column, identical within a pair, stays level at 31 of 50. '
+        + 'That makes the difference a measure of how predictable these loops '
+        + 'are, not of how well the candidate binds, so neither is scored.</p>');
     }
     if (d.liabilities_detail && d.liabilities_detail.length) {
       sections.push('<h3 style="font-size:11px;text-transform:uppercase;'

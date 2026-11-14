@@ -205,6 +205,61 @@ def section_controls(conn) -> list[str]:
         lines.append(f"| {kind.replace('_', ' ')} | {n} |")
     lines.append("")
 
+    # The paired verdicts, read out of the built meta rather than recomputed,
+    # so this table and the site cannot disagree. One verdict per axis pooled
+    # over all five targets, with the per-target counts beside it
+    # (DECISIONS 53).
+    meta_path = ROOT / "app/static/data/meta.json"
+    pooled = {}
+    if meta_path.exists():
+        pooled = json.loads(meta_path.read_text()).get("axis_verdict_pooled") or {}
+    if pooled:
+        lines += [
+            "### Does each axis separate a candidate from its own shuffled twin?",
+            "",
+            "Each scrambled control keeps its parent's amino-acid composition,",
+            "length and framework exactly, so CDR order is the only difference",
+            "left. The paired sign test below compares each control with the one",
+            "candidate it was shuffled from. The verdict is pooled over all five",
+            "targets and the per-target counts travel with it.",
+            "",
+            "| Axis | Pooled | Rate | p | Verdict | Per target |",
+            "|---|---|---|---|---|---|",
+        ]
+        for axis in ("affinity", "specificity", "thermo", "expression"):
+            v = pooled.get(axis) or {}
+            n = v.get("pooled_n") or 0
+            if not n:
+                lines.append(f"| {axis} | pending | | | {v.get('verdict', 'pending')} | |")
+                continue
+            per = ", ".join(f"{t} {c}" for t, c in
+                            sorted((v.get("per_target") or {}).items()))
+            lines.append(
+                f"| {axis} | {v.get('pooled_wins')} of {n} | "
+                f"{(v.get('pooled_fraction') or 0) * 100:.0f}% | "
+                f"{v.get('pooled_p'):.1g} | {v.get('verdict')} | {per} |")
+        lines.append("")
+        lines += [
+            "The expression row is the one to read carefully. Its 98 per cent is",
+            "not evidence that the axis works: two thirds of its weight is",
+            "amino-acid composition, which the shuffle preserves exactly, so the",
+            "comparison is largely a sequence against itself and a high rate is",
+            "what that looks like. It is reported untestable for that reason,",
+            "not ranked above thermostability.",
+            "",
+        ]
+        lines += [
+            "An earlier build reported the specificity axis at 60 per cent and",
+            "weak. That was withdrawn: the control set had been scored before",
+            "the non-specific-binding predictor had run on it, so the heaviest",
+            "component of the axis was missing from the control side and present",
+            "on the candidate side, and a third of the axis was being ranked",
+            "against all of it. `pipeline.score.score_external` now refuses to",
+            "place an external row unless it used exactly the components the",
+            "candidates were scored on. See DECISIONS 59.",
+            "",
+        ]
+
     pairs = conn.execute(
         "SELECT observed_tm, predicted_tm, name FROM controls "
         "WHERE observed_tm IS NOT NULL AND predicted_tm IS NOT NULL").fetchall()

@@ -1911,3 +1911,21 @@ through to the drawer.
 - 2026-11-14 18:28 build-db: 15 bundles, 3487 kB total
 - 2026-11-14 18:29 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
 - 2026-11-14 18:29 cofold: 2  complexes queued, cheapest target first: EGFR; full quality, no reduced settings
+- 2026-11-14 18:31 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:31 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:31 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:31 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:31 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:31 build-db: 15 bundles, 3605 kB total
+- 2026-11-14 18:31 score_external: EGFR specificity is not comparable and stays empty: the candidates were scored on ['psh', 'tnp_flags'] and no external row carries them. A percentile here would rank a 2-component score against the 4-component scale in scores.axis_specificity.
+- 2026-11-14 18:32 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:32 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:32 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:32 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:32 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 18:32 build-db: 15 bundles, 3605 kB total
+- 2026-11-14 18:34 cofold: 1/2 (1 ok, 0 failed), 5.0 min for EGFR-0004, about 0.1 hours left
+- 2026-11-14 18:34 findings: FINDINGS.md written, 92 lines
+- 2026-11-14 18:35 findings: FINDINGS.md written, 116 lines
+- 2026-11-14 18:35 findings: FINDINGS.md written, 123 lines
+- 2026-11-14 18:35 score_external: EGFR specificity is not comparable and stays empty: the candidates were scored on ['psh', 'tnp_flags'] and no external row carries them. A percentile here would rank a 2-component score against the 4-component scale in scores.axis_specificity.

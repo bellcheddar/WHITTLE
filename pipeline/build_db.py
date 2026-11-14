@@ -115,7 +115,15 @@ def candidate_bundle(conn, target: str, liabs: dict[str, dict[str, int]]) -> dic
                (SELECT AVG(f.polar_fraction) FROM cofolds f
                  WHERE f.candidate_id = c.id AND f.status='ok') AS polar_fraction,
                (SELECT AVG(f.n_his_contacts) FROM cofolds f
-                 WHERE f.candidate_id = c.id AND f.status='ok') AS n_his_contacts
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS n_his_contacts,
+               -- Confidence in the nanobody chain alone, which is where the
+               -- whole candidate-minus-shuffle pLDDT gap sits: 48 of 50 pairs
+               -- at +5.1, against the antigen chain's 31 of 50 at chance.
+               -- An annotation, never a ranking term. See DECISIONS 49 and 52.
+               (SELECT AVG(f.nanobody_plddt) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS nanobody_plddt,
+               (SELECT AVG(f.interface_plddt) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS interface_plddt
         FROM candidates c
         LEFT JOIN ranks r ON r.candidate_id = c.id
         LEFT JOIN scores s ON s.candidate_id = c.id
@@ -164,7 +172,7 @@ def candidate_bundle(conn, target: str, liabs: dict[str, dict[str, int]]) -> dic
                     "upstream_tm_pred",
                     "pose_consensus", "sc", "cdr_interface_fraction",
                     "n_hbond", "hbond_per_100a2", "polar_fraction",
-                    "n_his_contacts"):
+                    "n_his_contacts", "nanobody_plddt", "interface_plddt"):
             flat[key] = rec.get(key)
         flat["experimental_badge"] = rec.get("has_experimental_badge") or 0
         out.append(flat)

@@ -92,6 +92,17 @@ COLUMNS: list[dict] = [
          tier=2, default=False, decimals=0, higher_is_better=None,
          help="Candidates clustered by their interface residue set, so a shared face "
               "is visible."),
+    dict(key="nanobody_plddt", label="Nanobody pLDDT", group="binding",
+         unit="0-100", kind="num", tier=2, default=False, decimals=1,
+         higher_is_better=True,
+         help="How confident the predictor is about the nanobody chain itself, "
+              "averaged over the five samples. An annotation only: it is not a "
+              "term in any axis. Estimated, not measured."),
+    dict(key="interface_plddt", label="Interface pLDDT", group="binding",
+         unit="0-1", kind="num", tier=2, default=False, decimals=3,
+         higher_is_better=True,
+         help="The predictor's confidence restricted to the interface, averaged "
+              "over the five samples. Estimated, not measured."),
     dict(key="pose_consensus", label="Pose agreement", group="binding",
          unit="0-1", kind="num", tier=2, default=False, decimals=2,
          higher_is_better=True,
@@ -417,6 +428,48 @@ GLOSSARY: dict[str, dict] = {
                          "independently, which is the point of carrying "
                          "twenty-four rather than one.",
                      src=""),
+    "interface_plddt": G(plain="Confidence in the parts of the two chains that "
+                               "touch. The predictor reports this one from 0 to "
+                               "1, where the nanobody figure beside it runs from "
+                               "0 to 100, so compare each against its own column "
+                               "rather than against the other.",
+                         why="It separates a candidate from its shuffled twin in "
+                             "37 of 50 pairs, which is real but much weaker than "
+                             "the nanobody chain's 48. That ordering is the clue "
+                             "to what both numbers mean: if the gap were about "
+                             "the interface, the interface figure would lead. It "
+                             "does not, so the signal is the nanobody's own loop "
+                             "geometry leaking into a score computed near it. "
+                             "Shown for completeness, scored in nothing.",
+                         how="boltz-community's own interface pLDDT for each of "
+                             "the five diffusion samples, averaged.",
+                         src="boltz-community 2.13.0 confidence output"),
+    "nanobody_plddt": G(plain="How sure the structure predictor is about the "
+                              "nanobody's own shape, from 0 to 100. High means "
+                              "it has seen loops like these before and knows "
+                              "where they sit.",
+                        why="This number is the clearest difference in the whole "
+                            "co-folding tier between a real candidate and the "
+                            "same sequence with its loops shuffled: the real one "
+                            "wins 48 of 50 paired comparisons, by about 5 points. "
+                            "It is tempting to read that as evidence of binding, "
+                            "and it is not. Splitting the confidence by chain "
+                            "shows the entire gap sits on the nanobody, while the "
+                            "antigen, which has the identical sequence in both "
+                            "halves of a pair and so acts as the measurement's "
+                            "own control, comes out level at 31 of 50. What the "
+                            "number measures is how predictable the loops are, "
+                            "and a shuffled loop is simply an unlikely one. A "
+                            "well-behaved loop is worth knowing about, so it is "
+                            "shown; it says nothing about the target, so it is "
+                            "not scored.",
+                        how="The mean pLDDT over the nanobody chain's alpha "
+                            "carbons, read from the B-factor column of each of "
+                            "the five predicted structures and averaged. Taken "
+                            "per chain rather than per complex because the "
+                            "whole-complex figure averages the two chains "
+                            "together and hides which one moved.",
+                        src="boltz-community 2.13.0 predicted structures"),
     "pose_consensus": G(plain="How often the five independent predictions put the "
                               "nanobody in the same place on the antigen. 1 means "
                               "all five agree.",
@@ -787,7 +840,7 @@ def registry() -> dict:
 
 
 def _self_check() -> None:
-    assert len(COLUMNS) == 48, f"the registry must hold 48 columns, found {len(COLUMNS)}"
+    assert len(COLUMNS) == 50, f"the registry must hold 50 columns, found {len(COLUMNS)}"
     assert len(BY_KEY) == len(COLUMNS), "duplicate column key"
     assert len(DEFAULT_KEYS) == 6, f"six default columns, found {len(DEFAULT_KEYS)}"
     assert {c["group"] for c in COLUMNS} == {gid for gid, _ in GROUPS}

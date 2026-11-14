@@ -55,11 +55,46 @@ This is why the spec asks for per-region identity rather than a whole-chain numb
 |---|---|
 | known | 94 |
 | multi target | 23 |
-| scrambled | 250 |
+| scrambled | 1000 |
+
+### Does each axis separate a candidate from its own shuffled twin?
+
+Each scrambled control keeps its parent's amino-acid composition,
+length and framework exactly, so CDR order is the only difference
+left. The paired sign test below compares each control with the one
+candidate it was shuffled from. The verdict is pooled over all five
+targets and the per-target counts travel with it.
+
+| Axis | Pooled | Rate | p | Verdict | Per target |
+|---|---|---|---|---|---|
+| affinity | pending | | | pending | |
+| specificity | 679 of 839 | 81% | 9e-77 | informative | EGFR 130/169, GLP1R 141/162, PRLR 140/171, TL1A 137/169, TNFa 131/168 |
+| thermo | 837 of 1000 | 84% | 1e-109 | informative | EGFR 164/200, GLP1R 162/200, PRLR 174/200, TL1A 167/200, TNFa 170/200 |
+| expression | 982 of 1000 | 98% | 3e-263 | untestable | EGFR 195/200, GLP1R 199/200, PRLR 199/200, TL1A 195/200, TNFa 194/200 |
+
+The expression row is the one to read carefully. Its 98 per cent is
+not evidence that the axis works: two thirds of its weight is
+amino-acid composition, which the shuffle preserves exactly, so the
+comparison is largely a sequence against itself and a high rate is
+what that looks like. It is reported untestable for that reason,
+not ranked above thermostability.
+
+An earlier build reported the specificity axis at 60 per cent and
+weak. That was withdrawn: the control set had been scored before
+the non-specific-binding predictor had run on it, so the heaviest
+component of the axis was missing from the control side and present
+on the candidate side, and a third of the axis was being ranked
+against all of it. `pipeline.score.score_external` now refuses to
+place an external row unless it used exactly the components the
+candidates were scored on. See DECISIONS 59.
+
+### Thermostability, observed against predicted
+
+77 nanobodies with a published apparent Tm, held out of the model's training set entirely and predicted with the measurement withheld. Mean absolute error 7.0 degrees C, mean signed error +3.5 degrees C (the model reads high).
 
 - **control 3 tm sanity** (PASS): 0 of 2500 predictions above 95 deg C; hottest 91.1 | Spec 9 item 3. A prediction above 95 deg C means the model is extrapolating and its error bar must reflect that.
-- **control 4 trimer TNFa** (ATTENTION): no co-folds yet | Spec 9 item 4, pending the co-folding tier.
-- **control 4 trimer TL1A** (ATTENTION): no co-folds yet | Spec 9 item 4, pending the co-folding tier.
+- **control 4 trimer TNFa** (PASS): 311 of 340 co-folds contact more than one subunit | Spec 9 item 4. If every interface sits on a single chain, suspect the trimer was never assembled.
+- **control 4 trimer TL1A** (PASS): 304 of 340 co-folds contact more than one subunit | Spec 9 item 4. If every interface sits on a single chain, suspect the trimer was never assembled.
 - **control 6 hallmark** (PASS): 0.993 agreement under the three-of-four rule the upstream column implements | Spec 9 item 6. The strict all-four call agrees for 0.928 of rows; both are reported.
 
 ## What the scrambled control did to the affinity axis
@@ -76,7 +111,7 @@ No axis pair correlates above 0.8 in any target for this run.
 
 Every axis is checked for the ways a column can look like a measurement while carrying no information: no variance, a degenerate distribution, being a restatement of another column, having no low tail, or not separating real sequences from shuffled ones.
 
-Axes flagged as vacuous: expression.
+Axes flagged as vacuous: affinity, expression.
 
 ## The thermostability model
 

@@ -236,12 +236,14 @@
       if (key === 'vacuous_tests') {
         // One verdict per axis, pooled over all five targets, with the
         // per-target counts beside it. Fifty pairs on one target cannot
-        // resolve these effects: at a true 60 per cent rate the expected
-        // p-value at n = 50 is 0.20, so the per-target verdicts this used to
-        // print were a coin toss. It published specificity as informative on
-        // PRLR and non-discriminating on TNFa, which is one 60 per cent effect
-        // labelled two ways. The counts stay visible so a reader sees how thin
-        // the evidence is per target (DECISIONS 53).
+        // resolve an effect near 60 per cent: the expected p-value at n = 50
+        // is 0.20, so the per-target verdicts this used to print were close to
+        // a coin toss, and it once published specificity as informative on
+        // PRLR and non-discriminating on TNFa from the same evidence. That
+        // particular reading was an artefact as well as underpowered
+        // (DECISIONS 59). With 200 pairs per target both testable axes now
+        // clear the test on every target alone, and the counts stay visible so
+        // a reader can see that for themselves (DECISIONS 53).
         const WORD = {
           informative: 'informative',
           weak: 'weak but measurable',

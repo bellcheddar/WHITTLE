@@ -79,12 +79,15 @@ def build_scrambled(conn, rng: random.Random) -> list[dict]:
     """The CDR-shuffled negative controls, in two draws that do not interfere.
 
     `run.scrambled_per_target` in `targets.yaml` sets the total. The first
-    fifty are the original draw and are reproduced exactly, because fifty pairs
-    per target cannot resolve the effects these axes have and the fix was to
-    add controls rather than to replace them: pooled over five targets the
-    specificity axis separates at 60 per cent, p = 0.0024, while no single
-    target reaches significance alone (DECISIONS 53). Raising the total to
-    about 200 per target is what makes a per-target verdict mean anything.
+    fifty are the original draw and are reproduced exactly, because the fix for
+    a thin control set is to add controls rather than to replace them
+    (DECISIONS 53 and 55). Fifty pairs per target cannot resolve a 60 per cent
+    effect: the expected sign-test p-value at n = 50 is 0.20, so a per-target
+    verdict on an effect that size is close to a coin toss. The specificity
+    axis was the example that prompted the scale-up, and that example turned
+    out to be an artefact rather than a weak effect (DECISIONS 59), so it is no
+    longer the reason. The power argument is, and it holds for any axis whose
+    effect is genuinely near 60 per cent.
 
     The two draws are kept apart deliberately. `rng.sample(pop, k)` is not a
     prefix of `rng.sample(pop, k + n)`, so widening the original call would
