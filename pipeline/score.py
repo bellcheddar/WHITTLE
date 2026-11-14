@@ -64,27 +64,33 @@ AXIS_COMPONENTS: dict[str, list[Component]] = {
     # inside specificity would score 24 candidates per target on one set of
     # components and the other 476 on another.
     #
-    # The first three were the whole axis and all three rise with interface
-    # size, so it rewarded a large interface rather than a well-packed one.
-    # PRODIGY's delta G is close to a linear function of contact counts, which
-    # makes it and BSA nearly the same measurement twice. They now carry 1.5 of
-    # 8.25 rather than 1.5 of 3.5.
+    # The controls have now been run, and no component here separates a
+    # candidate from the control shuffled from it. The axis is therefore
+    # displayed and not ranked on: see `ordering_axes()` and DECISIONS 50. The
+    # weights below order the axis against itself and nothing else, so they are
+    # left as they were rather than refitted to a control set that declined to
+    # support any of them.
     #
-    # WEIGHTS ARE PROVISIONAL. They are set by argument, not by evidence, until
-    # the scrambled controls are co-folded and each component can be weighted by
-    # how well it actually separates a real candidate from a shuffled one.
+    # `bsa_total` and `prodigy_dg` were removed on 2026-11-14 (DECISIONS 52)
+    # because they are not uninformative but inverted: across the 50 pairs the
+    # shuffled sequence buries more surface than its own parent on 40 and has
+    # the better predicted binding energy on 37, at p = 2.4e-05 and p = 0.00094.
+    # A co-folding model appears to pack a shuffled loop into a large and
+    # comfortable looking interface, so both measure how willingly a peptide is
+    # buried rather than whether a designed binder binds. They are still
+    # computed and shown in the table, with the control's finding beside them,
+    # and they carry no weight. Their signs were not flipped: that would fit the
+    # axis to this control set rather than to any account of binding.
     "affinity": [
         Component("iptm", +1, 2, 2.0, "co-folding interface confidence, averaged over seeds"),
         Component("pose_consensus", +1, 2, 1.5,
                   "agreement between the five diffusion samples about the epitope"),
         Component("sc", +1, 2, 1.5,
                   "Lawrence-Colman shape complementarity across the interface"),
-        Component("prodigy_dg", -1, 2, 1.0, "predicted interface binding free energy"),
         Component("cdr_interface_fraction", +1, 2, 1.0,
                   "share of the paratope contributed by CDRs rather than framework"),
         Component("hbond_per_100a2", +1, 2, 0.75,
                   "hydrogen bonds per 100 square angstroms of buried surface"),
-        Component("bsa_total", +1, 2, 0.5, "buried surface area"),
     ],
     "specificity": [
         Component("psh", -1, 1, 2.0, "TNP patch surface hydrophobicity"),

@@ -62,6 +62,10 @@ METRICS = {c.field: c.sign for c in AXIS_COMPONENTS["affinity"]}
 # specificity, so "better" depends on which axis is asking, and counting wins
 # in either direction would assert something this project does not believe.
 SURVEY = {
+    # Removed from the axis on 2026-11-14 as inverted (DECISIONS 52). Kept here
+    # so the calibration keeps reporting them: a metric dropped for pointing the
+    # wrong way is exactly one to keep watching.
+    "bsa_total": +1, "prodigy_dg": -1,
     "polar_fraction": +1,          # share of contacts that are polar
     "interactions_per_100a2": +1,  # contact density, size-normalised
     "n_saltbridge": +1,            # charged pairs across the interface
