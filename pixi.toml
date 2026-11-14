@@ -82,6 +82,13 @@ ablang2 = "*"
 # Humanness: the OASis peptide identity without the 22 GB database
 # (DECISIONS.md 20). MIT, by the BioPhi authors.
 promb = "*"
+# Interaction profiling of the co-folded complexes (PLIP, Salentin 2015 and
+# Adasme 2021, GPLv2). Not in conda-forge or bioconda; pure Python, and its
+# only compiled dependency ships an osx-arm64 wheel. Pinned because the
+# interaction geometry is part of the published numbers.
+plip = "==3.0.1"
+openbabel-wheel = "==3.1.1.23"
+lxml = "*"
 
 [tasks]
 probe = "python tools/hwprobe.py"

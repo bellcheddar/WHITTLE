@@ -16,6 +16,9 @@ PY="$ROOT/.pixi/envs/default/bin/python"
 echo "==> Interface metrics for the co-folds that have finished"
 "$PY" -m pipeline.interface
 
+echo "==> Interaction profile across each finished interface (PLIP)"
+"$PY" -m pipeline.interactions
+
 echo "==> Re-ranking"
 "$PY" -m pipeline.score
 

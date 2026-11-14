@@ -863,3 +863,8 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:04 cofold: 2/120 (2 ok, 0 failed), 4.5 min for GLP1R-0007, about 11.1 hours left
 - 2026-11-13 20:07 interface: GLP1R published 3 co-folded complexes for the drawer, the highest-ipTM sample of each
 - 2026-11-13 20:07 interface: GLP1R 15 samples across 3 candidates, 3 epitope bins
+- 2026-11-13 20:09 cofold: 3/120 (3 ok, 0 failed), 4.7 min for GLP1R-0167, about 10.4 hours left
+- 2026-11-13 20:12 interactions: GLP1R profiled 15 samples across 3 candidates, median 20 interactions per sample
+- 2026-11-13 20:13 interactions: GLP1R profiled 15 samples across 3 candidates, median 20 interactions per sample
+- 2026-11-13 20:13 cofold: 4/120 (4 ok, 0 failed), 4.7 min for GLP1R-0264, about 10.0 hours left
+- 2026-11-13 20:18 cofold: 5/120 (5 ok, 0 failed), 4.9 min for GLP1R-0196, about 9.8 hours left

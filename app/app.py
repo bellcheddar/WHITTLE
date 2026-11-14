@@ -187,9 +187,13 @@ def api_candidate(cid: str):
     # The co-folded complex: the nanobody docked on the real antigen construct,
     # which is the thing Tier 2 exists to show.
     rec["complex_url"] = None
+    rec["interactions_url"] = None
     if (STRUCTURES / rec["target"] / f"{cid}.complex.pdb.gz").exists():
         rec["complex_url"] = url_for("structure", target=rec["target"],
                                      name=f"{cid}.complex.pdb")
+    if (STRUCTURES / rec["target"] / f"{cid}.interactions.json").exists():
+        rec["interactions_url"] = url_for("api_interactions",
+                                          target=rec["target"], cid=cid)
     # The neighbour chain on its own, shared by every candidate that matches
     # it, so the viewer loads two local files and never calls out to RCSB.
     rec["reference_url"] = None
@@ -224,6 +228,24 @@ def structure(target: str, name: str):
     response.headers["Content-Encoding"] = "gzip"
     response.headers["Content-Type"] = "chemical/x-pdb"
     response.headers["Content-Disposition"] = f'inline; filename="{name}"'
+    return response
+
+
+@app.route("/api/interactions/<target>/<cid>.json")
+def api_interactions(target: str, cid: str):
+    """Interactions across the co-folded interface, for the drawer and viewer.
+
+    Served separately rather than folded into the candidate payload because
+    most readers never open the Complex view, and an EGFR interface carries
+    enough contacts to be worth not sending every time.
+    """
+    if "/" in cid or ".." in cid or "/" in target or ".." in target:
+        abort(404)
+    path = STRUCTURES / target / f"{cid}.interactions.json"
+    if not path.exists():
+        abort(404)
+    response = app.response_class(path.read_text(), mimetype="application/json")
+    response.headers["Cache-Control"] = "no-cache, must-revalidate"
     return response
 
 

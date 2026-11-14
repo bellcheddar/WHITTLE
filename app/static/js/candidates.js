@@ -455,8 +455,156 @@
     const url = complex ? d.complex_url : d.structure_url;
     if (!url) return;
     delete container.dataset.pending;
-    await window.WViewer.show(container, [{ url, format: 'pdb', binary: false }]);
+    if (complex) {
+      const profile = await loadInteractions(d);
+      // Guard against the reader switching away while the fetch was in
+      // flight: drawing the complex into a viewer now showing the monomer
+      // would leave the toggle and the picture disagreeing.
+      if (viewerMode !== 'complex') return;
+      await showComplex(d, profile);
+      renderInteractions(d, profile);
+    } else {
+      await window.WViewer.show(container,
+        [{ url, format: 'pdb', binary: false }]);
+      const panel = el('interactions');
+      if (panel) panel.hidden = true;
+    }
     writeViewerCaption(d);
+  }
+
+  /* The complex, with the residues PLIP found in contact picked out.
+
+     Mol* 4.9's MolViewSpec has no primitives node, so these cannot be drawn
+     as dashed lines between the two atoms. Colouring the contacting residues
+     is more legible at this size in any case, and the list below carries the
+     atom names and distances. */
+  async function showComplex(d, profile) {
+    const container = el('viewer');
+    const byType = highlightResidues(profile && profile.interactions);
+    await window.WViewer.showMvs(container, (builder) => {
+      // Loading an MVS state resets the canvas, so the dark background has
+      // to be part of the state rather than set once on the plugin.
+      builder.canvas({ background_color: '#0D1117' });
+      const structure = builder
+        .download({ url: d.complex_url })
+        .parse({ format: 'pdb' })
+        .modelStructure();
+      // Disjoint components, one per chain, rather than a `polymer` cartoon
+      // with the nanobody drawn over it: two cartoons on the same geometry
+      // z-fight and the upper one does not reliably win, which left the whole
+      // complex a single grey.
+      structure.component({ selector: ANTIGEN_CHAINS.map(
+        (c) => ({ auth_asym_id: c })) })
+        .representation({ type: 'cartoon' })
+        .color({ color: ANTIGEN_COLOUR });
+      structure.component({ selector: [{ auth_asym_id: 'N' }] })
+        .representation({ type: 'cartoon' })
+        .color({ color: NANOBODY_COLOUR });
+      // Weakest first, so a residue drawn twice ends on its strongest type.
+      for (let i = IX_TYPES.length - 1; i >= 0; i -= 1) {
+        const spec = IX_TYPES[i];
+        const residues = byType[spec.key];
+        if (!residues || !residues.length) continue;
+        structure.component({ selector: residues })
+          .representation({ type: 'ball_and_stick' })
+          .color({ color: spec.colour });
+      }
+    });
+  }
+
+  function renderInteractions(d, profile) {
+    const panel = el('interactions');
+    if (!panel) return;
+    panel.hidden = false;
+    const records = (profile && profile.interactions) || [];
+    if (!records.length) {
+      panel.innerHTML = '<p class="ixempty">No interactions were detected '
+        + 'across this interface.</p>';
+      return;
+    }
+    const counts = {};
+    for (const r of records) counts[r.type] = (counts[r.type] || 0) + 1;
+    const chips = IX_TYPES.filter((s) => counts[s.key])
+      .map((s) => `<span class="ixchip" style="color:${s.colour}">`
+        + `${counts[s.key]} `
+        + `${W.escape(counts[s.key] === 1 ? s.one : s.many)}</span>`)
+      .join('');
+    const order = Object.fromEntries(IX_TYPES.map((x, i) => [x.key, i]));
+    const rows = records.slice().sort((a, b) => (order[a.type] - order[b.type])
+        || ((a.distance || 0) - (b.distance || 0)))
+      .map((r) => {
+        const spec = IX_BY_KEY[r.type] || { colour: 'var(--ink-3)' };
+        const side = (s) => `${W.escape(s.resname)}${s.resnum}`
+          + `<span class="ixmono">${s.atom ? ' ' + W.escape(s.atom) : ''}</span>`;
+        return `<tr><td style="width:14px"><span class="ixdot" `
+          + `style="background:${spec.colour}"></span></td>`
+          + `<td>${side(r.antigen)}</td>`
+          + `<td style="color:${NANOBODY_COLOUR}">${side(r.nanobody)}</td>`
+          + `<td class="ixmono" style="text-align:right">`
+          + `${r.distance === null ? '' : r.distance.toFixed(2) + ' \u00c5'}</td></tr>`;
+      }).join('');
+    panel.innerHTML = `<div class="ixhead">${chips}</div>`
+      + `<table><tbody>${rows}</tbody></table>`
+      + `<p class="ixnote">Antigen residue, then nanobody residue. Detected `
+      + `with PLIP on the highest-ipTM sample, which is the model shown above. `
+      + `These are interactions of a predicted pose, not a measured structure.</p>`;
+  }
+
+  // Interaction types, their colour in the viewer and in the list, and the
+  // order they are drawn in: a residue making several gets the strongest.
+  const IX_TYPES = [
+    { key: 'saltbridge', one: 'salt bridge', many: 'salt bridges',
+      colour: '#E4698F' },
+    { key: 'hbond', one: 'hydrogen bond', many: 'hydrogen bonds',
+      colour: '#4DA3FF' },
+    { key: 'pistacking', one: 'pi stack', many: 'pi stacks',
+      colour: '#5EC2A0' },
+    { key: 'pication', one: 'pi cation', many: 'pi cations',
+      colour: '#5EC2A0' },
+    { key: 'hydrophobic', one: 'hydrophobic contact',
+      many: 'hydrophobic contacts', colour: '#E0A458' },
+  ];
+  const IX_BY_KEY = Object.fromEntries(IX_TYPES.map((x) => [x.key, x]));
+  // A, B and C cover the monomers and the two homotrimers; naming a chain
+  // that is not in the file is harmless.
+  const ANTIGEN_CHAINS = ['A', 'B', 'C'];
+  const ANTIGEN_COLOUR = '#7E8796';
+  const NANOBODY_COLOUR = '#2F8F7E';
+
+  // One fetch per candidate, kept while the drawer stays on it.
+  let interactionsFor = { id: null, data: null };
+
+  async function loadInteractions(d) {
+    if (!d.interactions_url) return null;
+    if (interactionsFor.id === d.id) return interactionsFor.data;
+    const data = await W.loadJson(d.interactions_url);
+    interactionsFor = { id: d.id, data };
+    return data;
+  }
+
+  /* Residues to highlight, keyed by interaction type, strongest wins.
+     Returned per chain so the MVS selector can name them exactly. */
+  function highlightResidues(records) {
+    const claimed = new Map();          // "chain:resnum" -> type key
+    const rank = Object.fromEntries(IX_TYPES.map((x, i) => [x.key, i]));
+    for (const rec of records || []) {
+      for (const side of ['antigen', 'nanobody']) {
+        const s = rec[side];
+        if (!s) continue;
+        const id = `${s.chain}:${s.resnum}`;
+        const prev = claimed.get(id);
+        if (prev === undefined || rank[rec.type] < rank[prev]) {
+          claimed.set(id, rec.type);
+        }
+      }
+    }
+    const byType = {};
+    for (const [id, type] of claimed) {
+      const [chain, resnum] = id.split(':');
+      (byType[type] = byType[type] || []).push(
+        { auth_asym_id: chain, auth_seq_id: Number(resnum) });
+    }
+    return byType;
   }
 
   function bestCofold(d) {

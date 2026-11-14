@@ -179,6 +179,37 @@
     }
   }
 
+  /* Load a MolViewSpec state, which is how the complex view highlights the
+     residues PLIP found in contact.
+
+     Mol* 4.9 has no MVS `primitives()` node, so the interactions cannot be
+     drawn as dashed lines between atom pairs without moving to a 5.x bundle.
+     Highlighting the contacting residues reads better at this viewer's size
+     anyway, and the drawer carries the atom-level detail beside it.
+
+     `build(builder, helpers)` receives a fresh MVS builder and returns
+     nothing; the caller describes the scene and this handles the plugin. */
+  async function showMvs(container, build) {
+    const placeholder = placeholderFor(container);
+    try {
+      const view = await ensurePlugin(container);
+      const mvs = window.molstar
+        && window.molstar.PluginExtensions
+        && window.molstar.PluginExtensions.mvs;
+      if (!mvs) return { ok: false, reason: 'no mvs extension' };
+      const builder = mvs.MVSData.createBuilder();
+      build(builder);
+      const state = builder.getState();
+      await mvs.loadMVS(view.plugin, state, { replaceExisting: true });
+      setPlaceholder(placeholder, false);
+      return { ok: true, contexts: created - disposed };
+    } catch (err) {
+      setPlaceholder(placeholder, true,
+        'The 3D viewer could not draw this complex.');
+      return { ok: false, reason: String(err && err.message) };
+    }
+  }
+
   /* Dispose on drawer close. This is the half that keeps the context count
      bounded; building one instance is not enough on its own if it is never
      released when the drawer is dismissed. */
@@ -188,6 +219,7 @@
 
   window.WViewer = {
     show,
+    showMvs,
     dispose,
     stats: () => ({ contexts: created - disposed, created, disposed,
       live: Boolean(plugin) }),

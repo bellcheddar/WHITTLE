@@ -169,6 +169,17 @@ CREATE TABLE IF NOT EXISTS cofolds (
     -- independent diffusion samples agree about where this binds?
     pose_consensus           REAL,      -- mean pairwise Jaccard of epitopes across seeds
     iptm_spread              REAL,      -- max minus min ipTM across seeds
+    -- PLIP interaction profile. The raw counts largely restate interface size;
+    -- the densities and the polar fraction are what do not.
+    n_hbond                  INTEGER,
+    n_hydrophobic            INTEGER,
+    n_saltbridge             INTEGER,
+    n_pistack                INTEGER,
+    n_interactions           INTEGER,
+    n_his_contacts           INTEGER,   -- design intent of the His-enriched libraries
+    polar_fraction           REAL,
+    hbond_per_100a2          REAL,
+    interactions_per_100a2   REAL,
     path                     TEXT,
     status                   TEXT,
     PRIMARY KEY (candidate_id, target, seed)

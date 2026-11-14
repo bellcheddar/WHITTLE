@@ -468,6 +468,27 @@ main {
    it was standing in for. */
 .viewerwrap .placeholder[hidden] { display: none; }
 
+/* Interaction inventory under the complex view. */
+#interactions { margin-top: 10px; }
+#interactions .ixhead {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  margin-bottom: 8px;
+}
+#interactions .ixchip {
+  font-size: 10px; letter-spacing: 0.02em; padding: 2px 7px;
+  border-radius: 9px; border: 1px solid currentColor;
+}
+#interactions table { width: 100%; border-collapse: collapse; font-size: 11px; }
+#interactions td { padding: 3px 4px; border-bottom: 1px solid var(--line); }
+#interactions tr:last-child td { border-bottom: none; }
+#interactions .ixdot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  margin-right: 5px; vertical-align: middle;
+}
+#interactions .ixmono { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+#interactions .ixnote { font-size: 10px; color: var(--ink-3); margin-top: 7px; }
+#interactions .ixempty { font-size: 11px; color: var(--ink-3); }
+
 .tiles {
   display: grid;
   grid-template-columns: 1fr 1fr;
