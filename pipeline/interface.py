@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -96,10 +97,35 @@ def confidence_for(model_path: Path) -> dict:
     return out
 
 
+MODEL_INDEX = re.compile(r"_model_(\d+)$")
+
+
 def structures(run_dir: Path) -> list[Path]:
-    return sorted((p for p in run_dir.rglob("*_model_*.pdb")
-                   if "pre_affinity" not in p.name),
-                  key=lambda p: int(p.stem.rsplit("_", 1)[-1]))
+    """The diffusion samples for one complex, in sample order.
+
+    The index is matched rather than split off the end, because the run
+    directories live under iCloud-synced Documents and a directory rewritten
+    while a sync is in flight leaves the superseded copy behind as
+    `<stem>_model_4 2.pdb`. Those files are real PDBs from an earlier run of
+    the same candidate, so a plain glob picks them up as extra samples, and
+    `int("4 2")` then raises ValueError and takes the whole stage down. This
+    cost the first interface pass of 2026-11-14: 250 co-folds finished and the
+    refresh died on the first candidate that had one.
+
+    A file whose index is not an integer is skipped rather than repaired. It
+    is a duplicate of a sample this function is already returning, so dropping
+    it loses nothing, and silently averaging a stale pose into a live run
+    would be worse than either crashing or skipping.
+    """
+    indexed: list[tuple[int, Path]] = []
+    for path in run_dir.rglob("*_model_*.pdb"):
+        if "pre_affinity" in path.name:
+            continue
+        found = MODEL_INDEX.search(path.stem)
+        if not found:
+            continue
+        indexed.append((int(found.group(1)), path))
+    return [path for _, path in sorted(indexed, key=lambda pair: pair[0])]
 
 
 # ------------------------------------------------------------------- metrics

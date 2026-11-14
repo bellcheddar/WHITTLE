@@ -1470,3 +1470,42 @@ through to the drawer.
 - 2026-11-14 10:16 cofold: 23/30 (23 ok, 0 failed), 4.8 min for SCRAM-EGFR-003, about 0.4 hours left
 - 2026-11-14 10:21 cofold: 24/30 (24 ok, 0 failed), 4.9 min for SCRAM-EGFR-004, about 0.4 hours left
 - 2026-11-14 10:26 cofold: 25/30 (25 ok, 0 failed), 4.9 min for SCRAM-EGFR-005, about 0.3 hours left
+- 2026-11-14 10:31 cofold: 26/30 (26 ok, 0 failed), 4.8 min for SCRAM-EGFR-006, about 0.3 hours left
+- 2026-11-14 10:35 cofold: 27/30 (27 ok, 0 failed), 4.9 min for SCRAM-EGFR-007, about 0.2 hours left
+- 2026-11-14 10:40 cofold: 28/30 (28 ok, 0 failed), 4.9 min for SCRAM-EGFR-008, about 0.1 hours left
+- 2026-11-14 10:45 cofold: 29/30 (29 ok, 0 failed), 4.9 min for SCRAM-EGFR-009, about 0.1 hours left
+- 2026-11-14 10:50 cofold: 30/30 (30 ok, 0 failed), 4.8 min for SCRAM-EGFR-010, about 0.0 hours left
+- 2026-11-14 10:50 cofold: finished 30 ok, 0 failed, in 2.0 hours
+- 2026-11-14 10:50 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-14 10:50 cofold: 40 control-parent complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
+- 2026-11-14 10:51 cofold: 1/40 (1 ok, 0 failed), 0.9 min for GLP1R-0082, about 0.6 hours left
+- 2026-11-14 10:52 cofold: 2/40 (2 ok, 0 failed), 0.9 min for GLP1R-0132, about 0.6 hours left
+- 2026-11-14 10:53 cofold: 3/40 (3 ok, 0 failed), 0.9 min for GLP1R-0056, about 0.6 hours left
+- 2026-11-14 10:54 cofold: 4/40 (4 ok, 0 failed), 0.9 min for GLP1R-0238, about 0.5 hours left
+- 2026-11-14 10:55 cofold: 5/40 (5 ok, 0 failed), 0.9 min for GLP1R-0168, about 0.5 hours left
+- 2026-11-14 10:56 cofold: 6/40 (6 ok, 0 failed), 0.9 min for GLP1R-0244, about 0.5 hours left
+- 2026-11-14 10:56 cofold: 7/40 (7 ok, 0 failed), 0.9 min for GLP1R-0435, about 0.5 hours left
+- 2026-11-14 10:58 cofold: 8/40 (8 ok, 0 failed), 1.3 min for PRLR-0197, about 0.5 hours left
+- 2026-11-14 10:59 cofold: 9/40 (9 ok, 0 failed), 1.3 min for PRLR-0198, about 0.5 hours left
+- 2026-11-14 11:00 cofold: 10/40 (10 ok, 0 failed), 1.3 min for PRLR-0462, about 0.5 hours left
+- 2026-11-14 11:02 cofold: 11/40 (11 ok, 0 failed), 1.3 min for PRLR-0120, about 0.5 hours left
+- 2026-11-14 11:03 cofold: 12/40 (12 ok, 0 failed), 1.3 min for PRLR-0385, about 0.5 hours left
+- 2026-11-14 11:04 cofold: 13/40 (13 ok, 0 failed), 1.3 min for PRLR-0463, about 0.5 hours left
+- 2026-11-14 11:06 cofold: 14/40 (14 ok, 0 failed), 1.3 min for PRLR-0452, about 0.5 hours left
+- 2026-11-14 11:07 cofold: 15/40 (15 ok, 0 failed), 1.3 min for PRLR-0356, about 0.5 hours left
+- 2026-11-14 11:10 cofold: 16/40 (16 ok, 0 failed), 3.2 min for TNFa-0271, about 0.5 hours left
+- 2026-11-14 11:13 cofold: 17/40 (17 ok, 0 failed), 3.1 min for TNFa-0053, about 0.5 hours left
+- 2026-11-14 11:16 cofold: 18/40 (18 ok, 0 failed), 3.2 min for TNFa-0137, about 0.5 hours left
+- 2026-11-14 11:20 cofold: 19/40 (19 ok, 0 failed), 3.2 min for TNFa-0055, about 0.5 hours left
+- 2026-11-14 11:23 cofold: 20/40 (20 ok, 0 failed), 3.1 min for TNFa-0052, about 0.5 hours left
+- 2026-11-14 11:26 cofold: 21/40 (21 ok, 0 failed), 3.2 min for TNFa-0234, about 0.5 hours left
+- 2026-11-14 11:29 cofold: 22/40 (22 ok, 0 failed), 3.2 min for TNFa-0066, about 0.5 hours left
+- 2026-11-14 11:32 cofold: 23/40 (23 ok, 0 failed), 3.1 min for TNFa-0499, about 0.5 hours left
+- 2026-11-14 11:36 cofold: 24/40 (24 ok, 0 failed), 3.9 min for TL1A-0246, about 0.5 hours left
+- 2026-11-14 11:40 cofold: 25/40 (25 ok, 0 failed), 3.9 min for TL1A-0218, about 0.5 hours left
+- 2026-11-14 11:44 cofold: 26/40 (26 ok, 0 failed), 3.8 min for TL1A-0391, about 0.5 hours left
+- 2026-11-14 11:48 cofold: 27/40 (27 ok, 0 failed), 3.8 min for TL1A-0024, about 0.5 hours left
+- 2026-11-14 11:52 cofold: 28/40 (28 ok, 0 failed), 3.9 min for TL1A-0273, about 0.4 hours left
+- 2026-11-14 11:55 cofold: 29/40 (29 ok, 0 failed), 3.9 min for TL1A-0194, about 0.4 hours left
+- 2026-11-14 11:59 cofold: 30/40 (30 ok, 0 failed), 3.9 min for TL1A-0474, about 0.4 hours left
+- 2026-11-14 12:03 cofold: 31/40 (31 ok, 0 failed), 3.8 min for TL1A-0288, about 0.4 hours left
