@@ -983,10 +983,26 @@
     // No unit beside "pending": there is no number for it to qualify.
     const unitSpan = missing ? '' : `<span class="tunit">${W.escape(unit || '')}</span>`;
     const verdict = axis ? axisVerdict(axis) : null;
-    const flag = verdict === 'vacuous'
-      ? '<div class="tflag" title="This axis does not separate real candidates '
-        + 'from CDR-shuffled controls, so its ordering carries no evidence.">'
-        + 'non-discriminating</div>'
+    // Four states, not two. "unconfirmed" and "untestable" are things the
+    // control set measured and could not rule on, and flattening either into
+    // the unflagged case would present a weak axis as a working one.
+    const FLAGS = {
+      vacuous: ['non-discriminating',
+        'This axis does not separate real candidates from CDR-shuffled '
+        + 'controls, so its ordering carries no evidence.'],
+      unconfirmed: ['weak',
+        'This axis separates real candidates from CDR-shuffled controls on '
+        + 'the unpaired test but not when each control is compared with the '
+        + 'candidate it was shuffled from. Treat its ordering as suggestive.'],
+      untestable: ['untested',
+        'The CDR-shuffled control preserves amino-acid composition, which is '
+        + 'most of what this axis reads, so the control cannot test it either '
+        + 'way. This is not a failure of the axis.'],
+    };
+    const label = FLAGS[verdict];
+    const flag = label
+      ? `<div class="tflag${verdict === 'vacuous' ? '' : ' soft'}" `
+        + `title="${W.escape(label[1])}">${label[0]}</div>`
       : '';
     return `<div class="tile"><div class="tlabel">${W.escape(label)}</div>
       <div class="tvalue">${shown}${unitSpan}</div>

@@ -3,10 +3,12 @@
 Rewritten after every phase and at least every 30 minutes during compute
 (spec 0.1 item 6). Live at <https://whittle.mdeller.com>.
 
-**Overall: about 75 percent.** Phases 1 and 2 are complete and deployed.
-Phase 3's machinery is proven end to end by a smoke co-fold and its queue is
-the remaining long pole, about 3.65 days. Phase 4 is largely written and waits
-only on the co-folding results.
+**Overall: about 93 percent.** Phases 1 and 2 are complete and deployed.
+Phase 3's co-folding is done: 250 candidate complexes (50 per target) and 30
+scrambled controls, all on MPS, 0 failed. The 40 paired control parents are
+finishing now, and the interface, interaction and complementarity metrics plus
+the affinity calibration run straight after them. Phase 4 waits on that
+calibration and on the final QC pass.
 
 ---
 
@@ -55,63 +57,98 @@ only on the co-folding results.
 - [x] 5 anti-EGFR and 13 anti-TNFa nanobodies resolved from SAbDab-nano, not hand-typed
 - [x] `tools/qc_pareto.py`: an independent Pareto implementation, agrees on all five targets
 - [x] `tools/vacuous_tests.py`: five ways an axis can be uninformative, checked per target
-- [ ] Antigen MSA cache built (needs the ColabFold server)
-- [ ] Smoke co-fold on GLP1R, timed, before the queue opens
-- [ ] The queue itself: about 100 complexes, days
-- [ ] Controls run blind through the same pipeline
+- [x] Antigen MSA cache built for all five targets
+- [x] Smoke co-fold on GLP1R, timed, before the queue opened
+- [x] The queue itself: **250 complexes, 50 per target, 11.7 hours, 0 failed**
+- [x] Controls run blind through the same pipeline
+- [x] **30 scrambled controls co-folded**, 2.0 hours, 0 failed
+- [x] Paired tests added for the sequence axes; the thermo verdict changed
+- [~] The 40 paired control parents: 35 of 40 done, 0 failed
+- [ ] Interface, interaction and complementarity metrics over the controls
+- [ ] Affinity weights decided from the paired calibration
 - [ ] Full QC pass
 
-## Phase 4: about, provenance, polish, public release: about 70 percent
+## Phase 4: about, provenance, polish, public release: about 85 percent
 
-- [x] `config/references.yaml` resolved through Crossref; 25 of 25 DOIs verified
+- [x] `config/references.yaml` resolved through Crossref; 29 of 29 DOIs verified
 - [x] Three seed DOIs found resolving to the wrong paper and corrected
 - [x] Provenance table: 32 entries, tool versions, snapshot dates, run id, git sha
 - [x] Mermaid workflow rendered to a static SVG with nine reference anchors
 - [x] Icon and favicon set in the house style
 - [x] `README.md`
 - [x] `FINDINGS.md`, generated from the database
+- [x] About tab rewritten in lay terms with a glossary for all 48 parameters
+- [x] Workflow diagram re-laid out tall and made legible
+- [x] Hero panel rebuilt as the shortlist ladder and the whittling gates
+- [x] Drawer slides over the page; white viewer; CDRs coloured in all three views
 - [ ] Final QC pass and secret scan
 - [ ] Remove the robots disallow and the noindex tag
 - [ ] Final deploy and push
 
 ---
 
-## In flight (restarted 2026-11-13 20:40 on MPS)
+## In flight as of 2026-11-14 12:25
 
-- **Tier 2 co-folding queue**: 250 complexes, **50 per target**, cheapest
-  target first, full quality (recycling 3, 5 samples, 200 steps), on **MPS**.
-  The shortlist takes the best 24 of the 50; Tier 2 is the last tier, so
-  co-folding exactly 24 would mean it selected nothing (DECISIONS 35).
-  `tools/overnight.sh` runs the night as one unit: scrambled controls for the
-  two cheapest targets first, then the candidates under
-  `tools/supervise_tier2.sh`, then the remaining controls and the affinity
-  calibration. Progress: `data/overnight.log`, `data/tier2_supervisor.log`
-  and `data/manifests/cofold.jsonl`.
+- **Paired control parents**: 35 of 40 done, 0 failed, about 25 minutes left.
+  Each scrambled control's own parent is co-folded so the affinity comparison
+  is paired. Without it the comparison is confounded: the co-folded candidates
+  are the top 50 by Tier 1 rank, which is driven by patch surface
+  hydrophobicity, so they sit below the population (median PSH 93.6 against
+  106.4 across all 500 GLP1R candidates) while the controls were shuffled from
+  a random sample whose parents sit at 107.9 (DECISIONS 35).
+- **Then**, straight after, `tools/calibrate_run.sh` runs `pipeline.interface`,
+  `pipeline.interactions` and `pipeline.complementarity` over about 320
+  complexes and then `tools/calibrate_affinity.py`. Roughly 1.5 to 2 hours on
+  CPU, measured from GLP1R's 300 samples last night: interface a few minutes,
+  interactions 14, complementarity 4.
 - **Affinity weights are provisional.** The axis blends seven interface
   metrics weighted by argument. `tools/calibrate_affinity.py` proposes weights
-  from how well each separates a real candidate from a co-folded scrambled
-  one. Applying them is a deliberate edit, so the reasoning lands in a commit.
+  from how well each separates a real candidate from its co-folded shuffled
+  twin. Applying them is a deliberate edit, so the reasoning lands in a commit.
+  `polar_fraction` was the strongest discriminator on the unpaired read at AUC
+  0.841 and is not currently a component; if it survives the paired test it has
+  earned a place in the axis.
 
-## Control-set verdicts as of 2026-11-13 20:54
+## Control-set verdicts as of 2026-11-14 12:23
 
-| Axis | Reachable by the CDR shuffle | Verdict |
-|---|---|---|
-| Affinity | 100 per cent | pending, tonight's co-folded controls decide |
-| Specificity | 89 per cent | vacuous on EGFR (AUC 0.600) and TNFa (0.535), informative on the other three |
-| Thermo | 60 per cent | vacuous on EGFR (0.590) and TL1A (0.589), informative on the other three |
-| Expression | 33 per cent | **untestable by this control**, not vacuous |
+Each axis is tested twice. **Unpaired** compares every scrambled control
+against all 500 candidates, which is the number spec Section 9 asks for.
+**Paired** compares each control with the one candidate it was shuffled from,
+holding composition, length and framework fixed so CDR order is the only
+difference left. Between-sequence variance drops out of the paired form and it
+is far the more powerful of the two, so it decides the verdict.
 
+| Axis | Unpaired AUC | Paired, parent beats its own shuffle | Verdict |
+|---|---|---|---|
+| Affinity | pending | pending | tonight's co-folded controls decide |
+| Specificity | 0.535 to 0.679 | 144 of 240, p = 0.0023 | informative on PRLR, weak on GLP1R and TL1A, **non-discriminating on EGFR and TNFa** |
+| Thermo | 0.589 to 0.629 | **210 of 250, p = 5e-29** | **informative on all five** |
+| Expression | 0.439 to 0.522 | 136 of 250, p = 0.18 | untestable by this control |
+
+- **The thermo axis is not vacuous.** The unpaired test called it vacuous on
+  EGFR (0.591) and TL1A (0.589) and the site said so. Paired, a candidate
+  beats its own shuffled twin on 84 per cent of pairs and every target clears
+  p < 1e-4 on its own (PRLR 47 of 50). The unpaired AUC was low because
+  comparing one shuffle against 500 different sequences is swamped by the
+  variance between them, not because the axis carries nothing.
+- **Specificity is weak and target-dependent.** Real on PRLR (32 of 48,
+  p = 0.029), unconfirmed on GLP1R and TL1A, nothing on TNFa (24 of 49). EGFR
+  is non-discriminating, which is the target where it matters most.
 - The scrambled control preserves amino-acid composition exactly, so a
   composition-only metric cannot move under it. Two thirds of the expression
   axis is composition-only, so its AUC sits at chance by construction. An
-  axis the control cannot reach is now reported untestable rather than
+  axis the control cannot reach is reported untestable rather than
   non-discriminating.
 - **Open**: the expression axis needs a composition-varying negative control
-  before anything can be claimed about it either way. Not built.
-- EGFR is vacuous on both axes the control can test, which is the target
-  where it matters most.
-- No AUC anywhere exceeds 0.68. None of the sequence-level axes is a strong
-  discriminator.
+  before anything can be claimed about it either way. Not built, and note that
+  a synthetic one risks circularity: SWI and Protein-Sol are defined from
+  composition, so a deliberately hydrophobic variant scores worse by
+  construction rather than by evidence. There is no observed expression or
+  solubility measurement anywhere in the control set to anchor it against.
+- Four verdict states are now reported, not two: informative, weak and
+  unconfirmed, non-discriminating, and untestable by this control. A hard
+  threshold at AUC 0.6 had been splitting indistinguishable evidence into
+  opposite labels (DECISIONS 46).
 
 ## Open items carried forward
 

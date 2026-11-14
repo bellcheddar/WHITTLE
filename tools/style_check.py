@@ -56,7 +56,15 @@ CODE_EXEMPT = re.compile(
     r"|clusterBkg|primaryColor|accent-color|theme_color|background_color"
     r"|License-Identifier|license\s*=|licenses|normalize\(|analyze_|\.analyze"
     r"|center\s*[:=]|text-align|place-items|justify-content|align-items"
-    r"|normalized\(|center\"|\"center\"|labeled=|labels|normalise")
+    r"|normalized\(|center\"|\"center\"|labeled=|labels|normalise"
+    # Added after five of these sat in the report as known-unfixable noise. A
+    # check that always reports the same five issues is one a reader learns to
+    # skip, which costs more than the issues do. Each of these is a CSS
+    # property or value, or a DOM property, whose spelling is fixed by the
+    # platform and cannot be anglicised: `align-self: center`,
+    # `overscroll-behavior: contain`, `ctx.textAlign = 'center'`.
+    r"|'center'|textAlign|textBaseline|align-self|align-content"
+    r"|overscroll-behavior|scroll-behavior|-behavior\s*:")
 
 
 # Files this build was handed rather than wrote. They are inputs and are not

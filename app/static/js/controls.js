@@ -234,15 +234,35 @@
       }
 
       if (key === 'vacuous_tests') {
+        // Per target, not rolled up. One axis can be informative on one
+        // target and carry nothing on another, and it does: specificity is
+        // informative on PRLR and non-discriminating on TNFa. Collapsing the
+        // five into a single word for the axis was wrong in both directions,
+        // and an axis that came back unresolved on every target used to print
+        // as "informative" (DECISIONS 46).
+        const WORD = {
+          informative: 'informative',
+          vacuous: 'NOT DISCRIMINATING',
+          unconfirmed: 'weak, unconfirmed',
+          untestable: 'this control cannot test it',
+          pending: 'not computed yet',
+        };
         const lines = Object.entries(value).map(([axis, entry]) => {
+          const verdicts = entry.verdicts || {};
           const targets = entry.targets || {};
+          const per = Object.keys(verdicts).sort().map((t2) => {
+            const v = verdicts[t2];
+            const paired = targets[t2] && targets[t2].paired_n
+              ? ` (${targets[t2].paired_wins}/${targets[t2].paired_n} paired)` : '';
+            return `${W.escape(t2)} ${W.escape(WORD[v] || v)}${paired}`;
+          }).join(', ');
           const findings = new Set();
           Object.values(targets).forEach((t2) => (t2.findings || [])
             .forEach((f) => findings.add(f)));
-          const verdict = entry.passed ? 'informative' : 'NOT DISCRIMINATING';
-          return `<strong>${W.escape(axis)}</strong>: ${verdict}`
+          return `<strong>${W.escape(axis)}</strong>: ${per}`
             + (findings.size
-              ? ` &middot; ${W.escape([...findings].join('; '))}` : '');
+              ? `<br><span class="qcnote">${W.escape([...findings].join(' '))}</span>`
+              : '');
         });
         out.innerHTML = lines.join('<br>');
         return;

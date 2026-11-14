@@ -713,6 +713,17 @@ label.gname { cursor: pointer; }
   margin-top: 6px; font-size: 9.5px; letter-spacing: 0.04em;
   text-transform: uppercase; color: var(--poor, #B0304A); cursor: help;
 }
+/* "weak" and "untested" are not "non-discriminating" and must not read with
+   the same weight: one says the axis carries nothing, the others say the
+   control set could not rule on it (DESIGN 2, DECISIONS 46). */
+.tile .tflag.soft { color: var(--warn, #B5781C); }
+
+/* The reasoning under a QC verdict. Smaller and quieter than the verdict
+   itself, because the verdict is the answer and this is why. */
+.qcnote {
+  display: block; margin: 3px 0 7px 0; font-size: 11.5px;
+  line-height: 1.5; color: var(--ink-3);
+}
 
 .tiles {
   display: grid;

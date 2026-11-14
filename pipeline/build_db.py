@@ -240,8 +240,14 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
             payload = {}
         for axis, block in (payload or {}).items():
             for target, result in (block.get("targets") or {}).items():
+                # `verdict` is set by the test itself where it has something
+                # more specific to say than pass or fail. "unconfirmed" and
+                # "untestable" are both distinct from "pending": pending means
+                # the check has not run, while these two mean it ran and could
+                # not rule. Collapsing them into pending told a reader nothing
+                # had been measured when something had.
                 passed = result.get("passed")
-                verdicts.setdefault(axis, {})[target] = (
+                verdicts.setdefault(axis, {})[target] = result.get("verdict") or (
                     "pending" if passed is None else
                     "informative" if passed else "vacuous")
     return {

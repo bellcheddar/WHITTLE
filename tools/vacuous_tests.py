@@ -14,6 +14,17 @@ information:
    real candidates from CDR-shuffled ones. This is the strong form, and for the
    affinity axis spec Section 9 item 5 says a failure here is a finding to
    report prominently, not a failure to hide.
+
+   This is asked twice, because the two forms answer different questions and
+   on this data they disagree. **Unpaired** compares every scrambled control
+   against all 500 candidates: it asks where a shuffled sequence would rank,
+   and it is the number spec Section 9 asks for. **Paired** compares each
+   control against the one candidate it was shuffled from, which is the same
+   sequence with the same composition, length and framework, so CDR order is
+   the only difference left inside a pair. Between-sequence variance drops out
+   of the paired form, and with 50 pairs per target it is far the more
+   powerful of the two. The paired form therefore decides the verdict and the
+   unpaired AUC is still reported beside it.
 5. **Cannot fail by construction.** The axis has no low tail: nothing scores
    badly, so the column cannot discriminate against anything.
 
@@ -25,6 +36,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import statistics
 import sys
 from pathlib import Path
@@ -75,6 +87,65 @@ def mann_whitney_auc(a: list[float], b: list[float]) -> float | None:
             elif x == y:
                 ties += 1
     return (wins + 0.5 * ties) / (len(a) * len(b))
+
+
+def sign_test(wins: int, n: int) -> float | None:
+    """Two-sided exact binomial tail against p = 0.5. No scipy on the droplet.
+
+    A p-value is the right statistic here where an AUC is not, because the
+    paired question is a count of 50 and not a comparison of two large
+    samples: 30 of 50 looks like separation and is what a fair coin does one
+    time in five.
+    """
+    if n == 0:
+        return None
+    tail = sum(math.comb(n, k) for k in range(wins, n + 1)) / 2 ** n
+    return min(1.0, 2 * tail)
+
+
+def paired_against_parents(conn, target: str, control_column: str,
+                           axis_column: str) -> dict:
+    """Does a candidate beat the control that was shuffled from it?
+
+    The parent is recovered from the control's own note rather than stored as a
+    column, because `pipeline.controls` writes the provenance there and
+    duplicating it in the schema would let the two disagree. A control whose
+    parent is missing or unscored is dropped from the count rather than
+    counted as a loss.
+
+    Both sides are on the same scale: `pipeline.controls_run` ranks a control
+    against its target's candidate distribution using scales fitted on the
+    candidates alone, which is exactly the scale `scores.axis_*` carries.
+    """
+    wins = losses = ties = 0
+    for row in conn.execute(
+            f"SELECT notes, {control_column} AS value FROM controls "
+            "WHERE kind = 'scrambled' AND target = ?", (target,)):
+        if row["value"] is None:
+            continue
+        found = re.search(r"derived from ([A-Za-z0-9]+-\d+)", row["notes"] or "")
+        if not found:
+            continue
+        parent = conn.execute(
+            f"SELECT {axis_column} AS value FROM scores WHERE candidate_id = ?",
+            (found.group(1),)).fetchone()
+        if parent is None or parent["value"] is None:
+            continue
+        if parent["value"] > row["value"]:
+            wins += 1
+        elif parent["value"] < row["value"]:
+            losses += 1
+        else:
+            ties += 1
+    n = wins + losses + ties
+    out = {"paired_n": n, "paired_wins": wins, "paired_ties": ties}
+    if n < 10:
+        out["paired_fraction"] = None
+        out["paired_p"] = None
+        return out
+    out["paired_fraction"] = round(wins / n, 3)
+    out["paired_p"] = sign_test(wins, n)
+    return out
 
 
 def check_axis(conn, target: str, name: str, column: str) -> dict:
@@ -151,6 +222,9 @@ def check_axis(conn, target: str, name: str, column: str) -> dict:
     auc = mann_whitney_auc(values, shuffled)
     result["auc_vs_scrambled"] = None if auc is None else round(auc, 4)
 
+    # The same question asked pairwise, which is the powerful form.
+    result.update(paired_against_parents(conn, target, control_column, column))
+
     # How much of this axis could the control move at all? The shuffle
     # preserves amino-acid composition and the framework by design, so a
     # component reading only those is bit-identical between a candidate and
@@ -176,15 +250,76 @@ def check_axis(conn, target: str, name: str, column: str) -> dict:
                 f"the measured AUC of {auc:.3f} is near chance by construction "
                 f"rather than by failure. A negative control that varies "
                 f"composition is needed before this axis can be called "
-                f"informative or not.")
+                f"informative or not."
+                + (f" The paired form agrees and adds nothing: "
+                   f"{result['paired_wins']} of {result['paired_n']} "
+                   f"({result['paired_fraction']:.0%}, p = "
+                   f"{result['paired_p']:.2g}), which is what a control that "
+                   f"cannot move two thirds of the weight should look like."
+                   if result.get("paired_p") is not None else ""))
+            result["verdict"] = "untestable"
+        elif (result.get("paired_p") is not None
+              and result["paired_p"] < 0.05
+              and result["paired_fraction"] > 0.5):
+            # The paired test fires where the unpaired AUC does not. That is
+            # not a contradiction: the unpaired comparison is swamped by the
+            # variance between 500 different sequences, and the paired one
+            # holds composition, length and framework fixed so that CDR order
+            # is the only difference left. Treating the weaker test as the
+            # verdict labelled an informative axis vacuous, which is the more
+            # damaging of the two errors available here: it tells a reader to
+            # ignore a column that works.
+            result["findings"].append(
+                f"separates a candidate from its own CDR-shuffled twin in "
+                f"{result['paired_wins']} of {result['paired_n']} pairs "
+                f"({result['paired_fraction']:.0%}, sign test p = "
+                f"{result['paired_p']:.1g}). The unpaired AUC of {auc:.3f} is "
+                f"below the 0.6 threshold because comparing one shuffle "
+                f"against all 500 candidates is swamped by the variance "
+                f"between different sequences, not because the axis carries "
+                f"nothing. Informative on the paired evidence.")
+            result["verdict"] = "informative"
+        elif auc >= 0.6 and result.get("paired_p") is not None:
+            # Unpaired clears the bar, paired cannot confirm it. Calling this
+            # informative would rest a headline label on the weaker of the two
+            # tests, and calling it vacuous would contradict the number that
+            # was actually measured. It is neither: it is an axis the control
+            # set is not sharp enough to rule on.
+            #
+            # This case exists because a hard threshold at 0.6 was deciding
+            # between axes whose evidence is indistinguishable. EGFR
+            # specificity at 0.600 was labelled non-discriminating while TL1A
+            # at 0.614 was labelled informative, on paired p-values of 0.18
+            # and 0.2. One label told a reader to ignore the column and the
+            # other told them to trust it, for the same evidence.
+            if result["passed"]:
+                result["passed"] = None
+            result["verdict"] = "unconfirmed"
+            result["findings"].append(
+                f"weak and unconfirmed: it clears the unpaired bar (AUC "
+                f"{auc:.3f}) but beats its own shuffled twin in only "
+                f"{result['paired_wins']} of {result['paired_n']} pairs "
+                f"({result['paired_fraction']:.0%}, sign test p = "
+                f"{result['paired_p']:.2g}), which a fair coin reproduces too "
+                f"often to call this separation. Treat its ordering as "
+                f"suggestive, not as evidence.")
         elif auc < 0.6:
             result["passed"] = False
+            paired_note = ""
+            if result.get("paired_p") is not None:
+                paired_note = (
+                    f" Paired against their own parents it is "
+                    f"{result['paired_wins']} of {result['paired_n']} "
+                    f"({result['paired_fraction']:.0%}, p = "
+                    f"{result['paired_p']:.2g}), so the more powerful form of "
+                    f"the test does not rescue it.")
             result["findings"].append(
                 f"does not separate real candidates from CDR-shuffled ones "
                 f"(AUC {auc:.3f}; 0.5 is no separation), and {testable:.0%} of "
-                f"the axis weight could have moved. The axis is "
+                f"the axis weight could have moved.{paired_note} The axis is "
                 f"non-discriminating and must be labelled as such wherever it "
                 f"appears.")
+            result["verdict"] = "vacuous"
     else:
         # A check that did not run is not a check that passed. Leaving
         # `passed` True here reported PASS for an axis whose decisive test had
@@ -209,16 +344,33 @@ def main() -> int:
             state = ("PASS" if result["passed"]
                      else ("PENDING" if result["passed"] is None else "VACUOUS"))
             detail = "; ".join(result["findings"]) or "informative"
-            log(f"vacuous_tests: {state} {target} {name}: {detail}")
+            paired = ""
+            if result.get("paired_p") is not None:
+                paired = (f" [paired {result['paired_wins']}/"
+                          f"{result['paired_n']}, p = {result['paired_p']:.2g}]")
+            log(f"vacuous_tests: {state} {target} {name}:{paired} {detail}")
 
+    # The axis-level roll-up. `passed` started as True and was only ever set
+    # False, so an axis whose every target came back unresolved rolled up as
+    # True and the QC panel printed "informative" for it. The expression axis
+    # is exactly that case: untestable on all five targets, reported as
+    # working. None now means unresolved, and the per-target verdicts travel
+    # with it so the panel need not collapse five answers into one.
     by_axis: dict[str, dict] = {}
     for result in results:
         entry = by_axis.setdefault(result["axis"], {"targets": {}, "passed": True})
         entry["targets"][result["target"]] = result
-        if result["passed"] is False:
-            entry["passed"] = False
+    for entry in by_axis.values():
+        states = [r["passed"] for r in entry["targets"].values()]
+        entry["passed"] = (False if any(s is False for s in states)
+                           else (None if any(s is None for s in states) else True))
+        entry["verdicts"] = {t: (r.get("verdict")
+                                 or ("pending" if r["passed"] is None
+                                     else "informative" if r["passed"] else "vacuous"))
+                             for t, r in entry["targets"].items()}
 
-    failed = [axis for axis, entry in by_axis.items() if not entry["passed"]]
+    failed = [axis for axis, entry in by_axis.items() if entry["passed"] is False]
+    unresolved = [axis for axis, entry in by_axis.items() if entry["passed"] is None]
     conn.execute("INSERT OR REPLACE INTO qc (key, value, passed) VALUES (?,?,?)",
                  ("vacuous_tests", json.dumps(by_axis), 0 if failed else 1))
     conn.commit()
@@ -230,6 +382,10 @@ def main() -> int:
               "a non-discriminating axis wherever it appears and keeps it out of "
               "the Pareto front.")
         return 0  # a finding, not an error exit
+    if unresolved:
+        print(f"UNRESOLVED: {', '.join(unresolved)} were tested and the control "
+              f"set could not rule on them. Not the same as passing.")
+        return 0
     print("vacuous tests clean: every computed axis carries information")
     return 0
 
