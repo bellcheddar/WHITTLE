@@ -399,13 +399,27 @@
       const lost = (before / all.length) * 100;
       // A toggle is its own checkbox beside the name; a floor keeps the name
       // as a label and puts the slider on its own row under the bar.
+      // A gate on an axis that failed its own control is still offered,
+      // because a reader may want to see what it does, but it says so in the
+      // place where the decision is actually made. Leaving the caveat on the
+      // About tab only would let someone whittle 500 candidates down on an
+      // axis the control found to carry nothing, four tabs away from the
+      // sentence explaining that.
+      const gateAxis = { aff: 'affinity', spec: 'specificity',
+        thermo: 'thermo', expr: 'expression' }[gate.id];
+      const gateVerdict = gateAxis ? axisVerdict(gateAxis) : null;
+      const caveat = gateVerdict === 'vacuous'
+        ? `${gate.sub} · non-discriminating in the control`
+        : gateVerdict === 'inverted'
+          ? `${gate.sub} · runs backwards in the control`
+          : gate.sub;
       const name = gate.kind === 'toggle'
         ? `<label class="gname"><input type="checkbox" data-gate="${gate.id}"`
           + `${gateValue(gate) ? ' checked' : ''}>`
           + `<span>${W.escape(gate.name)}`
-          + `<small>${W.escape(gate.sub)}</small></span></label>`
+          + `<small>${W.escape(caveat)}</small></span></label>`
         : `<span class="gname"><span>${W.escape(gate.name)}`
-          + `<small>${W.escape(gate.sub)}</small></span></span>`;
+          + `<small>${W.escape(caveat)}</small></span></span>`;
       const slider = gate.kind === 'range'
         ? `<span class="gctl"><input type="range" min="0" max="95" step="1"`
           + ` value="${gateValue(gate)}" data-gate="${gate.id}"`
