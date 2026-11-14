@@ -915,3 +915,19 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:25 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
 - 2026-11-13 20:25 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
 - 2026-11-13 20:25 build-db: 15 bundles, 2883 kB total
+- 2026-11-13 20:27 cofold: 7/120 (7 ok, 0 failed), 4.6 min for GLP1R-0280, about 9.3 hours left
+- 2026-11-13 20:28 interface: GLP1R published 8 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-13 20:28 interface: GLP1R 40 samples across 8 candidates, 4 epitope bins
+- 2026-11-13 20:28 calibrate: EGFR skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 20:28 calibrate: GLP1R skipped, 8 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 20:28 calibrate: PRLR skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 20:28 calibrate: TL1A skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 20:28 calibrate: TNFa skipped, 0 candidates and 0 scrambled controls co-folded, need 8 of each
+- 2026-11-13 20:28 calibrate: nothing to calibrate yet. Co-fold the scrambled controls first: pixi run -e cofold python -m pipeline.cofold --controls 10
+- 2026-11-13 20:29 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 20:29 cofold: 114  complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
+- 2026-11-13 20:32 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 20:32 cofold: 120  complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
+- 2026-11-13 20:40 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-13 20:40 cofold: 20 scrambled control complexes queued, cheapest target first: GLP1R, PRLR; full quality, no reduced settings
+- 2026-11-13 20:41 cofold: 1/20 (1 ok, 0 failed), 0.9 min for SCRAM-GLP1R-001, about 0.3 hours left

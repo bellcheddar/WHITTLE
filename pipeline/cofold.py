@@ -213,6 +213,30 @@ def queue(conn, targets: list[str], per_target: int) -> list[tuple[str, str, str
     return jobs
 
 
+def queue_controls(conn, targets: list[str], per_target: int
+                   ) -> list[tuple[str, str, str]]:
+    """Scrambled controls, co-folded against the same antigen.
+
+    This is the test that decides whether any interface metric means
+    anything. A CDR-shuffled sequence has no reason to bind, so if it earns
+    the same shape complementarity and hydrogen bond density as a designed
+    candidate then those metrics are measuring "two proteins placed near each
+    other" rather than binding, and they must not be ranked on.
+    """
+    done = {str(r["id"]) for r in manifest_read("cofold")
+            if r.get("status") == "ok"}
+    jobs: list[tuple[str, str, str]] = []
+    for target in targets:
+        rows = conn.execute(
+            "SELECT id, sequence FROM controls WHERE target = ? "
+            "AND kind = 'scrambled' AND sequence IS NOT NULL "
+            "ORDER BY id LIMIT ?", (target, per_target)).fetchall()
+        for row in rows:
+            if row["id"] not in done:
+                jobs.append((target, row["id"], row["sequence"]))
+    return jobs
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", action="append", default=None)
@@ -222,6 +246,10 @@ def main() -> int:
     parser.add_argument("--smoke", action="store_true",
                         help="one GLP1R complex, timed, before anything is queued")
     parser.add_argument("--msa-only", action="store_true")
+    parser.add_argument("--controls", type=int, default=None, metavar="N",
+                        help="co-fold N scrambled controls per target instead "
+                             "of candidates, as the negative control for every "
+                             "interface metric")
     args = parser.parse_args()
 
     cfg = targets_config()
@@ -285,14 +313,18 @@ def main() -> int:
         conn.close()
         return 0
 
-    jobs = queue(conn, order, per_target)
+    if args.controls:
+        jobs = queue_controls(conn, order, args.controls)
+    else:
+        jobs = queue(conn, order, per_target)
     conn.close()
     if not jobs:
         log("cofold: queue empty, every complex is already done")
         return 0
     tuned = {t: sampling_steps(t) for t in order if sampling_steps(t)}
-    log(f"cofold: {len(jobs)} complexes queued, cheapest target first: "
-        f"{', '.join(order)}"
+    log(f"cofold: {len(jobs)} "
+        f"{'scrambled control' if args.controls else ''} complexes queued, "
+        f"cheapest target first: {', '.join(order)}"
         + (f"; reduced sampling steps for {tuned}" if tuned else
            "; full quality, no reduced settings"))
 

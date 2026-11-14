@@ -179,6 +179,11 @@ CREATE TABLE IF NOT EXISTS cofolds (
     n_his_contacts           INTEGER,   -- design intent of the His-enriched libraries
     polar_fraction           REAL,
     sc                       REAL,      -- Lawrence-Colman shape complementarity
+    -- 1 when candidate_id names a row in `controls` rather than `candidates`.
+    -- Spec 8.2 wants the controls through the same code path as the
+    -- candidates, so they share this table; every candidate-facing query
+    -- joins on candidates.id and so cannot pick a control up.
+    is_control               INTEGER DEFAULT 0,
     hbond_per_100a2          REAL,
     interactions_per_100a2   REAL,
     path                     TEXT,

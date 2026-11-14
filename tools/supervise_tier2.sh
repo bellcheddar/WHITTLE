@@ -24,7 +24,7 @@ PY="$ROOT/.pixi/envs/cofold/bin/python"
 MANIFEST="$ROOT/data/manifests/cofold.jsonl"
 STOP_FILE="$ROOT/tools/tier2.stop"
 MAX_RESTARTS="${MAX_RESTARTS:-20}"
-EXPECTED="${EXPECTED:-120}"
+EXPECTED="${EXPECTED:-250}"
 
 stamp() { date "+%Y-%m-%d %H:%M:%S"; }
 done_count() {
@@ -118,4 +118,11 @@ done
 echo "$(stamp) queue finished with $(done_count) of $EXPECTED complexes"
 echo "$(stamp) pulling the results through: interface, ranking, controls, bundles"
 bash tools/refresh.sh || echo "$(stamp) refresh failed; run ./tools/refresh.sh by hand"
+
+# The GPU is free now, so the negative control for every interface metric can
+# run. Until it does, the affinity axis weights are set by argument rather
+# than by evidence.
+echo "$(stamp) co-folding the scrambled controls and calibrating the axis"
+bash tools/calibrate_run.sh \
+  || echo "$(stamp) calibration failed; run ./tools/calibrate_run.sh by hand"
 echo "$(stamp) supervisor done"

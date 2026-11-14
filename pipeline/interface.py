@@ -168,6 +168,26 @@ def interface_residues(chains: dict[str, list[tuple]], antigen_chains: list[str]
     }
 
 
+_CONTROL_REGIONS: dict[str, dict] = {}
+
+
+def _control_regions(row: dict) -> dict | None:
+    """CDRs for a control, numbered on demand and remembered."""
+    cid = row["id"]
+    if cid in _CONTROL_REGIONS:
+        return _CONTROL_REGIONS[cid]
+    try:
+        from pipeline import numbering as nb
+
+        regions = nb.number_many([(cid, row["sequence"])])[cid].regions or {}
+    except Exception:
+        regions = {}
+    out = {"sequence": row["sequence"], **{k: regions.get(k) for k in
+                                           ("cdr1", "cdr2", "cdr3")}}
+    _CONTROL_REGIONS[cid] = out
+    return out
+
+
 def cdr_spans(sequence: str, cdrs: dict[str, str]) -> dict[str, tuple[int, int]]:
     """Residue ranges of each CDR in chain N, 1-based and inclusive.
 
@@ -403,6 +423,13 @@ def main() -> int:
         seqs = {r["id"]: dict(r) for r in conn.execute(
             "SELECT id, sequence, cdr1, cdr2, cdr3 FROM candidates WHERE target = ?",
             (target,))}
+        # Scrambled controls go through this same code (spec 8.2). They carry
+        # no CDR columns, so their regions are numbered here; the CDRs of a
+        # shuffled sequence are still positionally defined, which is what the
+        # paratope fraction needs.
+        controls = {r["id"]: dict(r) for r in conn.execute(
+            "SELECT id, sequence FROM controls WHERE target = ? "
+            "AND sequence IS NOT NULL", (target,))}
         records: list[dict] = []
         for cid, run in done_runs.items():
             if run.get("target") != target:
@@ -442,6 +469,9 @@ def main() -> int:
                     "status": "ok",
                 }
                 meta = seqs.get(cid)
+                if meta is None and cid in controls:
+                    meta = _control_regions(controls[cid])
+                record["is_control"] = 1 if cid in controls else 0
                 if meta:
                     spans = cdr_spans(meta["sequence"], meta)
                     comp = paratope_composition(
@@ -487,7 +517,7 @@ def main() -> int:
                    "epitope_bin", "interface_residues_json",
                    "nanobody_residues_json", "cdr_interface_fraction",
                    "cdr_interface_detail_json", "pose_consensus",
-                   "iptm_spread", "path", "status"]
+                   "iptm_spread", "is_control", "path", "status"]
         conn.executemany(
             f"INSERT OR REPLACE INTO cofolds ({', '.join(columns)}) VALUES "
             f"({', '.join(':' + c for c in columns)})",

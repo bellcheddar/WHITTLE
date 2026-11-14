@@ -28,7 +28,12 @@ esm_batch = 8
 esm_model = "esm2_t33_650M_UR50D"
 precision = "float32"
 precision_reason = "spec 2.2: float32 everywhere; bf16-mixed never re-enabled"
-cofold_accelerator = "cpu"
+# config/targets.yaml specifies mps for tier2 and this overrode it to cpu, so
+# the entire queue ran on CPU while every projection the plan was built on came
+# from tools/cofold_bench.py, which hard-codes mps. Measured: 1.13 min per
+# GLP1R complex on MPS against 4.6 min on CPU, which is 6.3 hours for the 120
+# complexes rather than 25.1. See DECISIONS.md 34.
+cofold_accelerator = "mps"
 cofold_seeds = 5
 cofold_recycling = 3
 memory_headroom_gb = 24
