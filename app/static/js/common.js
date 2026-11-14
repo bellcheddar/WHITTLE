@@ -90,6 +90,9 @@ W.state = {
   cols: null,      // array of column keys, or null for the defaults
   pareto: false,
   brush: {},       // axis key -> [lo, hi]
+  gates: {},       // gate id -> true, or a percentile floor
+  hero: 'ladder',  // 'ladder' or 'plane'
+  ladder: 'desirability',
   search: '',
   panel: 'structure',
 };
@@ -111,6 +114,15 @@ W.parseUrl = () => {
       W.state.brush = JSON.parse(decodeURIComponent(params.get('brush')));
     } catch (err) { W.state.brush = {}; }
   }
+  // The gates filter the table, so a link that does not carry them is a link
+  // to a different set of candidates than the one the sender was looking at.
+  if (params.has('gates')) {
+    try {
+      W.state.gates = JSON.parse(decodeURIComponent(params.get('gates')));
+    } catch (err) { W.state.gates = {}; }
+  }
+  if (params.has('hero')) W.state.hero = params.get('hero');
+  if (params.has('sort')) W.state.ladder = params.get('sort');
   return W.state;
 };
 
@@ -122,6 +134,13 @@ W.writeUrl = (replace) => {
   if (W.state.id && W.state.panel !== 'structure') params.set('panel', W.state.panel);
   if (Object.keys(W.state.brush).length) {
     params.set('brush', encodeURIComponent(JSON.stringify(W.state.brush)));
+  }
+  if (W.state.gates && Object.keys(W.state.gates).length) {
+    params.set('gates', encodeURIComponent(JSON.stringify(W.state.gates)));
+  }
+  if (W.state.hero && W.state.hero !== 'ladder') params.set('hero', W.state.hero);
+  if (W.state.ladder && W.state.ladder !== 'desirability') {
+    params.set('sort', W.state.ladder);
   }
   const hash = W.state.id
     ? `#/t/${W.state.target}/nb/${W.state.id}`

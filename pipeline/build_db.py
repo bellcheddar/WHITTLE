@@ -209,6 +209,7 @@ def tm_distribution(conn, target: str) -> dict:
 
 
 def meta_bundle(conn, targets: list[dict]) -> dict:
+    run_cfg = targets_config().get("run", {}) or {}
     n_total = conn.execute("SELECT COUNT(*) FROM candidates").fetchone()[0]
     axes = {}
     row = conn.execute("SELECT value FROM qc WHERE key='axis_availability'").fetchone()
@@ -258,6 +259,10 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
         "axis_verdicts": verdicts,
         "ranking_scope": "within_target",
         "upstream_caveat": "not comparable between targets",
+        # The hero draws the shortlist cut and the gates solve for it, so the
+        # number has to reach the browser rather than being repeated in JS.
+        "shortlist_per_target": run_cfg.get("shortlist_per_target", 24),
+        "tier2_top_n_per_target": run_cfg.get("tier2_top_n_per_target"),
     }
 
 

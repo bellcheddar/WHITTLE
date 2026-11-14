@@ -36,33 +36,88 @@
 </p>
 {% endif %}
 
-<!-- ----------------------------------------------- 3.1 four-axis explorer -->
+<!-- ------------------------------------------------ 3.1 shortlist and gates -->
+{# The hero is the shortlist and the gates that produced it, not a plot of all
+   500 candidates. DESIGN 3.1. The parcoords panel this replaced drew 500
+   polylines across five axes, of which about 24 are ever ordered, could not be
+   sorted, and hid an empty axis rather than stating it. #}
 <section class="card" id="explorercard" aria-labelledby="explorerhead">
   <div class="cardhead">
-    <h2 id="explorerhead">Four-axis explorer</h2>
-    <span class="hint" id="explorerhint">drag an axis to brush</span>
+    <h2 id="explorerhead">Shortlist</h2>
+    <span class="hint" id="explorerhint">the 24 that would be ordered, and what removed the rest</span>
     <span class="spacer"></span>
-    <span class="legend" aria-hidden="true">
-      <span><i class="front"></i> on the Pareto front</span>
-      <span><i class="dom"></i> dominated</span>
-    </span>
-    <button type="button" class="btn" id="resetbrush">Reset brush</button>
+    <div class="segset" id="heroview" role="group" aria-label="What the left pane shows">
+      <button type="button" data-view="ladder" aria-pressed="true">Ladder</button>
+      <button type="button" data-view="plane" aria-pressed="false">Trade-off</button>
+    </div>
+    <button type="button" class="btn" id="resetbrush">Reset filters</button>
   </div>
   <div class="explorer-strip">
-    <strong>Four-axis explorer</strong>
+    <strong>Shortlist</strong>
     <span id="stripfilters">no filters</span>
     <span class="spacer" style="flex:1 1 auto"></span>
     <button type="button" class="btn" id="expand">Expand</button>
   </div>
-  {# role="img" with a label, and the table below carries the same data in a
-     form a screen reader can actually work with. The caption states the active
-     filters in words, so the view is self-describing however it is read
-     (DESIGN 3.1 and 6). #}
-  <div id="explorer" role="img" aria-describedby="caption"
-       aria-label="Parallel-coordinates plot of the four scoring axes, with
-                   Pareto-front candidates drawn over the dominated ones. The
-                   same candidates are in the table below, which states the
-                   active filters in words."></div>
+
+  <div class="herogrid">
+    <div class="heropane">
+      <div class="panelbar" id="ladderbar">
+        <label for="laddersort">Order by</label>
+        <select id="laddersort"></select>
+        <label for="laddern">Show</label>
+        <select id="laddern">
+          <option value="24">24, the shortlist</option>
+          <option value="32" selected>32</option>
+          <option value="50">50</option>
+        </select>
+        <span class="spacer" style="flex:1 1 auto"></span>
+        <span class="laddkey" id="ladderkey"></span>
+      </div>
+
+      {# The table below carries the same candidates in a form a screen reader
+         can work through, and the caption states the active filters in words,
+         so the view is self-describing however it is read (DESIGN 3.1, 6). #}
+      <div id="ladder" role="img" aria-describedby="caption"
+           aria-label="The highest-ranked candidates for this target, one row
+                       each, with their percentile on every axis drawn as a bar
+                       and a rule marking where the shortlist of 24 stops. The
+                       same candidates are in the table below."></div>
+
+      <div id="planewrap" hidden>
+        <div class="panelbar">
+          <label for="planex">X</label><select id="planex"></select>
+          <label for="planey">Y</label><select id="planey"></select>
+          <span class="spacer" style="flex:1 1 auto"></span>
+          <span class="laddkey">drag a box to filter the table</span>
+        </div>
+        <div class="canvasbox">
+          <canvas id="planecanvas" height="352" role="img"
+                  aria-label="Two axes plotted against each other, one point per
+                              candidate, with the frontier of candidates that
+                              nothing beats on both axes drawn as a staircase."></canvas>
+        </div>
+        <p class="planeread" id="planeread"></p>
+      </div>
+    </div>
+
+    <aside class="heropane gatespane" aria-labelledby="gateshead">
+      <div class="gateshead">
+        <h3 id="gateshead">Whittling gates</h3>
+        <span class="spacer" style="flex:1 1 auto"></span>
+        <button type="button" class="btn" id="gatesolve"
+                title="Raise the three percentile floors together until 24 candidates remain">Solve for 24</button>
+        <button type="button" class="btn" id="gatereset">Reset</button>
+      </div>
+      <div class="gates" id="gates"></div>
+      <div class="gatefinal">
+        <span class="big" id="gatecount">&ndash;</span>
+        <span>
+          <span class="state" id="gatestate">&nbsp;</span>
+          <span class="hint" id="gatehint">&nbsp;</span>
+        </span>
+      </div>
+    </aside>
+  </div>
 </section>
 
 <!-- ------------------------------------------------------- 3.2 toolbar -->
@@ -134,6 +189,7 @@
       </div>
       <div id="interactions" hidden></div>
       <div class="tiles" id="axistiles"></div>
+      <div id="axisstrips"></div>
       <div id="tmpanel" style="margin-top:14px"></div>
       <p class="footnote" id="structfootnote"></p>
     </div>

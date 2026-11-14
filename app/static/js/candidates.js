@@ -1,8 +1,10 @@
-/* Candidates tab: target selector, parcoords explorer, Tabulator table, column
+/* Candidates tab: target selector, the shortlist hero, Tabulator table, column
    chooser, docked drawer. Spec 8.1 and DESIGN.md Section 3.
 
-   Plotly is loaded on demand for the explorer, Mol* on first drawer open. Neither
-   is in the initial bundle (DESIGN 3.6). */
+   The hero is three panels over one set of rows: the ladder of candidates in
+   contention, the gates that produced it, and a two-axis trade-off plane. All
+   three draw in the DOM or on a canvas, so the hero no longer loads Plotly;
+   Plotly and Mol* both load on first drawer open (DESIGN 3.6). */
 'use strict';
 
 (function () {
@@ -55,12 +57,27 @@
     }
     if (col.kind === 'pct') return (cell) => W.pctCell(cell.getValue());
     if (col.kind === 'num') {
+      // A number alone makes the reader do the ranking. The cell is shaded by
+      // the value's percentile within this target, on one lightness ramp so it
+      // survives greyscale and colour-vision deficiency, and a column with no
+      // better direction (a flag, like pI) is left unshaded rather than
+      // implying one.
+      const directional = col.higher_is_better !== null
+        && col.higher_is_better !== undefined;
       return (cell) => {
         const value = cell.getValue();
         if (value === null || value === undefined) {
           return '<span style="color:var(--ink-3)">pending</span>';
         }
-        return W.fmt(value, col.decimals ?? 2);
+        const text = W.fmt(value, col.decimals ?? 2);
+        if (!directional) return text;
+        const pct = pctOf(col.key)[cell.getRow().getData().id];
+        if (pct === null || pct === undefined) return text;
+        const shade = (0.05 + 0.5 * (pct / 100) * (pct / 100)).toFixed(3);
+        const strong = pct >= 72 ? ';color:var(--ink);font-weight:600' : '';
+        return `<span class="shaded" style="background:rgba(52,87,166,${shade})`
+          + `${strong}" title="${Math.round(pct)}th percentile within this `
+          + `target">${text}</span>`;
       };
     }
     return (cell) => {
@@ -125,7 +142,7 @@
 
   function activeRows() {
     if (!bundle) return [];
-    let rows = bundle.rows;
+    let rows = applyGates(bundle.rows);
     if (W.state.pareto) rows = rows.filter((r) => r.on_front);
     const query = (W.state.search || '').trim().toUpperCase();
     if (query) {
@@ -146,6 +163,11 @@
 
   function filterWords() {
     const parts = [];
+    GATES.filter(gateActive).forEach((gate) => {
+      parts.push(gate.kind === 'toggle'
+        ? gate.name.toLowerCase()
+        : `${gate.name.toLowerCase()} at the ${gateValue(gate)}th percentile`);
+    });
     if (W.state.pareto) parts.push('Pareto front only');
     if (W.state.search) parts.push(`matching "${W.state.search}"`);
     for (const [axis, range] of Object.entries(W.state.brush)) {
@@ -190,7 +212,7 @@
     const params = new URLSearchParams({ target: W.state.target || '',
       columns: cols.join(','), ids: rows.map((r) => r.id).join(',') });
     el('exportbtn').href = `/api/export.csv?${params.toString()}`;
-    drawExplorer(rows);
+    drawHero(rows);
   }
 
   /* --------------------------------------------------------------- the table */
@@ -215,133 +237,604 @@
     table.on('rowClick', (_e, row) => openDrawer(row.getData().id));
   }
 
-  /* ------------------------------------------------- 3.1 the parcoords explorer */
+  /* ------------------------------------------------ 3.1 the shortlist hero
 
-  async function ensurePlotly() {
-    if (window.Plotly) return window.Plotly;
-    if (plotlyReady) return plotlyReady;
-    plotlyReady = new Promise((resolve, reject) => {
-      const css = document.createElement('link');
-      css.rel = 'stylesheet';
-      css.href = '/static/vendor/plotly-whittle.min.css';
-      document.head.appendChild(css);
-      const script = document.createElement('script');
-      script.src = '/static/vendor/plotly-whittle.min.js';
-      script.async = true;
-      script.onload = () => resolve(window.Plotly);
-      script.onerror = () => reject(new Error('Plotly did not load'));
-      document.head.appendChild(script);
-    });
-    return plotlyReady;
+     Three panels share one set of rows: the ladder (which 24), the gates (what
+     removed the other 476) and the trade-off plane (what one axis costs
+     another). None of them draws a line that crosses another line, which is
+     what the parcoords panel they replaced did 500 times over. */
+
+  const HERO_AXES = [
+    ['axis_affinity', 'Aff', 'Affinity'],
+    ['axis_specificity', 'Spec', 'Specificity'],
+    ['axis_thermo', 'Thermo', 'Thermostability'],
+    ['axis_expression', 'Expr', 'Expression'],
+    ['axis_nativeness', 'Native', 'Nativeness'],
+  ];
+  const SHORTLIST = META.shortlist_per_target || 24;
+
+  // Lower is better for these, so their percentile is flipped before it is
+  // shaded or sorted. Taken from the column registry where it is declared.
+  function lowerIsBetter(field) {
+    const col = BY_KEY[field];
+    return col ? col.higher_is_better === false : false;
   }
 
-  const EXPLORER_AXES = [...W.AXIS_KEYS, 'axis_nativeness'];
-
-  async function drawExplorer(rows) {
-    const node = el('explorer');
-    if (!node || !bundle) return;
-    const usable = EXPLORER_AXES.filter(
-      (a) => bundle.rows.some((r) => r[a] !== null && r[a] !== undefined));
-    if (!usable.length) {
-      node.innerHTML = '<p style="font-size:12px;color:var(--ink-3);margin:0;'
-        + 'padding:28px 0;text-align:center">No axis has been computed yet. The '
-        + 'explorer appears once the first scoring tier completes.</p>';
-      el('explorerhint').textContent = 'no axes computed yet';
-      return;
-    }
-    let Plotly;
-    try { Plotly = await ensurePlotly(); } catch (err) {
-      node.innerHTML = '<p style="font-size:12px;color:var(--ink-3);margin:0">'
-        + 'The explorer chart could not load. The table below is unaffected.</p>';
-      return;
-    }
-
-    const front = rows.filter((r) => r.on_front);
-    const dominated = rows.filter((r) => !r.on_front);
-    el('explorerhint').textContent = `drag an axis to brush · `
-      + `${W.fmt(front.length)} candidates on the Pareto front`;
-
-    const dims = (subset) => usable.map((axis) => ({
-      label: W.AXIS_LABELS[axis],
-      range: [0, 100],
-      values: subset.map((r) => (r[axis] === null || r[axis] === undefined
-        ? null : r[axis])),
-      constraintrange: W.state.brush[axis] || undefined,
-    }));
-
-    // Two traces, with identical domains so the front is drawn exactly OVER the
-    // dominated set rather than Plotly stacking them into separate bands.
-    //
-    // DESIGN 3.1 asks for colour AND line weight. plotly.js parcoords has no
-    // per-line width attribute (verified against Plotly.PlotSchema: line carries
-    // colour attributes only), and the spec mandates parcoords, so the second
-    // channel here is lightness and opacity rather than weight: a very light
-    // #C3CBD9 at 0.5 under a dark #3457A6 at 0.92. That step survives greyscale
-    // and colour-vision deficiency, which is what the rule is for. The legend
-    // swatches below the header do carry the weight difference, and the Pareto
-    // toggle shows the front on its own. See DECISIONS.md.
-    const FULL_DOMAIN = { x: [0, 1], y: [0, 1] };
-    const traces = [];
-    if (dominated.length) {
-      traces.push({
-        type: 'parcoords',
-        domain: FULL_DOMAIN,
-        line: { color: W.PALETTE.dominated },
-        opacity: 0.5,
-        dimensions: dims(dominated),
-        labelside: 'top',
-        labelfont: { family: 'Inter', size: 11, color: W.PALETTE.ink3 },
-        tickfont: { family: 'Inter', size: 10, color: W.PALETTE.ink3 },
-        rangefont: { family: 'Inter', size: 9, color: W.PALETTE.ink3 },
-      });
-    }
-    if (front.length) {
-      traces.push({
-        type: 'parcoords',
-        domain: FULL_DOMAIN,
-        line: { color: W.PALETTE.accent },
-        opacity: 0.92,
-        dimensions: dims(front),
-        labelside: 'top',
-        labelfont: { family: 'Inter', size: 11, color: W.PALETTE.ink },
-        tickfont: { family: 'Inter', size: 10, color: W.PALETTE.ink3 },
-        rangefont: { family: 'Inter', size: 9, color: W.PALETTE.ink3 },
-      });
-    }
-
-    await Plotly.react(node, traces, {
-      height: 212,
-      // t: 48 so the axis labels clear the card edge. DESIGN 3.1 asks for about
-      // 196px of chart; the extra is label gutter, not plot area.
-      margin: { l: 58, r: 40, t: 48, b: 22 },
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: 'Inter', size: 11, color: W.PALETTE.ink3 },
-    }, { displayModeBar: false, responsive: true });
-
-    node.removeAllListeners?.('plotly_restyle');
-    node.on('plotly_restyle', (event) => {
-      // Brushing filters the table beneath (DESIGN 3.1). Read the constraint
-      // ranges back off whichever trace Plotly reports and normalise them.
-      let changed = false;
-      for (const patch of event) {
-        if (!patch || typeof patch !== 'object') continue;
-        for (const [key, value] of Object.entries(patch)) {
-          const match = key.match(/^dimensions\[(\d+)\]\.constraintrange$/);
-          if (!match) continue;
-          const axis = usable[Number(match[1])];
-          if (!axis) continue;
-          if (!value || (Array.isArray(value) && !value.length)) {
-            delete W.state.brush[axis];
-          } else {
-            const range = Array.isArray(value[0]) ? value[0] : value;
-            W.state.brush[axis] = [Math.min(...range), Math.max(...range)];
-          }
-          changed = true;
-        }
-      }
-      if (changed) { W.writeUrl(true); refreshAfterBrush(); }
+  let pctCache = {};
+  function pctOf(field) {
+    if (pctCache[field]) return pctCache[field];
+    const map = {};
+    const values = [];
+    (bundle ? bundle.rows : []).forEach((r) => {
+      const v = r[field];
+      if (typeof v === 'number' && isFinite(v)) values.push(v);
     });
+    if (values.length > 1) {
+      values.sort((a, b) => a - b);
+      const flip = lowerIsBetter(field);
+      (bundle.rows).forEach((r) => {
+        const v = r[field];
+        if (typeof v !== 'number' || !isFinite(v)) { map[r.id] = null; return; }
+        let lo = 0, hi = values.length;
+        while (lo < hi) { const mid = (lo + hi) >> 1; if (values[mid] < v) lo = mid + 1; else hi = mid; }
+        const pct = (lo / (values.length - 1)) * 100;
+        map[r.id] = flip ? 100 - pct : pct;
+      });
+    } else {
+      (bundle ? bundle.rows : []).forEach((r) => { map[r.id] = null; });
+    }
+    pctCache[field] = map;
+    return map;
+  }
+
+  function medianOf(field) {
+    const values = [];
+    (bundle ? bundle.rows : []).forEach((r) => {
+      const v = r[field];
+      if (typeof v === 'number' && isFinite(v)) values.push(v);
+    });
+    if (!values.length) return null;
+    values.sort((a, b) => a - b);
+    return values[Math.floor(values.length / 2)];
+  }
+
+  /* ------------------------------------------------------------- the gates */
+
+  const GATES = [
+    { id: 'cdrliab', name: 'No liability motif in a CDR',
+      sub: 'glycosylation, deamidation, isomerisation', kind: 'toggle',
+      test: (r) => !r.n_cdr_liabilities },
+    { id: 'hallmark', name: 'Camelid hallmark intact',
+      sub: 'all four of IMGT 42, 49, 50, 52', kind: 'toggle',
+      test: (r) => r.hallmark_n === 4 },
+    { id: 'spec', name: 'Specificity floor', sub: 'percentile within target',
+      kind: 'range', test: (r, v) => r.axis_specificity !== null
+        && r.axis_specificity !== undefined && r.axis_specificity >= v },
+    { id: 'thermo', name: 'Thermostability floor', sub: 'percentile within target',
+      kind: 'range', test: (r, v) => r.axis_thermo !== null
+        && r.axis_thermo !== undefined && r.axis_thermo >= v },
+    { id: 'expr', name: 'Expression floor', sub: 'percentile within target',
+      kind: 'range', test: (r, v) => r.axis_expression !== null
+        && r.axis_expression !== undefined && r.axis_expression >= v },
+    { id: 'cluster', name: 'One per CDR3 cluster',
+      sub: 'keeps the best of each 90 per cent group', kind: 'toggle',
+      cluster: true },
+    // A candidate with no co-fold is not failed by this gate. Tier 2 covers
+    // the top 50 per target, so failing the other 450 on a missing value would
+    // be reading an absence as evidence.
+    { id: 'aff', name: 'Affinity floor, where co-folded',
+      sub: 'skipped for a candidate with no co-fold', kind: 'range',
+      test: (r, v) => r.axis_affinity === null || r.axis_affinity === undefined
+        || r.axis_affinity >= v },
+  ];
+
+  function gateValue(gate) {
+    const set = W.state.gates || {};
+    if (gate.kind === 'toggle') return set[gate.id] === true;
+    const v = set[gate.id];
+    return typeof v === 'number' ? v : 0;
+  }
+
+  function gateActive(gate) {
+    return gate.kind === 'toggle' ? gateValue(gate) === true : gateValue(gate) > 0;
+  }
+
+  // Applied in order, so each gate sees the survivors of the one above it.
+  function applyGates(rows) {
+    let pool = rows;
+    for (const gate of GATES) {
+      if (!gateActive(gate)) continue;
+      if (gate.cluster) {
+        const seen = new Set();
+        const keep = [];
+        pool.slice().sort((a, b) => (b.desirability || 0) - (a.desirability || 0))
+          .forEach((r) => {
+            const key = r.cdr3_cluster;
+            if (key === null || key === undefined) { keep.push(r); return; }
+            if (!seen.has(key)) { seen.add(key); keep.push(r); }
+          });
+        const kept = new Set(keep.map((r) => r.id));
+        pool = pool.filter((r) => kept.has(r.id));
+      } else {
+        pool = pool.filter((r) => gate.test(r, gateValue(gate)));
+      }
+    }
+    return pool;
+  }
+
+  function drawGates() {
+    if (!bundle) return;
+    const all = bundle.rows;
+    let pool = all;
+    // Order matters: the grid places gname and gcount on the first row and
+    // lets the bar and any slider span both columns beneath them.
+    let html = `<div class="gate entering"><span class="gname">Entering</span>`
+      + `<span class="gcount">${W.fmt(all.length)}</span>`
+      + `<span class="gbar"><i style="width:100%"></i></span></div>`;
+
+    for (const gate of GATES) {
+      const before = pool.length;
+      if (gateActive(gate)) pool = applyGates(all).length >= 0 ? pool : pool;
+      // Apply just this gate to the running pool, so the bar is the survivors
+      // of everything above it rather than of this gate alone.
+      let after = before;
+      if (gateActive(gate)) {
+        if (gate.cluster) {
+          const seen = new Set();
+          const keep = [];
+          pool.slice().sort((a, b) => (b.desirability || 0) - (a.desirability || 0))
+            .forEach((r) => {
+              const key = r.cdr3_cluster;
+              if (key === null || key === undefined) { keep.push(r); return; }
+              if (!seen.has(key)) { seen.add(key); keep.push(r); }
+            });
+          const kept = new Set(keep.map((r) => r.id));
+          pool = pool.filter((r) => kept.has(r.id));
+        } else {
+          pool = pool.filter((r) => gate.test(r, gateValue(gate)));
+        }
+        after = pool.length;
+      }
+      const kept = (after / all.length) * 100;
+      const lost = (before / all.length) * 100;
+      // A toggle is its own checkbox beside the name; a floor keeps the name
+      // as a label and puts the slider on its own row under the bar.
+      const name = gate.kind === 'toggle'
+        ? `<label class="gname"><input type="checkbox" data-gate="${gate.id}"`
+          + `${gateValue(gate) ? ' checked' : ''}>`
+          + `<span>${W.escape(gate.name)}`
+          + `<small>${W.escape(gate.sub)}</small></span></label>`
+        : `<span class="gname"><span>${W.escape(gate.name)}`
+          + `<small>${W.escape(gate.sub)}</small></span></span>`;
+      const slider = gate.kind === 'range'
+        ? `<span class="gctl"><input type="range" min="0" max="95" step="1"`
+          + ` value="${gateValue(gate)}" data-gate="${gate.id}"`
+          + ` aria-label="${W.escape(gate.name)}, percentile floor">`
+          + `<output>${gateValue(gate)}</output></span>`
+        : '';
+      html += `<div class="gate${gateActive(gate) ? '' : ' off'}">`
+        + name
+        + `<span class="gcount">${gateActive(gate)
+            ? W.fmt(after) : '<span class="goff">off</span>'}</span>`
+        + `<span class="gbar"><i class="lost" style="width:${lost}%"></i>`
+        + `<i style="width:${kept}%"></i></span>`
+        + slider
+        + `</div>`;
+    }
+    el('gates').innerHTML = html;
+
+    el('gates').querySelectorAll('[data-gate]').forEach((input) => {
+      const gate = GATES.find((g) => g.id === input.dataset.gate);
+      input.addEventListener('input', () => {
+        W.state.gates = W.state.gates || {};
+        W.state.gates[gate.id] = gate.kind === 'toggle'
+          ? input.checked : Number(input.value);
+        if (gate.kind === 'toggle' && !input.checked) delete W.state.gates[gate.id];
+        if (gate.kind === 'range' && Number(input.value) === 0) {
+          delete W.state.gates[gate.id];
+        }
+        W.writeUrl(true);
+        refresh();
+      });
+    });
+
+    const survivors = pool.length;
+    el('gatecount').textContent = W.fmt(survivors);
+    const state = el('gatestate');
+    const hint = el('gatehint');
+    const anyGate = GATES.some(gateActive);
+    if (!anyGate) {
+      state.className = 'state';
+      state.textContent = 'no gates applied';
+      hint.textContent = `All ${W.fmt(all.length)} candidates are in the table. `
+        + `The ladder shows the top ${SHORTLIST} by desirability.`;
+    } else if (survivors === SHORTLIST) {
+      state.className = 'state on';
+      state.textContent = `exactly ${SHORTLIST}`;
+      hint.textContent = 'These are the candidates that would be ordered.';
+    } else if (survivors > SHORTLIST) {
+      state.className = 'state over';
+      state.textContent = `${W.fmt(survivors - SHORTLIST)} more than the shortlist`;
+      hint.textContent = `Raise a floor, or take the top ${SHORTLIST} of these `
+        + 'by desirability.';
+    } else {
+      state.className = 'state under';
+      state.textContent = `${W.fmt(SHORTLIST - survivors)} short of ${SHORTLIST}`;
+      hint.textContent = 'The gates are tighter than the library can satisfy. '
+        + 'Which one gives is a scientific decision rather than a slider.';
+    }
+  }
+
+  function solveForShortlist() {
+    // Raise the three percentile floors together and keep the tightest setting
+    // that still leaves at least a full shortlist standing. Stopping at the
+    // first setting to fall BELOW the shortlist was worse: it overshot, and a
+    // button called "Solve for 24" that returns 18 has not solved for 24.
+    // Whatever the floors cannot separate, desirability orders.
+    if (!bundle) return;
+    W.state.gates = W.state.gates || {};
+    const floors = ['spec', 'thermo', 'expr'];
+    floors.forEach((id) => { delete W.state.gates[id]; });
+    let best = null;
+    for (let v = 0; v <= 95; v += 1) {
+      floors.forEach((id) => { W.state.gates[id] = v; });
+      if (applyGates(bundle.rows).length >= SHORTLIST) best = v;
+      else break;
+    }
+    if (best === null || best === 0) floors.forEach((id) => { delete W.state.gates[id]; });
+    else floors.forEach((id) => { W.state.gates[id] = best; });
+    W.writeUrl(true);
+    refresh();
+  }
+
+  /* ------------------------------------------------------------ the ladder */
+
+  const LADDER_SORTS = [
+    ['desirability', 'Desirability'],
+    ['axis_affinity', 'Affinity'],
+    ['axis_specificity', 'Specificity'],
+    ['axis_thermo', 'Thermostability'],
+    ['axis_expression', 'Expression'],
+    ['axis_nativeness', 'Nativeness'],
+    ['tm_pred', 'Predicted Tm'],
+    ['rank', 'Tier 1 rank'],
+  ];
+
+  function ladderOrder(rows, key) {
+    const flip = lowerIsBetter(key) || key === 'rank';
+    return rows.slice().sort((a, b) => {
+      const x = a[key], y = b[key];
+      const xn = (x === null || x === undefined);
+      const yn = (y === null || y === undefined);
+      if (xn && yn) return (a.rank || 0) - (b.rank || 0);
+      if (xn) return 1;
+      if (yn) return -1;
+      return flip ? x - y : y - x;
+    });
+  }
+
+  function drawLadder(rows) {
+    const node = el('ladder');
+    if (!node || !bundle) return;
+    const key = el('laddersort').value || W.state.ladder || 'desirability';
+    const want = Number(el('laddern').value || 32);
+    const pool = ladderOrder(rows, key).slice(0, want);
+
+    if (!pool.length) {
+      node.innerHTML = '<p class="laddempty">No candidate passes the current '
+        + 'filters. Loosen a gate or reset the filters.</p>';
+      el('ladderkey').textContent = '';
+      return;
+    }
+
+    const medians = {};
+    HERO_AXES.forEach(([field]) => { medians[field] = medianOf(field); });
+
+    let html = '<div class="lrow lhead"><span class="pos">#</span>'
+      + '<span>Candidate</span>';
+    HERO_AXES.forEach(([, short, long]) => {
+      html += `<span title="${long} percentile within this target">${short}</span>`;
+    });
+    html += '<span>Tm &deg;C</span><span>Flags</span></div>';
+
+    pool.forEach((r, i) => {
+      if (i === SHORTLIST && want > SHORTLIST) {
+        html += `<div class="cutline">shortlist of ${SHORTLIST} stops here</div>`;
+      }
+      const inShort = i < SHORTLIST;
+      html += `<div class="lrow${inShort ? ' inshort' : ''}" tabindex="0"`
+        + ` role="button" data-id="${W.escape(r.id)}"`
+        + ` aria-label="Open ${W.escape(r.id)}">`
+        + `<span class="pos">${i + 1}</span>`
+        + `<span class="cid">${W.escape(r.id)}</span>`;
+      HERO_AXES.forEach(([field, , long]) => {
+        const v = r[field];
+        if (v === null || v === undefined) {
+          html += `<span class="track pending" title="${long} has not been `
+            + `computed for this candidate"></span>`;
+          return;
+        }
+        const med = medians[field];
+        html += `<span class="track" title="${long} ${v.toFixed(1)}th percentile`
+          + ` within this target">`
+          + `<i class="${W.pctClass(v)}" style="width:${Math.max(2, v)}%"></i>`
+          + (med === null ? '' : `<u style="left:${med}%"></u>`)
+          + `<b>${Math.round(v)}</b></span>`;
+      });
+      const tm = r.tm_pred === null || r.tm_pred === undefined
+        ? '<span class="pend">&ndash;</span>'
+        : `${r.tm_pred.toFixed(1)}<span class="err">&plusmn;${Math.round(r.tm_err || 0)}</span>`;
+      html += `<span class="tmcell">${tm}</span><span class="flags">`
+        + `<i class="pip ${r.n_cdr_liabilities ? 'bad' : 'ok'}" title="`
+        + `${r.n_cdr_liabilities || 0} liability motifs inside a CDR"></i>`
+        + `<i class="pip ${r.hallmark_n === 4 ? 'ok' : 'warn'}" title="`
+        + `camelid hallmark ${r.hallmark_n === null ? 'unknown' : r.hallmark_n} of 4"></i>`
+        + `<i class="pip ${r.experimental_badge ? 'ok' : ''}" title="`
+        + `${r.experimental_badge ? 'a near-identical sequence has a PDB entry'
+            : 'no near-identical experimental structure'}"></i>`
+        + `</span></div>`;
+    });
+    node.innerHTML = html;
+
+    node.querySelectorAll('.lrow[data-id]').forEach((row) => {
+      row.addEventListener('click', () => openDrawer(row.dataset.id));
+      row.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          openDrawer(row.dataset.id);
+        }
+      });
+    });
+
+    const pending = HERO_AXES.filter(([field]) =>
+      !bundle.rows.some((r) => r[field] !== null && r[field] !== undefined));
+    el('ladderkey').innerHTML = 'tick = population median'
+      + (pending.length ? ` &middot; hatched = ${pending
+          .map(([, , long]) => long.toLowerCase()).join(' and ')} not computed` : '');
+  }
+
+  /* ------------------------------------------------------ the trade-off plane */
+
+  const PLANE_FIELDS = [
+    ['axis_specificity', 'Specificity percentile'],
+    ['axis_thermo', 'Thermostability percentile'],
+    ['axis_expression', 'Expression percentile'],
+    ['axis_nativeness', 'Nativeness percentile'],
+    ['axis_affinity', 'Affinity percentile'],
+    ['tm_pred', 'Predicted Tm, deg C'],
+    ['psh', 'Patch surface hydrophobicity'],
+    ['cdr3_len', 'CDR3 length, aa'],
+    ['desirability', 'Desirability'],
+  ];
+  let planeBox = null;
+
+  function extentOf(field) {
+    if (field.startsWith('axis_')) return [0, 100];
+    let lo = Infinity, hi = -Infinity;
+    (bundle ? bundle.rows : []).forEach((r) => {
+      const v = r[field];
+      if (typeof v !== 'number' || !isFinite(v)) return;
+      if (v < lo) lo = v;
+      if (v > hi) hi = v;
+    });
+    if (!isFinite(lo)) return null;
+    if (lo === hi) { lo -= 1; hi += 1; }
+    const pad = (hi - lo) * 0.05;
+    return [lo - pad, hi + pad];
+  }
+
+  function drawPlane(rows) {
+    const canvas = el('planecanvas');
+    if (!canvas || !bundle) return;
+    const xf = el('planex').value, yf = el('planey').value;
+    const dpr = window.devicePixelRatio || 1;
+    const width = canvas.clientWidth || 620, height = 352;
+    canvas.width = width * dpr; canvas.height = height * dpr;
+    const g = canvas.getContext('2d');
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, width, height);
+    g.font = '10px Inter, system-ui, sans-serif';
+
+    const ex = extentOf(xf), ey = extentOf(yf);
+    if (!ex || !ey) {
+      g.fillStyle = W.PALETTE.ink3;
+      g.textAlign = 'center';
+      g.fillText(`${!ex ? el('planex').selectedOptions[0].text
+        : el('planey').selectedOptions[0].text} has not been computed for `
+        + `${W.state.target} yet.`, width / 2, height / 2);
+      el('planeread').textContent = '';
+      return;
+    }
+    const MT = 34, MR = 42, MB = 38, ML = 52;
+    const pw = width - ML - MR, ph = height - MT - MB;
+    const sx = (v) => ML + ((v - ex[0]) / (ex[1] - ex[0])) * pw;
+    const sy = (v) => MT + ph - ((v - ey[0]) / (ey[1] - ey[0])) * ph;
+
+    g.strokeStyle = W.PALETTE.rule; g.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const yv = ey[0] + (ey[1] - ey[0]) * i / 4;
+      const xv = ex[0] + (ex[1] - ex[0]) * i / 4;
+      g.beginPath(); g.moveTo(ML, Math.round(sy(yv)) + 0.5);
+      g.lineTo(ML + pw, Math.round(sy(yv)) + 0.5); g.stroke();
+      g.beginPath(); g.moveTo(Math.round(sx(xv)) + 0.5, MT);
+      g.lineTo(Math.round(sx(xv)) + 0.5, MT + ph); g.stroke();
+      g.fillStyle = W.PALETTE.ink3;
+      g.textAlign = 'right'; g.textBaseline = 'middle';
+      g.fillText(yv.toFixed(ey[1] - ey[0] > 20 ? 0 : 2), ML - 7, sy(yv));
+      g.textAlign = 'center'; g.textBaseline = 'top';
+      g.fillText(xv.toFixed(ex[1] - ex[0] > 20 ? 0 : 2), sx(xv), MT + ph + 6);
+    }
+
+    const plotted = bundle.rows.filter((r) =>
+      typeof r[xf] === 'number' && typeof r[yf] === 'number');
+    const passing = new Set(rows.map((r) => r.id));
+
+    // Marginal histograms in the top and right gutters: the distribution the
+    // ladder cannot show.
+    const bins = (field, n, e) => {
+      const out = new Array(n).fill(0);
+      plotted.forEach((r) => {
+        const t = (r[field] - e[0]) / (e[1] - e[0]);
+        out[Math.min(n - 1, Math.max(0, Math.floor(t * n)))] += 1;
+      });
+      return out;
+    };
+    const hx = bins(xf, 26, ex), hy = bins(yf, 20, ey);
+    const mx = Math.max(...hx), my = Math.max(...hy);
+    g.fillStyle = W.PALETTE.dominated;
+    hx.forEach((count, i) => {
+      const bw = pw / hx.length, h = (count / mx) * (MT - 12);
+      g.fillRect(ML + i * bw + 0.5, MT - 4 - h, Math.max(1, bw - 1), h);
+    });
+    hy.forEach((count, i) => {
+      const bh = ph / hy.length, w = (count / my) * (MR - 12);
+      g.fillRect(ML + pw + 5, MT + i * bh + 0.5, w, Math.max(1, bh - 1));
+    });
+
+    let inBox = 0;
+    const within = (r) => {
+      if (!planeBox) return true;
+      const x = sx(r[xf]), y = sy(r[yf]);
+      return x >= Math.min(planeBox[0], planeBox[2]) && x <= Math.max(planeBox[0], planeBox[2])
+        && y >= Math.min(planeBox[1], planeBox[3]) && y <= Math.max(planeBox[1], planeBox[3]);
+    };
+    plotted.forEach((r) => {
+      const keep = passing.has(r.id) && within(r);
+      if (keep) inBox += 1;
+      g.beginPath();
+      g.arc(sx(r[xf]), sy(r[yf]), r.on_front ? 3.1 : 2.3, 0, 6.2832);
+      if (r.on_front) {
+        g.fillStyle = W.PALETTE.accent; g.globalAlpha = keep ? 0.92 : 0.14; g.fill();
+      } else {
+        g.strokeStyle = W.PALETTE.dominated; g.lineWidth = 1;
+        g.globalAlpha = keep ? 0.75 : 0.12; g.stroke();
+      }
+      g.globalAlpha = 1;
+    });
+
+    // The frontier of this PAIR, which is not the four-axis Pareto front. The
+    // readout says so, because the two are easy to confuse and one of them is
+    // a much weaker claim.
+    const dirX = lowerIsBetter(xf) ? -1 : 1, dirY = lowerIsBetter(yf) ? -1 : 1;
+    const sorted = plotted.slice().sort((a, b) => (b[xf] - a[xf]) * dirX);
+    const front = [];
+    let best = -Infinity;
+    sorted.forEach((r) => {
+      const yv = r[yf] * dirY;
+      if (yv > best) { best = yv; front.push(r); }
+    });
+    g.strokeStyle = W.PALETTE.accent; g.lineWidth = 1.5; g.globalAlpha = 0.85;
+    g.beginPath();
+    front.forEach((r, i) => {
+      const x = sx(r[xf]), y = sy(r[yf]);
+      if (i === 0) g.moveTo(x, y);
+      else { g.lineTo(x, sy(front[i - 1][yf])); g.lineTo(x, y); }
+    });
+    g.stroke(); g.globalAlpha = 1;
+
+    if (planeBox) {
+      g.strokeStyle = W.PALETTE.accent; g.lineWidth = 1; g.setLineDash([4, 3]);
+      const bx = Math.min(planeBox[0], planeBox[2]), by = Math.min(planeBox[1], planeBox[3]);
+      const bw = Math.abs(planeBox[2] - planeBox[0]), bh = Math.abs(planeBox[3] - planeBox[1]);
+      g.strokeRect(bx, by, bw, bh); g.setLineDash([]);
+      g.fillStyle = W.PALETTE.accent; g.globalAlpha = 0.06;
+      g.fillRect(bx, by, bw, bh); g.globalAlpha = 1;
+    }
+
+    g.fillStyle = W.PALETTE.ink;
+    g.font = '600 10.5px Inter, system-ui, sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    g.fillText(el('planex').selectedOptions[0].text, ML + pw / 2, height - 5);
+    g.save(); g.translate(12, MT + ph / 2); g.rotate(-Math.PI / 2);
+    g.fillText(el('planey').selectedOptions[0].text, 0, 0); g.restore();
+
+    el('planeread').innerHTML = `${W.fmt(plotted.length)} of `
+      + `${W.fmt(bundle.rows.length)} ${W.state.target} candidates have both `
+      + `values${planeBox ? `, ${W.fmt(inBox)} inside the box` : ''}. The `
+      + `staircase holds ${W.fmt(front.length)} candidates that nothing beats on `
+      + 'both of these two axes, which is a smaller claim than the four-axis '
+      + 'Pareto front the table marks.';
+  }
+
+  // The box sets a range on each of the two axes, which is the same brush the
+  // table already filters on, so one gesture drives both.
+  function bindPlane() {
+    const canvas = el('planecanvas');
+    let from = null;
+    canvas.addEventListener('pointerdown', (ev) => {
+      const rect = canvas.getBoundingClientRect();
+      from = [ev.clientX - rect.left, ev.clientY - rect.top];
+      canvas.setPointerCapture(ev.pointerId);
+    });
+    canvas.addEventListener('pointermove', (ev) => {
+      if (!from) return;
+      const rect = canvas.getBoundingClientRect();
+      planeBox = [from[0], from[1], ev.clientX - rect.left, ev.clientY - rect.top];
+      drawPlane(activeRows());
+    });
+    canvas.addEventListener('pointerup', () => {
+      from = null;
+      if (planeBox && Math.abs(planeBox[2] - planeBox[0]) < 5
+          && Math.abs(planeBox[3] - planeBox[1]) < 5) {
+        planeBox = null;
+      }
+      commitPlaneBox();
+    });
+  }
+
+  function commitPlaneBox() {
+    const xf = el('planex').value, yf = el('planey').value;
+    [xf, yf].forEach((f) => { if (f.startsWith('axis_')) delete W.state.brush[f]; });
+    if (planeBox) {
+      const canvas = el('planecanvas');
+      const width = canvas.clientWidth, height = 352;
+      const MT = 34, MR = 42, MB = 38, ML = 52;
+      const pw = width - ML - MR, ph = height - MT - MB;
+      const ex = extentOf(xf), ey = extentOf(yf);
+      if (ex && xf.startsWith('axis_')) {
+        const a = ex[0] + ((Math.min(planeBox[0], planeBox[2]) - ML) / pw) * (ex[1] - ex[0]);
+        const b = ex[0] + ((Math.max(planeBox[0], planeBox[2]) - ML) / pw) * (ex[1] - ex[0]);
+        W.state.brush[xf] = [Math.max(0, a), Math.min(100, b)];
+      }
+      if (ey && yf.startsWith('axis_')) {
+        const a = ey[0] + ((MT + ph - Math.max(planeBox[1], planeBox[3])) / ph) * (ey[1] - ey[0]);
+        const b = ey[0] + ((MT + ph - Math.min(planeBox[1], planeBox[3])) / ph) * (ey[1] - ey[0]);
+        W.state.brush[yf] = [Math.max(0, a), Math.min(100, b)];
+      }
+    }
+    W.writeUrl(true);
+    refresh();
+  }
+
+  /* ------------------------------------------------------------ the switcher */
+
+  function heroView() {
+    return W.state.hero === 'plane' ? 'plane' : 'ladder';
+  }
+
+  function drawHero(rows) {
+    const view = heroView();
+    // `hidden` is not enough here: a stylesheet `display` beats the user
+    // agent's `[hidden] { display: none }`, and .panelbar is display:flex, so
+    // the ladder's controls stayed on screen over the plane. Set display.
+    const show = (id, on, mode) => {
+      const node = el(id);
+      node.hidden = !on;
+      node.style.display = on ? (mode || '') : 'none';
+    };
+    show('ladderbar', view === 'ladder', 'flex');
+    show('ladder', view === 'ladder');
+    show('planewrap', view === 'plane');
+    el('heroview').querySelectorAll('button').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.view === view));
+    });
+    drawGates();
+    if (view === 'ladder') drawLadder(rows);
+    else drawPlane(rows);
+    const front = bundle ? bundle.rows.filter((r) => r.on_front).length : 0;
+    el('explorerhint').textContent = view === 'ladder'
+      ? `the ${SHORTLIST} that would be ordered, and what removed the rest`
+      : `${W.fmt(front)} candidates on the four-axis Pareto front`;
   }
 
   let brushTimer = null;
@@ -352,6 +845,76 @@
       if (table && tableReady) table.replaceData(rows);
       renderCaption(rows);
     }, 60);
+  }
+
+  /* ------------------------------------------- 3.3 where one candidate sits
+
+     The strips are the parcoords idea with the lines taken out: one row per
+     axis, every candidate a dot, and a needle on the one the drawer is open
+     on. In the drawer the subject is already a single candidate, which is the
+     question this answers. */
+
+  function drawAxisStrips(d) {
+    const host = el('axisstrips');
+    if (!host || !bundle) return;
+    const rows = bundle.rows;
+    host.innerHTML = '<h3 class="stripshead">Where this candidate sits</h3>'
+      + HERO_AXES.map(([field, , long]) =>
+        `<div class="striprow"><span class="sname">${long}</span>`
+        + `<span class="canvasbox"><canvas height="38" data-axis="${field}"></canvas></span>`
+        + `</div>`).join('')
+      + `<p class="stripsnote">Every ${W.escape(W.state.target)} candidate is a `
+      + `dot. The marked one is this candidate. Percentiles are within this `
+      + `target only.</p>`;
+
+    host.querySelectorAll('canvas').forEach((canvas) => {
+      const field = canvas.dataset.axis;
+      const dpr = window.devicePixelRatio || 1;
+      const width = canvas.clientWidth || 300, height = 38;
+      canvas.width = width * dpr; canvas.height = height * dpr;
+      const g = canvas.getContext('2d');
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.clearRect(0, 0, width, height);
+      const ML = 6, pw = width - 12, mid = height / 2;
+
+      g.strokeStyle = W.PALETTE.rule; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(ML, mid + 0.5); g.lineTo(ML + pw, mid + 0.5); g.stroke();
+
+      const have = rows.filter((r) => typeof r[field] === 'number');
+      if (!have.length) {
+        g.fillStyle = W.PALETTE.ink3;
+        g.font = '10px Inter, system-ui, sans-serif';
+        g.textAlign = 'left'; g.textBaseline = 'middle';
+        g.fillText('not computed for this target', ML + 2, mid);
+        return;
+      }
+      have.forEach((r) => {
+        const x = ML + (r[field] / 100) * pw;
+        // Deterministic jitter, so the strip does not reshuffle on redraw.
+        // The candidate number drives it rather than a hash of the whole id:
+        // ids share a long target prefix, and folding that in collapsed the
+        // spread into two bands instead of filling the strip.
+        const n = parseInt(String(r.id).replace(/\D/g, ''), 10) || 0;
+        const jitter = ((n * 2654435761) % 10007) / 10007;
+        const y = mid + (jitter - 0.5) * (height - 11);
+        g.beginPath(); g.arc(x, y, 1.8, 0, 6.2832);
+        g.fillStyle = W.PALETTE.dominated; g.globalAlpha = 0.6; g.fill();
+        g.globalAlpha = 1;
+      });
+      const mine = d ? d[field] : null;
+      if (typeof mine === 'number') {
+        const x = ML + (mine / 100) * pw;
+        g.strokeStyle = W.PALETTE.accent; g.lineWidth = 1.5;
+        g.beginPath(); g.moveTo(x, 2); g.lineTo(x, height - 2); g.stroke();
+        g.fillStyle = '#FFFFFF';
+        g.beginPath(); g.arc(x, mid, 4, 0, 6.2832); g.fill(); g.stroke();
+      } else {
+        g.fillStyle = W.PALETTE.ink3;
+        g.font = '10px Inter, system-ui, sans-serif';
+        g.textAlign = 'right'; g.textBaseline = 'middle';
+        g.fillText('pending for this candidate', ML + pw - 2, mid);
+      }
+    });
   }
 
   /* --------------------------------------------------- 3.4 the column chooser */
@@ -700,6 +1263,7 @@
         'pct', d.axis_expression, 'expression'),
     ].join('');
 
+    drawAxisStrips(d);
     syncViewerMode(d);
     writeViewerCaption(d);
 
@@ -735,6 +1299,27 @@
       showPlaceholder('No predicted model for this candidate yet. '
         + 'The structural tier has not run.');
     }
+  }
+
+  // The only Plotly on this tab now: the Tm distribution in the drawer. The
+  // hero used to pull it on page load for the parcoords panel; it is loaded on
+  // first drawer open instead (DESIGN 3.6).
+  async function ensurePlotly() {
+    if (window.Plotly) return window.Plotly;
+    if (plotlyReady) return plotlyReady;
+    plotlyReady = new Promise((resolve, reject) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = '/static/vendor/plotly-whittle.min.css';
+      document.head.appendChild(css);
+      const script = document.createElement('script');
+      script.src = '/static/vendor/plotly-whittle.min.js';
+      script.async = true;
+      script.onload = () => resolve(window.Plotly);
+      script.onerror = () => reject(new Error('Plotly did not load'));
+      document.head.appendChild(script);
+    });
+    return plotlyReady;
   }
 
   async function renderTmPanel(d) {
@@ -1017,6 +1602,10 @@
   async function selectTarget(name, push) {
     W.state.target = name;
     W.state.brush = {};
+    // Every percentile, median and extent on this tab is computed within the
+    // target, so none of them survives a switch.
+    pctCache = {};
+    planeBox = null;
     tmDist = null;
     renderTargetBar(name);
     bundle = await W.loadJson(`/static/data/candidates_${name}.json`);
@@ -1119,11 +1708,70 @@
 
     el('resetbrush').addEventListener('click', () => {
       W.state.brush = {};
+      W.state.gates = {};
+      planeBox = null;
       W.writeUrl(true);
       refresh();
     });
     el('expand').addEventListener('click', () => {
       el('explorercard').classList.remove('collapsed');
+    });
+
+    /* ------------------------------------------------------- hero controls */
+
+    const sortSelect = el('laddersort');
+    LADDER_SORTS.forEach(([field, label]) => {
+      const option = document.createElement('option');
+      option.value = field;
+      option.textContent = label;
+      if (field === (W.state.ladder || 'desirability')) option.selected = true;
+      sortSelect.appendChild(option);
+    });
+    sortSelect.addEventListener('change', () => {
+      W.state.ladder = sortSelect.value;
+      W.writeUrl(true);
+      drawLadder(activeRows());
+    });
+    el('laddern').addEventListener('change', () => drawLadder(activeRows()));
+
+    [['planex', 'axis_specificity'], ['planey', 'axis_thermo']].forEach(
+      ([id, preset]) => {
+        const select = el(id);
+        PLANE_FIELDS.forEach(([field, label]) => {
+          const option = document.createElement('option');
+          option.value = field;
+          option.textContent = label;
+          if (field === preset) option.selected = true;
+          select.appendChild(option);
+        });
+        select.addEventListener('change', () => {
+          planeBox = null;
+          commitPlaneBox();
+        });
+      });
+    bindPlane();
+
+    el('heroview').addEventListener('click', (event) => {
+      const btn = event.target.closest('button[data-view]');
+      if (!btn) return;
+      W.state.hero = btn.dataset.view;
+      W.writeUrl(true);
+      drawHero(activeRows());
+    });
+    el('gatesolve').addEventListener('click', solveForShortlist);
+    el('gatereset').addEventListener('click', () => {
+      W.state.gates = {};
+      W.writeUrl(true);
+      refresh();
+    });
+
+    let heroResize = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(heroResize);
+      heroResize = setTimeout(() => {
+        if (heroView() === 'plane') drawPlane(activeRows());
+        if (currentDetail) drawAxisStrips(currentDetail);
+      }, 150);
     });
 
     const vmode = el('vmode');

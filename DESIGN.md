@@ -38,19 +38,60 @@ Percentile sparkline bars: accent at >=75, warn at 45-74, poor at <45. **Lightne
 
 ## 3. Candidates tab
 
-### 3.1 Explorer panel (full width, above the table)
+### 3.1 Shortlist panel (full width, above the table)
 
-Card, 16px padding. Header row: `Four-axis explorer` (13px, 600) · `drag an axis to brush · N candidates on the Pareto front` (11px, ink-3) · legend · `Reset brush`.
+Card, 16px padding. Header row: `Shortlist` (13px, 600) · a hint stating what the
+pane shows (11px, ink-3) · `Ladder` / `Trade-off` segmented control · `Reset filters`.
 
-Plotly `parcoords`, ~196px tall, five axes: Affinity · Specificity · Thermostability · Expression · Nativeness.
+Two panes on a `minmax(0,1fr) 338px` grid: the shortlist on the left, the gates
+that produced it on the right.
 
-- Dominated candidates: `#C3CBD9`, 1px, opacity 0.5.
-- Pareto front: accent, 2px, opacity 0.92, drawn **over** the dominated set.
-- Legend distinguishes the two by **colour and line weight both**.
-- An active brush draws as an accent rectangle on its axis with the threshold labelled beside it.
-- Brushing filters the table beneath. The table caption always states the active filters in words, so the view is self-describing.
+**Left, the ladder (default).** One row per candidate, the highest-ranked first,
+24 or 32 or 50 of them. Columns: position · candidate id · a 15px track for each
+of the five axes · predicted Tm with its error · three flag pips (liability in a
+CDR, camelid hallmark, experimental neighbour). Each track carries the
+percentile as a number and a tick at the population median, so a cell reads
+against all 500 even though only 32 rows are drawn. An axis with no data is a
+hatched track, never an empty one. A rule across the ladder marks where the
+shortlist stops. Clicking or pressing Enter on a row opens the drawer. Every
+column header sorts.
 
-Collapses to a single 44px strip (title · active filters in words · `Expand`) when the column chooser is open or at narrow widths. With a popover open the table matters more than the chart.
+**Left, the trade-off plane (toggle).** Two chosen axes, one point per
+candidate, hollow grey for dominated and solid accent for the Pareto front, with
+marginal histograms in the top and right gutters. The frontier of the chosen
+*pair* is drawn as a staircase and labelled as the smaller claim it is: it is
+not the four-axis Pareto front. Dragging a box sets a brush on both axes, which
+is the same brush the table filters on.
+
+**Right, the gates.** Seven filters applied in order: no liability motif in a
+CDR · camelid hallmark intact · specificity floor · thermostability floor ·
+expression floor · one per CDR3 cluster · affinity floor where co-folded. Each
+shows a bar of survivors over what the gate removed, and its own count. A
+candidate with no co-fold is not failed by the affinity gate: Tier 2 covers the
+top 50 per target, and failing the other 450 on a missing value reads an absence
+as evidence. Beneath them, the surviving count against the shortlist size, in
+`good` when they match, `warn` when there are too many and `poor` when the gates
+are tighter than the library can satisfy. `Solve for 24` raises the three
+percentile floors together and keeps the tightest setting that still leaves a
+full shortlist standing.
+
+The gates filter the table. The caption always states them in words, as it does
+every other filter, so the view is self-describing however it is read.
+
+Collapses to a single 44px strip (title · active filters in words · `Expand`)
+when the column chooser is open. At phone width the ladder and the plane both go
+(neither survives a 400px column) and the gates stay, because a filter the
+reader cannot reach is one that silently removes rows.
+
+**Why this replaced the parcoords panel.** The original specification here was a
+Plotly `parcoords` plot: 500 polylines across five axes, per target. It drew the
+wrong population, since about 24 of those 500 are ever ordered; its line
+crossings carried no information, because the axes are correlated by
+construction and the crossings are the same on every target; it could not be
+sorted, which is the first thing anyone wants from a ranking; and an axis with
+no data was an invisible gap rather than a stated absence. The replacement
+answers the two questions the site exists to answer, which are *which ones do I
+take* and *what removed the rest*. See DECISIONS.md.
 
 ### 3.2 Toolbar
 
@@ -61,6 +102,7 @@ Search (`Search ID, target, CDR3 motif`) · `Pareto front · N` as a pressed tog
 Tabulator, virtual DOM. Default six columns: **Candidate** (id plus target beneath), **Rank**, **Axis profile**, **Tm**, **Nearest PDB**, **Liabilities**.
 
 - Axis profile is a four-bar sparkline (7px wide, up to 24px tall, 3px gap) so the shape of a candidate reads without opening anything.
+- **Numeric cells are shaded by their percentile within the target**, on one accent lightness ramp, with the number still printed. A column with no better direction (a flag, such as pI or net charge) is left unshaded rather than implying one. A number alone makes the reader do the ranking; the shading is what lets a column be scanned.
 - Liabilities render as a chip: `Clean` in good, any flag in poor.
 - Selected row: accent-wash with a 3px accent inset left border.
 - Id column frozen. Wide tables scroll inside an `overflow-x: auto` box.
@@ -71,8 +113,8 @@ Tabulator, virtual DOM. Default six columns: **Candidate** (id plus target benea
 Popover anchored to its button, 460px, `0 14px 34px rgba(17,24,39,0.16)`, max-height 470px with internal scroll.
 
 Header: `Columns` · find-a-column input · `Reset`.
-Body: the 41 columns in five labelled groups with per-group counts, in this order: **Identity** (6) · **Binding** (7) · **Specificity and liabilities** (11) · **Thermostability** (5) · **Expression and evidence** (8). Each row is a real `<label>` wrapping a real checkbox, >=36px tall, with the unit in ink-3 on the right.
-Footer: `N of 41 shown` · `Save as view` · `Done`.
+Body: every column in five labelled groups, in this order: **Identity** · **Binding** · **Specificity and liabilities** · **Thermostability** · **Expression and evidence**. Each row is a real `<label>` wrapping a real checkbox, >=36px tall, with the unit in ink-3 on the right. The per-group counts are rendered from `pipeline/columns.py` rather than written here: the registry is the one source, and the counts in an earlier draft of this section summed to 37 against a stated total of 41, so they cannot both be authoritative. The registry currently holds 48 columns, each with a glossary entry on the About tab.
+Footer: `N of <total> shown` · `Save as view` · `Done`.
 
 Column state persists in the URL.
 
@@ -87,8 +129,9 @@ Four sub-tabs: **Structure · Metrics · Sequence · Neighbours**.
 Structure panel, in order:
 1. **Mol\* viewer**, 236px, on `#0D1117`. Caption bottom-left `model vs <PDB> · TM <score>`, bottom-right `CDR1 / 2 / 3`.
 2. **Four axis tiles**, 2x2 grid: uppercase 10px label, 20px value, unit in ink-3, 4px progress rule beneath.
-3. **Tm against the full set**: histogram of all candidates for this target with this candidate marked by a 2.5px accent rule, labelled `this one`, **and its error bar drawn**. A bare number hides the uncertainty that matters most.
-4. Footnote, 11px ink-3, above a top border: the error-bar and weak-affinity caveat.
+3. **Axis strips**, one 38px row per axis: every candidate for this target as a jittered dot, with this candidate marked by an accent needle. This is where the parcoords idea belongs, with the lines taken out. In the drawer the subject is already one candidate, which is the question "where does this one sit" actually asks. An axis with no data is a labelled empty strip, never a missing one.
+4. **Tm against the full set**: histogram of all candidates for this target with this candidate marked by a 2.5px accent rule, labelled `this one`, **and its error bar drawn**. A bare number hides the uncertainty that matters most.
+5. Footnote, 11px ink-3, above a top border: the error-bar and weak-affinity caveat.
 
 The **Neighbours** sub-tab leads with the nearest-neighbour superposition (model over nearest experimental structure, TM-score and per-region identity beside it). This is the panel that justifies having a 3D viewer rather than decorating with one.
 
@@ -98,7 +141,7 @@ Deep link `#/t/<target>/nb/<id>` opens the drawer directly.
 
 - **One plugin instance.** Reload structures into it, or `plugin.dispose()` on drawer close. Browsers cap WebGL contexts near 16; without this the viewer dies silently after a dozen drawer opens and reads as a random failure.
 - Dynamic-import Mol\* (~4 MB) on first drawer open, never in the initial bundle.
-- Plotly: custom partial bundle, `scatter` + `bar` + `parcoords` only. `parcoords` is **not** in `plotly.js-basic-dist-min`.
+- Plotly: custom partial bundle, `scatter` + `bar` + `parcoords` only. `parcoords` is **not** in `plotly.js-basic-dist-min`. Since 3.1 stopped using it, the Candidates tab loads Plotly on first drawer open (for the Tm histogram) rather than on page load; the Control set tab still loads it for its scatters.
 - Vendored assets cache-busted with `?v=<mtime>`.
 
 ## 4. Control set tab

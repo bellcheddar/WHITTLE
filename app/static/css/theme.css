@@ -168,6 +168,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-color: var(--accent);
   color: #fff;
 }
+/* A compact segmented control, for switching what a panel shows rather than
+   which target is selected. */
+.segset { display: inline-flex; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+.segset button {
+  appearance: none; border: 0; background: var(--surface); cursor: pointer;
+  font: inherit; font-size: 11.5px; font-weight: 500; color: var(--ink-2);
+  padding: 4px 11px; border-right: 1px solid var(--border);
+}
+.segset button:last-child { border-right: 0; }
+.segset button:hover { background: var(--accent-wash); }
+.segset button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+
 .construct {
   font-size: 11px;
   color: var(--ink-3);
@@ -234,16 +246,175 @@ main {
 .cardhead .hint { font-size: 11px; color: var(--ink-3); }
 .cardhead .spacer { flex: 1 1 auto; }
 
-/* --------------------------------------------------- 3.1 explorer (parcoords) */
+/* ------------------------------------------ 3.1 the shortlist hero
 
-#explorer { min-height: 196px; }
-.legend { display: flex; gap: 14px; align-items: center; font-size: 11px; color: var(--ink-3); }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-.legend i {
-  display: inline-block; width: 22px; border-radius: 1px;
+   Two panes: the ladder of candidates in contention (or the trade-off plane)
+   on the left, the gates that produced it on the right. Nothing here overplots
+   anything else, which is the whole reason it replaced the parcoords panel. */
+
+.herogrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 338px;
+  gap: 16px;
+  align-items: start;
 }
-.legend i.front { border-top: 2px solid var(--accent); }
-.legend i.dom { border-top: 1px solid var(--dominated); }
+.heropane { min-width: 0; }
+.gatespane {
+  background: var(--accent-wash);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 13px 13px;
+}
+.gateshead { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.gateshead h3 {
+  margin: 0; font-size: 12px; font-weight: 600; color: var(--ink);
+}
+
+.panelbar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 9px; font-size: 11px; color: var(--ink-3);
+}
+.panelbar select {
+  font: inherit; font-size: 11.5px; padding: 2px 5px; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+}
+.laddkey { font-size: 10.5px; color: var(--ink-3); }
+
+/* ---- the ladder */
+#ladder { font-size: 12px; }
+.lrow {
+  display: grid;
+  grid-template-columns: 24px 118px repeat(5, minmax(38px, 1fr)) 78px 44px;
+  gap: 7px; align-items: center;
+  padding: 2px 4px; border-bottom: 1px solid var(--rule);
+  border-radius: 3px; cursor: pointer;
+}
+.lrow:hover, .lrow:focus-visible { background: var(--accent-wash); }
+.lrow.lhead {
+  font-size: 10px; font-weight: 600; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-3); cursor: default;
+  border-bottom: 1px solid var(--border); padding-bottom: 5px;
+}
+.lrow.lhead:hover { background: transparent; }
+.lrow.lhead span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lrow .pos { color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.lrow .cid {
+  font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.lrow.inshort .cid { box-shadow: -7px 0 0 -3px var(--accent); }
+.track { position: relative; height: 15px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+.track i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--dominated); }
+.track i.hi { background: var(--accent); }
+.track i.mid { background: #8FA6D2; }
+.track i.lo { background: #C3CBD9; }
+.track u {
+  position: absolute; top: 0; bottom: 0; width: 1px;
+  background: var(--ink-3); opacity: .45;
+}
+/* A hatched track is an axis that has not been computed. It says so rather
+   than reading as a zero. */
+.track.pending {
+  background: repeating-linear-gradient(135deg,
+    var(--rule) 0 4px, transparent 4px 8px);
+}
+.track b {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 9.5px; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.lrow .tmcell { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 11px; }
+.lrow .tmcell .err { color: var(--ink-3); font-size: 10px; margin-left: 2px; }
+.lrow .tmcell .pend { color: var(--ink-3); }
+.lrow .flags { display: flex; gap: 3px; }
+.pip { width: 7px; height: 14px; border-radius: 2px; background: var(--rule); display: inline-block; }
+.pip.bad { background: var(--poor-ink); }
+.pip.ok { background: var(--good-ink); }
+.pip.warn { background: var(--warn); }
+.cutline {
+  display: flex; align-items: center; gap: 9px; margin: 5px 0;
+  font-size: 10px; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--accent);
+}
+.cutline::before, .cutline::after {
+  content: ""; height: 1px; background: var(--accent); flex: 1 1 auto; opacity: .45;
+}
+.laddempty { font-size: 12px; color: var(--ink-3); padding: 26px 0; text-align: center; margin: 0; }
+
+/* ---- the trade-off plane */
+.canvasbox { position: relative; }
+.canvasbox canvas { display: block; width: 100%; max-width: 100%; }
+#planecanvas { cursor: crosshair; }
+.planeread { font-size: 11px; color: var(--ink-3); margin: 8px 0 0; }
+
+/* ---- the gates */
+.gates { display: flex; flex-direction: column; }
+.gate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  column-gap: 8px; row-gap: 3px;
+  padding: 5px 0; border-bottom: 1px solid var(--rule);
+}
+.gate.entering .gname { font-weight: 600; }
+.gate.off .gname, .gate.off .gbar { opacity: .55; }
+.gate .gname {
+  font-size: 11.5px; color: var(--ink); line-height: 1.3;
+  display: flex; align-items: flex-start; gap: 6px; min-width: 0;
+}
+label.gname { cursor: pointer; }
+.gate .gname input[type="checkbox"] { margin: 2px 0 0; accent-color: var(--accent); flex: 0 0 auto; }
+.gate .gname small { display: block; font-size: 10px; color: var(--ink-3); }
+.gate .gcount {
+  text-align: right; font-size: 12px; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums; align-self: center;
+}
+.gate .gcount .goff { font-weight: 400; color: var(--ink-3); font-size: 11px; }
+.gbar {
+  grid-column: 1 / -1;
+  position: relative; height: 7px; background: var(--rule); border-radius: 2px;
+  overflow: hidden;
+}
+.gbar i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--accent); }
+.gbar i.lost { background: var(--poor-bg); }
+.gate .gctl {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 7px;
+  font-size: 10.5px; color: var(--ink-3);
+}
+.gate .gctl input[type="range"] { width: 100%; accent-color: var(--accent); }
+.gate .gctl output { font-variant-numeric: tabular-nums; color: var(--ink); min-width: 20px; }
+.gatefinal {
+  display: flex; align-items: baseline; gap: 11px;
+  margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--border);
+}
+.gatefinal .big {
+  font-size: 27px; font-weight: 700; color: var(--ink); line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.gatefinal .state { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink-3); }
+.gatefinal .state.on { color: var(--good-ink); }
+.gatefinal .state.over { color: var(--warn); }
+.gatefinal .state.under { color: var(--poor-ink); }
+.gatefinal .hint { display: block; font-size: 10.5px; color: var(--ink-3); line-height: 1.45; }
+
+/* ---- the drawer strips: where one candidate sits against all of them */
+#axisstrips { margin-top: 14px; }
+.stripshead {
+  margin: 0 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.striprow {
+  display: grid; grid-template-columns: 92px minmax(0, 1fr);
+  gap: 8px; align-items: center; margin-bottom: 2px;
+}
+.striprow .sname { font-size: 10.5px; color: var(--ink-2); text-align: right; }
+.stripsnote { font-size: 10.5px; color: var(--ink-3); margin: 6px 0 0; line-height: 1.45; }
+
+/* ---- shaded numeric cells (the old second-hero concept, in the table) */
+.tabulator-cell .shaded {
+  display: inline-block; padding: 1px 6px; border-radius: 2px;
+  font-variant-numeric: tabular-nums;
+}
 
 .explorer-strip {
   display: none;
@@ -253,7 +424,10 @@ main {
   font-size: 12px;
   color: var(--ink-2);
 }
-.collapsed #explorer, .collapsed .legend, .collapsed .cardhead .hint { display: none; }
+/* With the column chooser open the table matters more than the hero, so the
+   hero gives up its height and leaves the one-line strip (DESIGN 3.1). */
+.collapsed .herogrid, .collapsed .cardhead .hint,
+.collapsed .cardhead .segset, .collapsed #resetbrush { display: none; }
 .collapsed .explorer-strip { display: flex; }
 
 /* ------------------------------------------------------------- 3.2 toolbar */
@@ -722,7 +896,12 @@ h3.paramgroup span {
   .masthead .row { flex-wrap: wrap; row-gap: 8px; }
   .backronym { display: none; }
   .runmeta { padding-left: 0; border-left: 0; }
-  #explorer { display: none; }
+  /* A ladder of five axis tracks does not survive a 400px column, and nor
+     does a scatter plot, so both go. The gates stay: they filter the table,
+     and a filter a phone cannot reach is a filter that silently removes rows
+     from under the reader. The strip above states the active ones in words. */
+  .herogrid { grid-template-columns: minmax(0, 1fr); }
+  .heropane:not(.gatespane) { display: none; }
   .explorer-strip { display: flex; }
   .drawer { flex: 1 1 100%; }
   .tablewrap { flex: 1 1 100%; }

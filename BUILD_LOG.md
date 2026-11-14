@@ -1440,3 +1440,19 @@ through to the drawer.
 - 2026-11-14 09:12 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors, 18 label boxes widened for Inter
 - 2026-11-14 09:13 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors, 31 label boxes widened for Inter
 - 2026-11-14 09:14 cofold: 7/30 (7 ok, 0 failed), 3.2 min for SCRAM-TNFa-007, about 1.2 hours left
+- 2026-11-14 09:17 cofold: 8/30 (8 ok, 0 failed), 3.2 min for SCRAM-TNFa-008, about 1.2 hours left
+- 2026-11-14 09:20 cofold: 9/30 (9 ok, 0 failed), 3.2 min for SCRAM-TNFa-009, about 1.1 hours left
+- 2026-11-14 09:22 build-db: EGFR bundle, 500 rows, 40 columns with data, 7 pending
+- 2026-11-14 09:22 build-db: GLP1R bundle, 500 rows, 45 columns with data, 2 pending
+- 2026-11-14 09:22 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:22 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:22 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:22 build-db: 15 bundles, 2912 kB total
+- 2026-11-14 09:23 build-db: EGFR bundle, 500 rows, 40 columns with data, 7 pending
+- 2026-11-14 09:23 build-db: GLP1R bundle, 500 rows, 45 columns with data, 2 pending
+- 2026-11-14 09:23 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:23 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:23 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:23 build-db: 15 bundles, 2912 kB total
+- 2026-11-14 09:23 cofold: 10/30 (10 ok, 0 failed), 3.1 min for SCRAM-TNFa-010, about 1.1 hours left
+- 2026-11-14 09:27 cofold: 11/30 (11 ok, 0 failed), 3.8 min for SCRAM-TL1A-001, about 1.0 hours left
