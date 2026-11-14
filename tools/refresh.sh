@@ -19,6 +19,9 @@ echo "==> Interface metrics for the co-folds that have finished"
 echo "==> Interaction profile across each finished interface (PLIP)"
 "$PY" -m pipeline.interactions
 
+echo "==> Shape complementarity across each finished interface"
+"$PY" -m pipeline.complementarity
+
 echo "==> Re-ranking"
 "$PY" -m pipeline.score
 

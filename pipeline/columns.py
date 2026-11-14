@@ -92,6 +92,52 @@ COLUMNS: list[dict] = [
          tier=2, default=False, decimals=0, higher_is_better=None,
          help="Candidates clustered by their interface residue set, so a shared face "
               "is visible."),
+    dict(key="pose_consensus", label="Pose agreement", group="binding",
+         unit="0-1", kind="num", tier=2, default=False, decimals=2,
+         higher_is_better=True,
+         help="How far the five diffusion samples agree about where this binds, as "
+              "the mean overlap of their epitopes. A candidate can bury a lot of "
+              "surface somewhere different every time, and a single good-looking "
+              "sample out of five is a lucky draw rather than evidence."),
+    dict(key="sc", label="Shape complementarity", group="binding", unit="0-1",
+         kind="num", tier=2, default=False, decimals=3, higher_is_better=True,
+         help="Lawrence-Colman shape complementarity: how well the two surfaces fit, "
+              "independent of how large the interface is. Experimental "
+              "nanobody-antigen interfaces measure about 0.57 to 0.65 under this "
+              "implementation. A predicted pose scores lower, so treat it as a "
+              "ranking signal within this target rather than as a figure to compare "
+              "with the literature."),
+    dict(key="cdr_interface_fraction", label="CDR paratope", group="binding",
+         unit="fraction", kind="num", tier=2, default=False, decimals=2,
+         higher_is_better=True,
+         help="Share of the nanobody's contacting residues that sit in a CDR rather "
+              "than the framework. Framework binding is either a modelling artefact "
+              "or a contact unlikely to be specific, since the framework is the "
+              "conserved part."),
+    dict(key="n_hbond", label="H-bonds", group="binding", unit="count", kind="num",
+         tier=2, default=False, decimals=0, higher_is_better=True,
+         help="Hydrogen bonds across the interface, detected with PLIP on the "
+              "highest-ipTM sample. A count rises with interface size, so read it "
+              "beside the density."),
+    dict(key="hbond_per_100a2", label="H-bond density", group="binding",
+         unit="per 100 A2", kind="num", tier=2, default=False, decimals=2,
+         higher_is_better=True,
+         help="Hydrogen bonds per 100 square angstroms of buried surface. This is "
+              "the part of the interaction inventory that does not simply restate "
+              "how large the interface is."),
+    dict(key="polar_fraction", label="Polar fraction", group="binding",
+         unit="0-1", kind="num", tier=2, default=False, decimals=2,
+         higher_is_better=None,
+         help="Share of detected interactions that are polar (hydrogen bonds and "
+              "salt bridges) rather than hydrophobic. A flag for the character of "
+              "the interface, not a score."),
+    dict(key="n_his_contacts", label="His contacts", group="binding",
+         unit="count", kind="num", tier=2, default=False, decimals=0,
+         higher_is_better=None,
+         help="Interface contacts made by a nanobody histidine. The EGFR and TNFa "
+              "libraries are histidine-enriched for an intended pH switch, so a "
+              "candidate from those libraries whose histidines never reach the "
+              "antigen has not done what it was designed to do."),
 
     # ------------------------------------------------- specificity and liabilities (11)
     dict(key="axis_specificity", label="Specificity", group="specificity",
@@ -220,7 +266,7 @@ def registry() -> dict:
 
 
 def _self_check() -> None:
-    assert len(COLUMNS) == 41, f"the registry must hold 41 columns, found {len(COLUMNS)}"
+    assert len(COLUMNS) == 48, f"the registry must hold 48 columns, found {len(COLUMNS)}"
     assert len(BY_KEY) == len(COLUMNS), "duplicate column key"
     assert len(DEFAULT_KEYS) == 6, f"six default columns, found {len(DEFAULT_KEYS)}"
     assert {c["group"] for c in COLUMNS} == {gid for gid, _ in GROUPS}

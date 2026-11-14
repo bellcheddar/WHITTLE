@@ -3,7 +3,7 @@
 The droplet does no request-time computation, so everything the front page needs
 is precomputed here on the Studio:
 
-    app/static/data/meta.json              run metadata, targets, the 41 columns
+    app/static/data/meta.json              run metadata, targets, the 48 columns
     app/static/data/candidates_<T>.json    one bundle per target
     app/static/data/controls.json          the control set, Tab 2
     app/static/data/about.json             references, provenance, limitations
@@ -98,7 +98,24 @@ def candidate_bundle(conn, target: str, liabs: dict[str, dict[str, int]]) -> dic
                (SELECT MAX(f.n_subunits_contacted) FROM cofolds f
                  WHERE f.candidate_id = c.id AND f.status='ok') AS n_subunits_contacted,
                (SELECT MIN(f.epitope_bin) FROM cofolds f
-                 WHERE f.candidate_id = c.id AND f.status='ok') AS epitope_bin
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS epitope_bin,
+               -- Interface quality. Averaged over the seeds like the rest, so a
+               -- lucky single sample cannot carry a candidate.
+               (SELECT MAX(f.pose_consensus) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS pose_consensus,
+               (SELECT AVG(f.sc) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS sc,
+               (SELECT AVG(f.cdr_interface_fraction) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok')
+                 AS cdr_interface_fraction,
+               (SELECT AVG(f.n_hbond) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS n_hbond,
+               (SELECT AVG(f.hbond_per_100a2) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS hbond_per_100a2,
+               (SELECT AVG(f.polar_fraction) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS polar_fraction,
+               (SELECT AVG(f.n_his_contacts) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status='ok') AS n_his_contacts
         FROM candidates c
         LEFT JOIN ranks r ON r.candidate_id = c.id
         LEFT JOIN scores s ON s.candidate_id = c.id
@@ -144,7 +161,10 @@ def candidate_bundle(conn, target: str, liabs: dict[str, dict[str, int]]) -> dic
                     "epitope_bin", "psh", "ppc", "pnc", "tnp_flags", "swi",
                     "protein_sol", "nativeness_ppl", "oasis_humanness",
                     "nearest_pdb", "tm_pred", "tm_err", "temstapro",
-                    "upstream_tm_pred"):
+                    "upstream_tm_pred",
+                    "pose_consensus", "sc", "cdr_interface_fraction",
+                    "n_hbond", "hbond_per_100a2", "polar_fraction",
+                    "n_his_contacts"):
             flat[key] = rec.get(key)
         flat["experimental_badge"] = rec.get("has_experimental_badge") or 0
         out.append(flat)

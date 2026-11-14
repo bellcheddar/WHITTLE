@@ -178,6 +178,7 @@ CREATE TABLE IF NOT EXISTS cofolds (
     n_interactions           INTEGER,
     n_his_contacts           INTEGER,   -- design intent of the His-enriched libraries
     polar_fraction           REAL,
+    sc                       REAL,      -- Lawrence-Colman shape complementarity
     hbond_per_100a2          REAL,
     interactions_per_100a2   REAL,
     path                     TEXT,

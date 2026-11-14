@@ -868,3 +868,50 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:13 interactions: GLP1R profiled 15 samples across 3 candidates, median 20 interactions per sample
 - 2026-11-13 20:13 cofold: 4/120 (4 ok, 0 failed), 4.7 min for GLP1R-0264, about 10.0 hours left
 - 2026-11-13 20:18 cofold: 5/120 (5 ok, 0 failed), 4.9 min for GLP1R-0196, about 9.8 hours left
+- 2026-11-13 20:22 complementarity: 1MEL Sc 0.6233 (in range) VHH cAb-Lys3 and lysozyme
+- 2026-11-13 20:22 complementarity: 1ZVH Sc 0.6453 (in range) VHH and lysozyme
+- 2026-11-13 20:22 complementarity: 4KRL Sc 0.5746 (in range) VHH 7D12 and EGFR
+- 2026-11-13 20:23 cofold: 6/120 (6 ok, 0 failed), 4.5 min for GLP1R-0160, about 9.5 hours left
+- 2026-11-13 20:23 complementarity: GLP1R Sc for 15 samples, median 0.525, range 0.446 to 0.562
+- 2026-11-13 20:24 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'specificity': 26} of 500
+- 2026-11-13 20:24 score: EGFR 26 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: EGFR 500 rows, 13 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:24 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'specificity': 27} of 500
+- 2026-11-13 20:24 score: GLP1R 27 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['specificity', 'thermo', 'expression']; CORRELATION WARNING ['affinity and expression correlate at r = 0.9535']
+- 2026-11-13 20:24 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'specificity': 15} of 500
+- 2026-11-13 20:24 score: PRLR 15 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: PRLR 500 rows, 19 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:24 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'specificity': 14} of 500
+- 2026-11-13 20:24 score: TL1A 14 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: TL1A 500 rows, 25 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:24 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'specificity': 21} of 500
+- 2026-11-13 20:24 score: TNFa 21 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: TNFa 500 rows, 21 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:24 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'specificity': 26} of 500
+- 2026-11-13 20:24 score: EGFR 26 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: EGFR 500 rows, 13 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:24 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'specificity': 27} of 500
+- 2026-11-13 20:24 score: GLP1R 27 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['specificity', 'thermo', 'expression']; CORRELATION WARNING ['affinity and expression correlate at r = 0.9535']
+- 2026-11-13 20:24 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'specificity': 15} of 500
+- 2026-11-13 20:24 score: PRLR 15 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: PRLR 500 rows, 19 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:24 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'specificity': 14} of 500
+- 2026-11-13 20:24 score: TL1A 14 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: TL1A 500 rows, 25 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:24 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'specificity': 21} of 500
+- 2026-11-13 20:24 score: TNFa 21 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-13 20:24 score: TNFa 500 rows, 21 on the Pareto front, axes available ['specificity', 'thermo', 'expression']
+- 2026-11-13 20:25 build-db: EGFR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: GLP1R bundle, 500 rows, 39 columns with data, 8 pending
+- 2026-11-13 20:25 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: 15 bundles, 2531 kB total
+- 2026-11-13 20:25 build-db: EGFR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: GLP1R bundle, 500 rows, 46 columns with data, 1 pending
+- 2026-11-13 20:25 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-13 20:25 build-db: 15 bundles, 2883 kB total

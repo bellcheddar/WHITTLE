@@ -44,9 +44,32 @@ class Component:
 # what lets Phase 1 ship two honest axes and Phase 3 ship four, with no change
 # here beyond the data arriving.
 AXIS_COMPONENTS: dict[str, list[Component]] = {
+    # Every component here is Tier 2, so the axis exists only for candidates
+    # that were co-folded. Interface metrics are kept in this axis rather than
+    # spread across the others precisely to preserve that: a Tier 2 component
+    # inside specificity would score 24 candidates per target on one set of
+    # components and the other 476 on another.
+    #
+    # The first three were the whole axis and all three rise with interface
+    # size, so it rewarded a large interface rather than a well-packed one.
+    # PRODIGY's delta G is close to a linear function of contact counts, which
+    # makes it and BSA nearly the same measurement twice. They now carry 1.5 of
+    # 8.25 rather than 1.5 of 3.5.
+    #
+    # WEIGHTS ARE PROVISIONAL. They are set by argument, not by evidence, until
+    # the scrambled controls are co-folded and each component can be weighted by
+    # how well it actually separates a real candidate from a shuffled one.
     "affinity": [
         Component("iptm", +1, 2, 2.0, "co-folding interface confidence, averaged over seeds"),
+        Component("pose_consensus", +1, 2, 1.5,
+                  "agreement between the five diffusion samples about the epitope"),
+        Component("sc", +1, 2, 1.5,
+                  "Lawrence-Colman shape complementarity across the interface"),
         Component("prodigy_dg", -1, 2, 1.0, "predicted interface binding free energy"),
+        Component("cdr_interface_fraction", +1, 2, 1.0,
+                  "share of the paratope contributed by CDRs rather than framework"),
+        Component("hbond_per_100a2", +1, 2, 0.75,
+                  "hydrogen bonds per 100 square angstroms of buried surface"),
         Component("bsa_total", +1, 2, 0.5, "buried surface area"),
     ],
     "specificity": [
@@ -250,7 +273,22 @@ def gather(conn, target: str) -> list[dict]:
                (SELECT AVG(f.prodigy_dg) FROM cofolds f
                  WHERE f.candidate_id = c.id AND f.status = 'ok') AS prodigy_dg,
                (SELECT AVG(f.bsa_total) FROM cofolds f
-                 WHERE f.candidate_id = c.id AND f.status = 'ok') AS bsa_total
+                 WHERE f.candidate_id = c.id AND f.status = 'ok') AS bsa_total,
+               -- Averaged over the seeds like the three above, rather than
+               -- taken from the best sample: cherry-picking the best of five
+               -- diffusion draws is the thing pose_consensus exists to catch.
+               (SELECT AVG(f.sc) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status = 'ok') AS sc,
+               (SELECT AVG(f.cdr_interface_fraction) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status = 'ok')
+                 AS cdr_interface_fraction,
+               (SELECT AVG(f.hbond_per_100a2) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status = 'ok')
+                 AS hbond_per_100a2,
+               -- Already one value per candidate, repeated on each row.
+               (SELECT MAX(f.pose_consensus) FROM cofolds f
+                 WHERE f.candidate_id = c.id AND f.status = 'ok')
+                 AS pose_consensus
         FROM candidates c
         LEFT JOIN structures s ON s.candidate_id = c.id
         LEFT JOIN thermostability t ON t.candidate_id = c.id

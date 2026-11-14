@@ -127,7 +127,7 @@ def main() -> int:
     check("meta bundle", status == 200, f"status {status}")
     if status == 200:
         meta = json.loads(body)
-        check("41 columns", meta["columns"]["total"] == 41,
+        check("48 columns", meta["columns"]["total"] == 48,
               f"{meta['columns']['total']} columns")
         check("6 default columns", len(meta["columns"]["defaults"]) == 6,
               f"{len(meta['columns']['defaults'])} defaults")
