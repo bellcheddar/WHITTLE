@@ -318,12 +318,29 @@ def main() -> int:
     rows += build_multi_target(conn)
     attach_predictions(conn, rows)
 
+    # Predictions already computed for these sequences must survive a rebuild.
+    # This module is also the assertions step, so it runs again after
+    # `controls_run` has filled the predicted columns; deleting and reinserting
+    # without carrying them over silently threw away the whole blind run, which
+    # is exactly what happened on the first closeout: 290 scored rows became 23
+    # and the vacuous tests went back to reporting no scrambled control.
+    existing = {r["id"]: dict(r) for r in conn.execute(
+        "SELECT id, predicted_affinity, predicted_specificity, predicted_thermo, "
+        "predicted_expression, predicted_tm FROM controls")}
+
     conn.execute("DELETE FROM controls")
     columns = ["id", "target", "name", "source_doi", "pdb_id", "sequence",
                "observed_kd", "observed_tm", "observed_expression",
                "predicted_affinity", "predicted_thermo", "predicted_specificity",
-               "predicted_expression", "kind", "blind", "assertion",
-               "assertion_passed", "notes"]
+               "predicted_expression", "predicted_tm", "kind", "blind",
+               "assertion", "assertion_passed", "notes"]
+    for rec in rows:
+        previous = existing.get(rec["id"])
+        if not previous:
+            continue
+        for key, value in previous.items():
+            if key != "id" and value is not None and rec.get(key) is None:
+                rec[key] = value
     payload = [{c: rec.get(c) for c in columns} for rec in rows]
     conn.executemany(
         f"INSERT OR REPLACE INTO controls ({', '.join(columns)}) VALUES "
@@ -333,7 +350,12 @@ def main() -> int:
     counts: dict[str, int] = {}
     for rec in rows:
         counts[rec["kind"]] = counts.get(rec["kind"], 0) + 1
-    log(f"controls: {len(rows)} control rows written {counts}")
+    carried = sum(1 for rec in rows
+                  if any(rec.get(k) is not None for k in
+                         ("predicted_affinity", "predicted_specificity",
+                          "predicted_thermo", "predicted_expression")))
+    log(f"controls: {len(rows)} control rows written {counts}; "
+        f"{carried} carry predictions from an earlier blind run")
 
     results = assertions(conn)
     for res in results:

@@ -723,3 +723,64 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 19:33 tm_model: ESM-2 embedded 88/226
 - 2026-11-13 19:34 tm_model: ESM-2 embedded 168/226
 - 2026-11-13 19:35 tm_predict: 250/367
+- 2026-11-13 19:36 tm_model: 77 embeddings cached, 40 to compute
+- 2026-11-13 19:36 tm_model: ESM-2 embedded 8/40
+- 2026-11-13 19:36 tm_predict: 367/367
+- 2026-11-13 19:36 tm_predict: TemStaPro is not installed; the cross-check column stays pending
+- 2026-11-13 19:36 tm_predict: 367 predictions in 5.2 minutes. Tm 40.1 to 94.1 deg C, mean error bar 15.2 deg C, 0 above 95 deg C (spec 9 item 3 wants none)
+- 2026-11-13 19:36 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-13 19:36 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-13 19:36 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-13 19:36 controls: 367 control rows written {'scrambled': 250, 'known': 94, 'multi_target': 23}
+- 2026-11-13 19:36 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-13 19:36 controls: PENDING control_4_trimer_TNFa: no co-folds yet
+- 2026-11-13 19:36 controls: PENDING control_4_trimer_TL1A: no co-folds yet
+- 2026-11-13 19:36 controls: PENDING control_5_scrambled_EGFR: pending the affinity axis
+- 2026-11-13 19:36 controls: PENDING control_5_scrambled_GLP1R: pending the affinity axis
+- 2026-11-13 19:36 controls: PENDING control_5_scrambled_PRLR: pending the affinity axis
+- 2026-11-13 19:36 controls: PENDING control_5_scrambled_TL1A: pending the affinity axis
+- 2026-11-13 19:36 controls: PENDING control_5_scrambled_TNFa: pending the affinity axis
+- 2026-11-13 19:36 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-13 19:36 qc_pareto: EGFR 500 rows, stored front 13, independent front 13, AGREE
+- 2026-11-13 19:36 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 19:36 qc_pareto: GLP1R 500 rows, stored front 15, independent front 15, AGREE
+- 2026-11-13 19:36 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 19:36 qc_pareto: PRLR 500 rows, stored front 19, independent front 19, AGREE
+- 2026-11-13 19:36 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 19:36 qc_pareto: TL1A 500 rows, stored front 25, independent front 25, AGREE
+- 2026-11-13 19:36 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 19:36 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
+- 2026-11-13 19:36 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-13 19:36 vacuous_tests: PENDING EGFR affinity: not computed yet
+- 2026-11-13 19:36 vacuous_tests: PASS EGFR specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS EGFR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS EGFR expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PENDING GLP1R affinity: not computed yet
+- 2026-11-13 19:36 vacuous_tests: PASS GLP1R specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS GLP1R thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS GLP1R expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PENDING PRLR affinity: not computed yet
+- 2026-11-13 19:36 vacuous_tests: PASS PRLR specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS PRLR thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS PRLR expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PENDING TL1A affinity: not computed yet
+- 2026-11-13 19:36 vacuous_tests: PASS TL1A specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS TL1A thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS TL1A expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PENDING TNFa affinity: not computed yet
+- 2026-11-13 19:36 vacuous_tests: PASS TNFa specificity: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS TNFa thermo: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:36 vacuous_tests: PASS TNFa expression: no scrambled control scored yet, so the strongest check has not run
+- 2026-11-13 19:37 references: 28 rows. 25 of 25 DOIs verified against Crossref, 3 rows cited by repository and commit instead (spec 8.3 allows both). 30 provenance entries
+- 2026-11-13 19:37 build-db: EGFR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:37 build-db: GLP1R bundle, 500 rows, 38 columns with data, 2 pending
+- 2026-11-13 19:37 build-db: PRLR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:37 build-db: TL1A bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:37 build-db: TNFa bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:37 build-db: 15 bundles, 2527 kB total
+- 2026-11-13 19:37 findings: FINDINGS.md written, 88 lines
+- 2026-11-13 19:37 cofold_bench: baseline r3 s5 st200     4.88 min  ipTM 0.4132  pTM 0.7087  pLDDT 0.8845
+- 2026-11-13 19:29 The 3.65-day Tier 2 estimate was wrong, and wrong in the way estimates usually are: it rested on one measurement that included something that happens only once. The smoke co-fold took 9.3 minutes because it downloaded about a gigabyte of model weights. Measured warm, the same complex takes 1.13 minutes.
+- 2026-11-13 19:29 Each co-folding knob measured on a real complex rather than reasoned about, and the result inverts the intuition. Recycling 3 to 1 looks like the big structural saving and is the one that must not be touched: 15 percent faster, and ipTM collapses from 0.64 to 0.24, destroying the axis Tier 2 exists to produce. Halving the sampling steps saves 32 percent for an ipTM change of -0.004. Subsampling the MSA to 256 saves 16 percent and costs 0.11 ipTM. Five samples to two saves 32 percent but throws away the sampling spread, which is itself a statement about the interface.
+- 2026-11-13 19:37 EGFR, the worst case at 745 aa, measured at 4.88 minutes against the 11 minutes a quadratic extrapolation predicted and the 35 minutes a cubic one did. The real exponent is well under 2, so the whole queue runs at full quality in hours rather than days and nothing needs cutting.
+- 2026-11-13 19:38 The closeout chain destroyed its own work: `pipeline.controls` is both the builder and the assertions step, and it deletes and rebuilds the table, so running it after `controls_run` threw away all 290 blind predictions and left 23. It now carries existing predictions across a rebuild.

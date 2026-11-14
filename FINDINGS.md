@@ -54,10 +54,10 @@ This is why the spec asks for per-region identity rather than a whole-chain numb
 | Control kind | Rows |
 |---|---|
 | known | 94 |
-| multi target | 10 |
+| multi target | 23 |
 | scrambled | 250 |
 
-- **control 3 tm sanity** (ATTENTION): no Tm predictions yet | Spec 9 item 3, pending the thermostability model.
+- **control 3 tm sanity** (PASS): 0 of 2500 predictions above 95 deg C; hottest 91.1 | Spec 9 item 3. A prediction above 95 deg C means the model is extrapolating and its error bar must reflect that.
 - **control 4 trimer TNFa** (ATTENTION): no co-folds yet | Spec 9 item 4, pending the co-folding tier.
 - **control 4 trimer TL1A** (ATTENTION): no co-folds yet | Spec 9 item 4, pending the co-folding tier.
 - **control 6 hallmark** (PASS): 0.993 agreement under the three-of-four rule the upstream column implements | Spec 9 item 6. The strict all-four call agrees for 0.928 of rows; both are reported.
