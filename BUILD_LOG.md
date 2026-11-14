@@ -1218,3 +1218,225 @@ through to the drawer.
 - 2026-11-13 22:14 calibrate:   cdr_interface_fraction    1.00 ->  1.16  AUC 0.613
 - 2026-11-13 22:14 calibrate:   hbond_per_100a2           0.75 ->  2.00  AUC 0.694
 - 2026-11-13 22:14 calibrate:   bsa_total                 0.50 ->  0.00  AUC 0.270  (AUC 0.270 below 0.55, drop it)
+- 2026-11-13 22:15 cofold: 70/250 (70 ok, 0 failed), 1.3 min for PRLR-0313, about 3.1 hours left
+- 2026-11-13 22:17 cofold: 71/250 (71 ok, 0 failed), 1.3 min for PRLR-0145, about 3.0 hours left
+- 2026-11-13 22:18 cofold: 72/250 (72 ok, 0 failed), 1.3 min for PRLR-0010, about 3.0 hours left
+- 2026-11-13 22:19 cofold: 73/250 (73 ok, 0 failed), 1.3 min for PRLR-0047, about 3.0 hours left
+- 2026-11-13 22:20 cofold: 74/250 (74 ok, 0 failed), 1.3 min for PRLR-0104, about 3.0 hours left
+- 2026-11-13 22:22 cofold: 75/250 (75 ok, 0 failed), 1.3 min for PRLR-0273, about 3.0 hours left
+- 2026-11-13 22:23 cofold: 76/250 (76 ok, 0 failed), 1.3 min for PRLR-0446, about 3.0 hours left
+- 2026-11-13 22:24 cofold: 77/250 (77 ok, 0 failed), 1.3 min for PRLR-0412, about 3.0 hours left
+- 2026-11-13 22:26 cofold: 78/250 (78 ok, 0 failed), 1.3 min for PRLR-0244, about 3.0 hours left
+- 2026-11-13 22:27 cofold: 79/250 (79 ok, 0 failed), 1.3 min for PRLR-0230, about 3.0 hours left
+- 2026-11-13 22:28 cofold: 80/250 (80 ok, 0 failed), 1.3 min for PRLR-0137, about 3.0 hours left
+- 2026-11-13 22:30 cofold: 81/250 (81 ok, 0 failed), 1.3 min for PRLR-0187, about 3.0 hours left
+- 2026-11-13 22:31 cofold: 82/250 (82 ok, 0 failed), 1.3 min for PRLR-0396, about 3.0 hours left
+- 2026-11-13 22:32 cofold: 83/250 (83 ok, 0 failed), 1.3 min for PRLR-0206, about 3.0 hours left
+- 2026-11-13 22:34 cofold: 84/250 (84 ok, 0 failed), 1.3 min for PRLR-0084, about 2.9 hours left
+- 2026-11-13 22:35 cofold: 85/250 (85 ok, 0 failed), 1.3 min for PRLR-0236, about 2.9 hours left
+- 2026-11-13 22:36 cofold: 86/250 (86 ok, 0 failed), 1.3 min for PRLR-0114, about 2.9 hours left
+- 2026-11-13 22:38 cofold: 87/250 (87 ok, 0 failed), 1.3 min for PRLR-0146, about 2.9 hours left
+- 2026-11-13 22:39 cofold: 88/250 (88 ok, 0 failed), 1.3 min for PRLR-0321, about 2.9 hours left
+- 2026-11-13 22:40 cofold: 89/250 (89 ok, 0 failed), 1.3 min for PRLR-0373, about 2.9 hours left
+- 2026-11-13 22:42 cofold: 90/250 (90 ok, 0 failed), 1.3 min for PRLR-0387, about 2.9 hours left
+- 2026-11-13 22:43 cofold: 91/250 (91 ok, 0 failed), 1.3 min for PRLR-0024, about 2.9 hours left
+- 2026-11-13 22:44 cofold: 92/250 (92 ok, 0 failed), 1.3 min for PRLR-0442, about 2.9 hours left
+- 2026-11-13 22:46 cofold: 93/250 (93 ok, 0 failed), 1.3 min for PRLR-0247, about 2.9 hours left
+- 2026-11-13 22:47 cofold: 94/250 (94 ok, 0 failed), 1.3 min for PRLR-0151, about 2.8 hours left
+- 2026-11-13 22:48 cofold: 95/250 (95 ok, 0 failed), 1.3 min for PRLR-0053, about 2.8 hours left
+- 2026-11-13 22:49 cofold: 96/250 (96 ok, 0 failed), 1.3 min for PRLR-0040, about 2.8 hours left
+- 2026-11-13 22:51 cofold: 97/250 (97 ok, 0 failed), 1.3 min for PRLR-0088, about 2.8 hours left
+- 2026-11-13 22:52 cofold: 98/250 (98 ok, 0 failed), 1.3 min for PRLR-0366, about 2.8 hours left
+- 2026-11-13 22:53 cofold: 99/250 (99 ok, 0 failed), 1.3 min for PRLR-0394, about 2.8 hours left
+- 2026-11-13 22:55 cofold: 100/250 (100 ok, 0 failed), 1.3 min for PRLR-0083, about 2.8 hours left
+- 2026-11-13 22:58 cofold: 101/250 (101 ok, 0 failed), 3.2 min for TNFa-0123, about 2.8 hours left
+- 2026-11-13 23:01 cofold: 102/250 (102 ok, 0 failed), 3.2 min for TNFa-0037, about 2.8 hours left
+- 2026-11-13 23:04 cofold: 103/250 (103 ok, 0 failed), 3.2 min for TNFa-0186, about 2.9 hours left
+- 2026-11-13 23:08 cofold: 104/250 (104 ok, 0 failed), 3.2 min for TNFa-0393, about 2.9 hours left
+- 2026-11-13 23:11 cofold: 105/250 (105 ok, 0 failed), 3.2 min for TNFa-0228, about 2.9 hours left
+- 2026-11-13 23:14 cofold: 106/250 (106 ok, 0 failed), 3.2 min for TNFa-0493, about 2.9 hours left
+- 2026-11-13 23:17 cofold: 107/250 (107 ok, 0 failed), 3.2 min for TNFa-0288, about 3.0 hours left
+- 2026-11-13 23:20 cofold: 108/250 (108 ok, 0 failed), 3.2 min for TNFa-0152, about 3.0 hours left
+- 2026-11-13 23:24 cofold: 109/250 (109 ok, 0 failed), 3.2 min for TNFa-0091, about 3.0 hours left
+- 2026-11-13 23:27 cofold: 110/250 (110 ok, 0 failed), 3.2 min for TNFa-0040, about 3.0 hours left
+- 2026-11-13 23:30 cofold: 111/250 (111 ok, 0 failed), 3.2 min for TNFa-0343, about 3.0 hours left
+- 2026-11-13 23:33 cofold: 112/250 (112 ok, 0 failed), 3.2 min for TNFa-0206, about 3.1 hours left
+- 2026-11-13 23:36 cofold: 113/250 (113 ok, 0 failed), 3.2 min for TNFa-0165, about 3.1 hours left
+- 2026-11-13 23:40 cofold: 114/250 (114 ok, 0 failed), 3.2 min for TNFa-0435, about 3.1 hours left
+- 2026-11-13 23:43 cofold: 115/250 (115 ok, 0 failed), 3.2 min for TNFa-0412, about 3.1 hours left
+- 2026-11-13 23:46 cofold: 116/250 (116 ok, 0 failed), 3.2 min for TNFa-0039, about 3.1 hours left
+- 2026-11-13 23:49 cofold: 117/250 (117 ok, 0 failed), 3.2 min for TNFa-0463, about 3.1 hours left
+- 2026-11-13 23:52 cofold: 118/250 (118 ok, 0 failed), 3.2 min for TNFa-0326, about 3.1 hours left
+- 2026-11-13 23:56 cofold: 119/250 (119 ok, 0 failed), 3.2 min for TNFa-0063, about 3.1 hours left
+- 2026-11-13 23:59 cofold: 120/250 (120 ok, 0 failed), 3.2 min for TNFa-0319, about 3.2 hours left
+- 2026-11-14 00:02 cofold: 121/250 (121 ok, 0 failed), 3.2 min for TNFa-0131, about 3.2 hours left
+- 2026-11-14 00:05 cofold: 122/250 (122 ok, 0 failed), 3.2 min for TNFa-0318, about 3.2 hours left
+- 2026-11-14 00:08 cofold: 123/250 (123 ok, 0 failed), 3.2 min for TNFa-0090, about 3.2 hours left
+- 2026-11-14 00:12 cofold: 124/250 (124 ok, 0 failed), 3.2 min for TNFa-0475, about 3.2 hours left
+- 2026-11-14 00:15 cofold: 125/250 (125 ok, 0 failed), 3.2 min for TNFa-0071, about 3.2 hours left
+- 2026-11-14 00:18 cofold: 126/250 (126 ok, 0 failed), 3.2 min for TNFa-0252, about 3.2 hours left
+- 2026-11-14 00:21 cofold: 127/250 (127 ok, 0 failed), 3.2 min for TNFa-0470, about 3.2 hours left
+- 2026-11-14 00:24 cofold: 128/250 (128 ok, 0 failed), 3.2 min for TNFa-0238, about 3.2 hours left
+- 2026-11-14 00:27 cofold: 129/250 (129 ok, 0 failed), 3.2 min for TNFa-0253, about 3.2 hours left
+- 2026-11-14 00:31 cofold: 130/250 (130 ok, 0 failed), 3.2 min for TNFa-0220, about 3.2 hours left
+- 2026-11-14 00:34 cofold: 131/250 (131 ok, 0 failed), 3.2 min for TNFa-0102, about 3.2 hours left
+- 2026-11-14 00:37 cofold: 132/250 (132 ok, 0 failed), 3.1 min for TNFa-0242, about 3.2 hours left
+- 2026-11-14 00:40 cofold: 133/250 (133 ok, 0 failed), 3.2 min for TNFa-0111, about 3.2 hours left
+- 2026-11-14 00:43 cofold: 134/250 (134 ok, 0 failed), 3.2 min for TNFa-0007, about 3.2 hours left
+- 2026-11-14 00:47 cofold: 135/250 (135 ok, 0 failed), 3.1 min for TNFa-0166, about 3.2 hours left
+- 2026-11-14 00:50 cofold: 136/250 (136 ok, 0 failed), 3.2 min for TNFa-0095, about 3.2 hours left
+- 2026-11-14 00:53 cofold: 137/250 (137 ok, 0 failed), 3.2 min for TNFa-0380, about 3.1 hours left
+- 2026-11-14 00:56 cofold: 138/250 (138 ok, 0 failed), 3.2 min for TNFa-0483, about 3.1 hours left
+- 2026-11-14 00:59 cofold: 139/250 (139 ok, 0 failed), 3.1 min for TNFa-0117, about 3.1 hours left
+- 2026-11-14 01:02 cofold: 140/250 (140 ok, 0 failed), 3.2 min for TNFa-0057, about 3.1 hours left
+- 2026-11-14 01:05 cofold: 141/250 (141 ok, 0 failed), 3.1 min for TNFa-0337, about 3.1 hours left
+- 2026-11-14 01:09 cofold: 142/250 (142 ok, 0 failed), 3.2 min for TNFa-0054, about 3.1 hours left
+- 2026-11-14 01:12 cofold: 143/250 (143 ok, 0 failed), 3.2 min for TNFa-0285, about 3.1 hours left
+- 2026-11-14 01:15 cofold: 144/250 (144 ok, 0 failed), 3.2 min for TNFa-0454, about 3.1 hours left
+- 2026-11-14 01:18 cofold: 145/250 (145 ok, 0 failed), 3.1 min for TNFa-0459, about 3.1 hours left
+- 2026-11-14 01:21 cofold: 146/250 (146 ok, 0 failed), 3.1 min for TNFa-0408, about 3.1 hours left
+- 2026-11-14 01:24 cofold: 147/250 (147 ok, 0 failed), 3.2 min for TNFa-0177, about 3.0 hours left
+- 2026-11-14 01:28 cofold: 148/250 (148 ok, 0 failed), 3.1 min for TNFa-0476, about 3.0 hours left
+- 2026-11-14 01:31 cofold: 149/250 (149 ok, 0 failed), 3.2 min for TNFa-0259, about 3.0 hours left
+- 2026-11-14 01:34 cofold: 150/250 (150 ok, 0 failed), 3.1 min for TNFa-0158, about 3.0 hours left
+- 2026-11-14 01:38 cofold: 151/250 (151 ok, 0 failed), 3.8 min for TL1A-0326, about 3.0 hours left
+- 2026-11-14 01:42 cofold: 152/250 (152 ok, 0 failed), 3.8 min for TL1A-0185, about 3.0 hours left
+- 2026-11-14 01:45 cofold: 153/250 (153 ok, 0 failed), 3.8 min for TL1A-0121, about 3.0 hours left
+- 2026-11-14 01:49 cofold: 154/250 (154 ok, 0 failed), 3.8 min for TL1A-0343, about 3.0 hours left
+- 2026-11-14 01:53 cofold: 155/250 (155 ok, 0 failed), 3.8 min for TL1A-0173, about 3.0 hours left
+- 2026-11-14 01:57 cofold: 156/250 (156 ok, 0 failed), 3.8 min for TL1A-0280, about 2.9 hours left
+- 2026-11-14 02:01 cofold: 157/250 (157 ok, 0 failed), 3.8 min for TL1A-0081, about 2.9 hours left
+- 2026-11-14 02:04 cofold: 158/250 (158 ok, 0 failed), 3.8 min for TL1A-0369, about 2.9 hours left
+- 2026-11-14 02:08 cofold: 159/250 (159 ok, 0 failed), 3.8 min for TL1A-0433, about 2.9 hours left
+- 2026-11-14 02:12 cofold: 160/250 (160 ok, 0 failed), 3.8 min for TL1A-0336, about 2.9 hours left
+- 2026-11-14 02:16 cofold: 161/250 (161 ok, 0 failed), 3.8 min for TL1A-0377, about 2.9 hours left
+- 2026-11-14 02:20 cofold: 162/250 (162 ok, 0 failed), 3.8 min for TL1A-0485, about 2.9 hours left
+- 2026-11-14 02:24 cofold: 163/250 (163 ok, 0 failed), 3.8 min for TL1A-0451, about 2.8 hours left
+- 2026-11-14 02:27 cofold: 164/250 (164 ok, 0 failed), 3.8 min for TL1A-0220, about 2.8 hours left
+- 2026-11-14 02:31 cofold: 165/250 (165 ok, 0 failed), 3.8 min for TL1A-0169, about 2.8 hours left
+- 2026-11-14 02:35 cofold: 166/250 (166 ok, 0 failed), 3.9 min for TL1A-0138, about 2.8 hours left
+- 2026-11-14 02:39 cofold: 167/250 (167 ok, 0 failed), 3.8 min for TL1A-0341, about 2.8 hours left
+- 2026-11-14 02:43 cofold: 168/250 (168 ok, 0 failed), 3.8 min for TL1A-0077, about 2.8 hours left
+- 2026-11-14 02:46 cofold: 169/250 (169 ok, 0 failed), 3.8 min for TL1A-0429, about 2.7 hours left
+- 2026-11-14 02:50 cofold: 170/250 (170 ok, 0 failed), 3.8 min for TL1A-0214, about 2.7 hours left
+- 2026-11-14 02:54 cofold: 171/250 (171 ok, 0 failed), 3.8 min for TL1A-0334, about 2.7 hours left
+- 2026-11-14 02:58 cofold: 172/250 (172 ok, 0 failed), 3.8 min for TL1A-0238, about 2.7 hours left
+- 2026-11-14 03:02 cofold: 173/250 (173 ok, 0 failed), 3.8 min for TL1A-0104, about 2.7 hours left
+- 2026-11-14 03:06 cofold: 174/250 (174 ok, 0 failed), 3.8 min for TL1A-0193, about 2.6 hours left
+- 2026-11-14 03:09 cofold: 175/250 (175 ok, 0 failed), 3.8 min for TL1A-0419, about 2.6 hours left
+- 2026-11-14 03:13 cofold: 176/250 (176 ok, 0 failed), 3.8 min for TL1A-0344, about 2.6 hours left
+- 2026-11-14 03:17 cofold: 177/250 (177 ok, 0 failed), 3.8 min for TL1A-0405, about 2.6 hours left
+- 2026-11-14 03:21 cofold: 178/250 (178 ok, 0 failed), 3.8 min for TL1A-0317, about 2.5 hours left
+- 2026-11-14 03:25 cofold: 179/250 (179 ok, 0 failed), 3.8 min for TL1A-0443, about 2.5 hours left
+- 2026-11-14 03:28 cofold: 180/250 (180 ok, 0 failed), 3.8 min for TL1A-0153, about 2.5 hours left
+- 2026-11-14 03:32 cofold: 181/250 (181 ok, 0 failed), 3.8 min for TL1A-0229, about 2.5 hours left
+- 2026-11-14 03:36 cofold: 182/250 (182 ok, 0 failed), 3.8 min for TL1A-0094, about 2.4 hours left
+- 2026-11-14 03:40 cofold: 183/250 (183 ok, 0 failed), 3.9 min for TL1A-0417, about 2.4 hours left
+- 2026-11-14 03:44 cofold: 184/250 (184 ok, 0 failed), 3.8 min for TL1A-0008, about 2.4 hours left
+- 2026-11-14 03:48 cofold: 185/250 (185 ok, 0 failed), 3.8 min for TL1A-0483, about 2.4 hours left
+- 2026-11-14 03:51 cofold: 186/250 (186 ok, 0 failed), 3.8 min for TL1A-0187, about 2.3 hours left
+- 2026-11-14 03:55 cofold: 187/250 (187 ok, 0 failed), 3.8 min for TL1A-0209, about 2.3 hours left
+- 2026-11-14 03:59 cofold: 188/250 (188 ok, 0 failed), 3.8 min for TL1A-0402, about 2.3 hours left
+- 2026-11-14 04:03 cofold: 189/250 (189 ok, 0 failed), 3.8 min for TL1A-0180, about 2.3 hours left
+- 2026-11-14 04:07 cofold: 190/250 (190 ok, 0 failed), 3.8 min for TL1A-0319, about 2.2 hours left
+- 2026-11-14 04:10 cofold: 191/250 (191 ok, 0 failed), 3.8 min for TL1A-0354, about 2.2 hours left
+- 2026-11-14 04:14 cofold: 192/250 (192 ok, 0 failed), 3.8 min for TL1A-0378, about 2.2 hours left
+- 2026-11-14 04:18 cofold: 193/250 (193 ok, 0 failed), 3.8 min for TL1A-0026, about 2.1 hours left
+- 2026-11-14 04:22 cofold: 194/250 (194 ok, 0 failed), 3.8 min for TL1A-0233, about 2.1 hours left
+- 2026-11-14 04:26 cofold: 195/250 (195 ok, 0 failed), 3.8 min for TL1A-0286, about 2.1 hours left
+- 2026-11-14 04:30 cofold: 196/250 (196 ok, 0 failed), 3.8 min for TL1A-0213, about 2.0 hours left
+- 2026-11-14 04:33 cofold: 197/250 (197 ok, 0 failed), 3.8 min for TL1A-0456, about 2.0 hours left
+- 2026-11-14 04:37 cofold: 198/250 (198 ok, 0 failed), 3.8 min for TL1A-0312, about 2.0 hours left
+- 2026-11-14 04:41 cofold: 199/250 (199 ok, 0 failed), 3.8 min for TL1A-0351, about 2.0 hours left
+- 2026-11-14 04:45 cofold: 200/250 (200 ok, 0 failed), 3.8 min for TL1A-0166, about 1.9 hours left
+- 2026-11-14 04:50 cofold: 201/250 (201 ok, 0 failed), 4.9 min for EGFR-0068, about 1.9 hours left
+- 2026-11-14 04:55 cofold: 202/250 (202 ok, 0 failed), 4.9 min for EGFR-0256, about 1.9 hours left
+- 2026-11-14 04:59 cofold: 203/250 (203 ok, 0 failed), 4.8 min for EGFR-0398, about 1.8 hours left
+- 2026-11-14 05:04 cofold: 204/250 (204 ok, 0 failed), 4.8 min for EGFR-0059, about 1.8 hours left
+- 2026-11-14 05:09 cofold: 205/250 (205 ok, 0 failed), 4.9 min for EGFR-0409, about 1.8 hours left
+- 2026-11-14 05:14 cofold: 206/250 (206 ok, 0 failed), 4.9 min for EGFR-0450, about 1.7 hours left
+- 2026-11-14 05:19 cofold: 207/250 (207 ok, 0 failed), 4.8 min for EGFR-0300, about 1.7 hours left
+- 2026-11-14 05:24 cofold: 208/250 (208 ok, 0 failed), 4.9 min for EGFR-0082, about 1.7 hours left
+- 2026-11-14 05:28 cofold: 209/250 (209 ok, 0 failed), 4.8 min for EGFR-0500, about 1.6 hours left
+- 2026-11-14 05:33 cofold: 210/250 (210 ok, 0 failed), 4.9 min for EGFR-0212, about 1.6 hours left
+- 2026-11-14 05:38 cofold: 211/250 (211 ok, 0 failed), 4.8 min for EGFR-0097, about 1.6 hours left
+- 2026-11-14 05:43 cofold: 212/250 (212 ok, 0 failed), 4.8 min for EGFR-0002, about 1.5 hours left
+- 2026-11-14 05:48 cofold: 213/250 (213 ok, 0 failed), 4.9 min for EGFR-0360, about 1.5 hours left
+- 2026-11-14 05:53 cofold: 214/250 (214 ok, 0 failed), 4.9 min for EGFR-0069, about 1.5 hours left
+- 2026-11-14 05:57 cofold: 215/250 (215 ok, 0 failed), 4.8 min for EGFR-0121, about 1.4 hours left
+- 2026-11-14 06:02 cofold: 216/250 (216 ok, 0 failed), 4.8 min for EGFR-0148, about 1.4 hours left
+- 2026-11-14 06:07 cofold: 217/250 (217 ok, 0 failed), 4.8 min for EGFR-0344, about 1.4 hours left
+- 2026-11-14 06:12 cofold: 218/250 (218 ok, 0 failed), 4.9 min for EGFR-0074, about 1.3 hours left
+- 2026-11-14 06:17 cofold: 219/250 (219 ok, 0 failed), 4.8 min for EGFR-0355, about 1.3 hours left
+- 2026-11-14 06:21 cofold: 220/250 (220 ok, 0 failed), 4.8 min for EGFR-0063, about 1.3 hours left
+- 2026-11-14 06:26 cofold: 221/250 (221 ok, 0 failed), 4.8 min for EGFR-0219, about 1.2 hours left
+- 2026-11-14 06:31 cofold: 222/250 (222 ok, 0 failed), 4.8 min for EGFR-0225, about 1.2 hours left
+- 2026-11-14 06:36 cofold: 223/250 (223 ok, 0 failed), 4.8 min for EGFR-0065, about 1.2 hours left
+- 2026-11-14 06:41 cofold: 224/250 (224 ok, 0 failed), 4.9 min for EGFR-0313, about 1.1 hours left
+- 2026-11-14 06:46 cofold: 225/250 (225 ok, 0 failed), 4.8 min for EGFR-0085, about 1.1 hours left
+- 2026-11-14 06:50 cofold: 226/250 (226 ok, 0 failed), 4.8 min for EGFR-0315, about 1.0 hours left
+- 2026-11-14 06:55 cofold: 227/250 (227 ok, 0 failed), 4.8 min for EGFR-0303, about 1.0 hours left
+- 2026-11-14 07:00 cofold: 228/250 (228 ok, 0 failed), 4.9 min for EGFR-0278, about 1.0 hours left
+- 2026-11-14 07:05 cofold: 229/250 (229 ok, 0 failed), 4.8 min for EGFR-0376, about 0.9 hours left
+- 2026-11-14 07:10 cofold: 230/250 (230 ok, 0 failed), 4.8 min for EGFR-0162, about 0.9 hours left
+- 2026-11-14 07:15 cofold: 231/250 (231 ok, 0 failed), 4.9 min for EGFR-0018, about 0.8 hours left
+- 2026-11-14 07:19 cofold: 232/250 (232 ok, 0 failed), 4.9 min for EGFR-0054, about 0.8 hours left
+- 2026-11-14 07:24 cofold: 233/250 (233 ok, 0 failed), 4.8 min for EGFR-0445, about 0.8 hours left
+- 2026-11-14 07:29 cofold: 234/250 (234 ok, 0 failed), 4.9 min for EGFR-0026, about 0.7 hours left
+- 2026-11-14 07:34 cofold: 235/250 (235 ok, 0 failed), 4.8 min for EGFR-0111, about 0.7 hours left
+- 2026-11-14 07:39 cofold: 236/250 (236 ok, 0 failed), 4.9 min for EGFR-0203, about 0.6 hours left
+- 2026-11-14 07:44 cofold: 237/250 (237 ok, 0 failed), 4.9 min for EGFR-0271, about 0.6 hours left
+- 2026-11-14 07:49 cofold: 238/250 (238 ok, 0 failed), 4.8 min for EGFR-0144, about 0.5 hours left
+- 2026-11-14 07:53 cofold: 239/250 (239 ok, 0 failed), 4.8 min for EGFR-0091, about 0.5 hours left
+- 2026-11-14 07:58 cofold: 240/250 (240 ok, 0 failed), 4.8 min for EGFR-0340, about 0.5 hours left
+- 2026-11-14 08:03 cofold: 241/250 (241 ok, 0 failed), 4.8 min for EGFR-0149, about 0.4 hours left
+- 2026-11-14 08:08 cofold: 242/250 (242 ok, 0 failed), 4.8 min for EGFR-0090, about 0.4 hours left
+- 2026-11-14 08:13 cofold: 243/250 (243 ok, 0 failed), 4.9 min for EGFR-0156, about 0.3 hours left
+- 2026-11-14 08:17 cofold: 244/250 (244 ok, 0 failed), 4.8 min for EGFR-0487, about 0.3 hours left
+- 2026-11-14 08:22 cofold: 245/250 (245 ok, 0 failed), 4.9 min for EGFR-0477, about 0.2 hours left
+- 2026-11-14 08:27 cofold: 246/250 (246 ok, 0 failed), 4.8 min for EGFR-0280, about 0.2 hours left
+- 2026-11-14 08:32 cofold: 247/250 (247 ok, 0 failed), 4.8 min for EGFR-0287, about 0.1 hours left
+- 2026-11-14 08:37 cofold: 248/250 (248 ok, 0 failed), 4.9 min for EGFR-0129, about 0.1 hours left
+- 2026-11-14 08:42 cofold: 249/250 (249 ok, 0 failed), 4.8 min for EGFR-0092, about 0.0 hours left
+- 2026-11-14 08:47 cofold: 250/250 (250 ok, 0 failed), 4.9 min for EGFR-0070, about 0.0 hours left
+- 2026-11-14 08:47 cofold: finished 250 ok, 0 failed, in 11.7 hours
+- 2026-11-14 08:51 interface: EGFR published 50 co-folded complexes for the drawer, the highest-ipTM sample of each
+- 2026-11-14 08:51 interface: EGFR 250 samples across 50 candidates, 6 epitope bins
+- 2026-11-14 08:52 cofold: boltz-community 2.13.0, torch 2.15.0, MPS True
+- 2026-11-14 08:52 cofold: 30 scrambled control complexes queued, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR; full quality, no reduced settings
+- 2026-11-14 08:55 cofold: 1/30 (1 ok, 0 failed), 3.2 min for SCRAM-TNFa-001, about 1.5 hours left
+- 2026-11-14 08:58 cofold: 2/30 (2 ok, 0 failed), 3.1 min for SCRAM-TNFa-002, about 1.5 hours left
+- 2026-11-14 08:59 render_diagram: mmdc returned 1: ppeteer-core/lib/esm/puppeteer/api/Page.js:450:20)
+    at async renderMermaid (file:///Users/dellboy/Documents/Vibe_Coding/WHITTLE/node_modules/@mermaid-js/mermaid-cli/src/index.js:250:22)
+    at fromText (/Users/dellboy/Documents/Vibe_Coding/WHITTLE/node_modules/mermaid/dist/mermaid.js:192401:21)
+
+
+- 2026-11-14 08:59 render_diagram: app/static/img/workflow.svg written, 35 kB, 7 reference anchors
+- 2026-11-14 09:00 render_diagram: app/static/img/workflow.svg written, 36 kB, 7 reference anchors
+- 2026-11-14 09:01 render_diagram: app/static/img/workflow.svg written, 36 kB, 7 reference anchors
+- 2026-11-14 09:01 cofold: 3/30 (3 ok, 0 failed), 3.1 min for SCRAM-TNFa-003, about 1.4 hours left
+- 2026-11-14 09:04 cofold: 4/30 (4 ok, 0 failed), 3.2 min for SCRAM-TNFa-004, about 1.4 hours left
+- 2026-11-14 09:04 build-db: EGFR bundle, 500 rows, 40 columns with data, 7 pending
+- 2026-11-14 09:04 build-db: GLP1R bundle, 500 rows, 45 columns with data, 2 pending
+- 2026-11-14 09:04 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:04 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:04 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:04 build-db: 15 bundles, 2910 kB total
+- 2026-11-14 09:07 references: 32 rows. 29 of 29 DOIs verified against Crossref, 3 rows cited by repository and commit instead (spec 8.3 allows both). 30 provenance entries
+- 2026-11-14 09:07 cofold: 5/30 (5 ok, 0 failed), 3.2 min for SCRAM-TNFa-005, about 1.3 hours left
+- 2026-11-14 09:07 build-db: EGFR bundle, 500 rows, 40 columns with data, 7 pending
+- 2026-11-14 09:07 build-db: GLP1R bundle, 500 rows, 45 columns with data, 2 pending
+- 2026-11-14 09:07 build-db: PRLR bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:07 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:07 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
+- 2026-11-14 09:07 build-db: 15 bundles, 2912 kB total
+- 2026-11-14 09:08 render_diagram: app/static/img/workflow.svg written, 36 kB, 7 reference anchors
+- 2026-11-14 09:08 render_diagram: app/static/img/workflow.svg written, 37 kB, 7 reference anchors
+- 2026-11-14 09:09 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors
+- 2026-11-14 09:10 cofold: 6/30 (6 ok, 0 failed), 3.1 min for SCRAM-TNFa-006, about 1.3 hours left
+- 2026-11-14 09:11 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors, 4 label boxes widened for Inter
+- 2026-11-14 09:11 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors, 18 label boxes widened for Inter
+- 2026-11-14 09:11 render_diagram: app/static/img/workflow.svg written, 99 kB, 7 reference anchors, 18 label boxes widened for Inter
+- 2026-11-14 09:12 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors, 18 label boxes widened for Inter
+- 2026-11-14 09:13 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors, 31 label boxes widened for Inter
+- 2026-11-14 09:14 cofold: 7/30 (7 ok, 0 failed), 3.2 min for SCRAM-TNFa-007, about 1.2 hours left

@@ -47,3 +47,8 @@ package-lock.json
 tmp/
 *.log
 tests/qc_screenshots/
+
+# Generated at diagram-render time from the self-hosted Inter woff2: 64 kB of
+# base64 that would churn in every diff for no benefit. tools/render_diagram.py
+# writes it on each run.
+docs/mermaid-fonts.css

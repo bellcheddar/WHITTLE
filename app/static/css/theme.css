@@ -633,20 +633,88 @@ main {
 .reftable th { color: var(--ink-3); font-weight: 600; font-size: 11px; white-space: nowrap; }
 .reftable td.wrap { white-space: normal; }
 /* The workflow diagram is a figure, not prose: let it use the full card width
-   rather than being squeezed into the 760px reading measure. */
-.diagram {
-  max-width: min(1100px, 100%);
-  width: min(1100px, 100%);
-  overflow-x: auto;
-  margin: 8px 0 18px;
+   rather than being squeezed into the 760px reading measure.
+
+   The source diagram renders at about 912 x 1460. Letting it fill a 1240px box
+   draws it slightly ABOVE native size, which is the point: the previous layout
+   was 1729px wide, and scaling that into 1100px put 13px labels on screen at
+   roughly 8px. A tall diagram at full size reads; a wide one scaled down does
+   not. See docs/workflow.mmd. */
+.figure { margin: 10px 0 22px; }
+.figure figcaption {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  line-height: 1.55;
+  max-width: 760px;
+  margin-top: 10px;
+  padding-left: 2px;
+  border-top: 1px solid var(--rule);
+  padding-top: 8px;
 }
-.diagram svg { width: 100%; max-width: 1100px; height: auto; display: block; }
+.diagram {
+  max-width: min(1180px, 100%);
+  width: min(1180px, 100%);
+  overflow-x: auto;
+  background: var(--accent-wash);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 14px;
+}
+.diagram svg { width: 100%; max-width: 1120px; height: auto; display: block; margin: 0 auto; }
+.diagram a:hover rect { stroke: var(--accent); stroke-width: 2px; }
 @media (max-width: 900px) {
   /* At phone width the diagram scrolls inside its own box rather than forcing
      the page sideways (DESIGN 6). */
-  .diagram { overflow-x: auto; }
-  .diagram svg { width: 820px; max-width: none; }
+  .diagram { overflow-x: auto; padding: 12px 8px; }
+  .diagram svg { width: 720px; max-width: none; }
 }
+
+/* The parameter glossary is reference material, not reading matter: it needs
+   the full card width and five columns, so it sits outside .prose. */
+.widetable {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0 0 20px;
+}
+.widetable .reftable { min-width: 940px; }
+/* `auto` is for a table that fits most of the time and only needs the scroll
+   container at phone width, so it is not forced to a minimum. */
+.widetable.auto { margin: 0 0 12px; }
+.widetable.auto .reftable { min-width: 0; }
+h3.paramgroup {
+  font-size: 13px;
+  color: var(--ink);
+  margin: 24px 0 7px;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+h3.paramgroup span {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.paramtable td { font-size: 11.5px; line-height: 1.55; }
+.paramtable td:first-child { white-space: normal; }
+.paramtable td strong { color: var(--ink); display: block; }
+.paramtable .unit {
+  display: block;
+  font-size: 10px;
+  color: var(--ink-3);
+}
+.paramtable tr:target { background: var(--accent-wash); }
+.paramtable tr:target td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.srclink {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--ink-3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 5px;
+  margin-top: 4px;
+  text-decoration: none;
+}
+.srclink:hover { color: var(--accent); border-color: var(--accent); }
 
 /* --------------------------------------------------------- 6. responsive */
 

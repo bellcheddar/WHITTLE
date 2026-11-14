@@ -120,6 +120,28 @@ tools:
     doi: 10.12688/f1000research.7931.1
     title: "FreeSASA: An open source C library for solvent accessible surface area calculations"
 
+  - key: plip
+    role: Protein-protein interaction profiling at the co-folded interface
+    doi: 10.1093/nar/gkab294
+    title: "PLIP 2021: expanding the scope of the protein-ligand interaction profiler to DNA and RNA"
+    repo: https://github.com/pharmai/plip
+    licence: GPL-2.0
+
+  - key: plip_original
+    role: The original protein-ligand interaction profiler
+    doi: 10.1093/nar/gkv315
+    title: "PLIP: fully automated protein-ligand interaction profiler"
+
+  - key: lawrence_colman
+    role: Interface shape complementarity
+    doi: 10.1006/jmbi.1993.1648
+    title: "Shape complementarity at protein/protein interfaces"
+
+  - key: derringer_suich
+    role: Multi-objective desirability scoring
+    doi: 10.1080/00224065.1980.11980968
+    title: "Simultaneous Optimization of Several Response Variables"
+
   - key: molstar
     role: In-browser structure viewer
     doi: 10.1093/nar/gkab314

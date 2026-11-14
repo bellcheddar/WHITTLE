@@ -1,52 +1,53 @@
 %% WHITTLE workflow. Rendered to a static SVG at build time by
-%% tools/render_diagram.py; the Mermaid runtime is never loaded on the droplet
-%% (spec 8.3). Each node links into its reference row on the About tab.
+%% tools/render_diagram.py; the Mermaid runtime is never loaded on the
+%% droplet (spec 8.3). Each node links into its reference row on About.
+%% Shape matters: an earlier version fanned Tier 1 into four side-by-side
+%% nodes, giving a 1729 x 1146 SVG whose 13px labels landed on screen at
+%% about 8px once scaled into the card. The widest row here is three nodes
+%% and the diagram runs tall instead, so it renders near its native size.
 flowchart TD
-    IN["2,500 candidate VHH sequences<br/>500 per target, 5 targets"]:::input
+    IN["2,500 candidate VHH sequences<br/>500 per target &middot; five targets"]:::input
 
     IN --> T0
 
     subgraph T0G ["Tier 0 &middot; sequence &middot; minutes"]
-        T0["IMGT numbering and CDRs<br/>camelid hallmark tetrad<br/>liability motifs &middot; charge and pI<br/>disulfides &middot; CDR3 clustering"]:::tier
+        T0["IMGT numbering and CDRs<br/>camelid hallmark tetrad<br/>liability motifs &middot; charge and pI &middot; disulfides<br/>CDR3 clustering at 90 per cent"]:::tier
     end
 
     T0 --> T1
 
-    subgraph T1G ["Tier 1 &middot; structure &middot; about an hour per target"]
-        T1["NanoBodyBuilder2 model<br/>OpenMM refinement"]:::tier
-        T1 --> T1a["TNP developability<br/>PSH &middot; PPC &middot; PNC"]:::tier
-        T1 --> T1b["surface patches &middot; SWI<br/>Protein-Sol"]:::tier
-        T1 --> T1c["AbLang2 nativeness<br/>OASis humanness"]:::tier
-        T1 --> T1d["nearest experimental neighbour<br/>SAbDab-nano &middot; TM-align"]:::tier
+    subgraph T1G ["Tier 1 &middot; structure and developability &middot; about an hour per target"]
+        T1["NanoBodyBuilder2 model, OpenMM refinement"]:::tier
+        T1 --> T1a["TNP developability<br/>PSH &middot; PPC &middot; PNC<br/>surface patches<br/>SWI &middot; Protein-Sol"]:::tier
+        T1 --> T1c["AbLang2 nativeness<br/>OASis humanness<br/>nearest experimental<br/>neighbour, TM-align"]:::tier
+        T1 --> TM["WHITTLE apparent-Tm model<br/>650 labelled nanobodies<br/>grouped nested CV, per-row error bar<br/>TemStaPro cross-check"]:::model
     end
 
-    T1 --> TM
+    T1a --> R1
+    T1c --> R1
+    TM --> R1
 
-    subgraph TMG ["Tier 1b &middot; thermostability"]
-        TM["WHITTLE Tm model<br/>650 labelled nanobodies<br/>grouped nested CV<br/>per-row error bar"]:::model
+    R1["Tier 1 ranking, within-target percentiles<br/>on specificity, thermostability, expression<br/><b>the top 50 per target go forward</b>"]:::rank
+
+    R1 --> T2
+
+    subgraph T2G ["Tier 2 &middot; co-folding"]
+        T2["boltz-community, five seeds each<br/>250 complexes, about 14 hours<br/>cheapest target first, GLP1R to EGFR"]:::tier
+        T2 --> T2a["ipTM, pose agreement across seeds<br/>PRODIGY delta G, buried area<br/>epitope bin, shape complementarity<br/>CDR paratope share<br/>PLIP contacts, H-bond density"]:::tier
     end
 
-    T1a --> RANK
-    T1b --> RANK
-    T1c --> RANK
-    T1d --> RANK
-    TM --> RANK
+    T2a -.->|"weak prior, never an<br/>affinity measurement"| R2
 
-    T1 --> T2
-
-    subgraph T2G ["Tier 2 &middot; co-folding &middot; days &middot; top 20 per target"]
-        T2["boltz-community<br/>cheapest first:<br/>GLP1R &rarr; PRLR &rarr; TNFa &rarr; TL1A &rarr; EGFR"]:::tier
-        T2 --> T2a["PRODIGY delta G &middot; buried area<br/>per subunit for the trimers<br/>epitope binning"]:::tier
+    subgraph CG ["Controls"]
+        CTRL["Run through the same code<br/>50 CDR-shuffled sequences per target<br/>each co-folded beside its own parent<br/>held-out Tm nanobodies, known binders"]:::control
+        CTRL --> CAL["Calibration: how often does a real<br/>candidate beat its own shuffled twin?<br/>An axis that cannot separate the two<br/>is reported, not quietly kept"]:::control
     end
 
-    T2a -.->|"weak prior, not an<br/>affinity measurement"| RANK
+    CAL -.-> R2
 
-    RANK["Within-target percentiles<br/>Pareto non-dominated front<br/>Derringer-Suich desirability<br/>axis correlation matrix"]:::rank
+    R2["Final ranking<br/>Pareto non-dominated front<br/>Derringer-Suich desirability<br/>axis correlation matrix"]:::rank
 
-    RANK --> OUT["About 20 candidates per target<br/>five independent rankings<br/>never pooled"]:::output
-
-    CTRL["Control set, run blind<br/>held-out Tm nanobodies<br/>known EGFR and TNFa binders<br/>50 CDR-shuffled per target"]:::control
-    CTRL -.-> RANK
+    R2 --> OUT["24 candidates per target<br/>five independent rankings, never pooled"]:::output
 
     classDef input fill:#F5F8FF,stroke:#3457A6,stroke-width:2px,color:#111827
     classDef tier fill:#FFFFFF,stroke:#DDE2EB,stroke-width:1px,color:#434C5A
@@ -58,9 +59,7 @@ flowchart TD
     click T0 "#ref-anarci" "ANARCI"
     click T1 "#ref-immunebuilder" "ImmuneBuilder"
     click T1a "#ref-tnp" "TNP"
-    click T1b "#ref-swi" "SWI and Protein-Sol"
     click T1c "#ref-ablang2" "AbLang2"
-    click T1d "#ref-sabdab_nano" "SAbDab-nano"
     click TM "#ref-nanomelt_method" "the thermostability labels"
     click T2 "#ref-boltz2" "boltz-community"
     click T2a "#ref-prodigy" "PRODIGY"

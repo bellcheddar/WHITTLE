@@ -5,35 +5,119 @@
   <div class="prose">
     <h1 style="font-size:20px;margin:0 0 12px;color:var(--ink)">About and methods</h1>
 
-    <h2 id="what">What WHITTLE does</h2>
+    <h2 id="what">What WHITTLE does, in plain terms</h2>
     <p>
-      WHITTLE takes 2,500 candidate nanobody sequences, 500 against each of five
-      targets, and triages them down to a defensible shortlist of about twenty per
-      target by running the cheapest checks first. Each candidate is scored on four
-      axes: binding, non-specific binding, thermostability and expression. Every
-      score is reported as a percentile within its own target, because the five
-      targets are different sizes, different constructs and different libraries, and
-      a pooled league table would be meaningless. Everything here is predicted or
-      estimated from sequence and from predicted structure: nothing on this site is
-      a measurement.
+      A nanobody is the smallest piece of an antibody that still binds something
+      on its own. Camelids make them naturally, they are about a tenth the size
+      of a normal antibody, and they are easy to produce, which is why they turn
+      up in diagnostics, imaging and increasingly in medicines.
     </p>
+    <p>
+      Designing one is now cheap. Testing one is not. A single candidate has to
+      be turned into DNA, expressed in cells, purified and measured, and that is
+      days of work and real money for each one. So when a design campaign hands
+      you 500 candidates per target, the expensive question is not which one is
+      best. It is which twenty or so are worth spending the money on.
+    </p>
+    <p>
+      WHITTLE answers that question for 2,500 candidates against five targets,
+      500 each, and narrows them to 24 per target. It does this by running the
+      cheap checks on everything and the expensive checks only on what survives.
+      Each candidate is judged on four things:
+    </p>
+    <table class="reftable">
+      <caption class="sr-only">The four axes in plain terms</caption>
+      <thead><tr><th>Axis</th><th>The question it asks</th><th>Confidence</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Binding</strong></td>
+            <td>Does it look like it will stick to the thing it was designed for?</td>
+            <td><span class="chip warn">weak</span></td></tr>
+        <tr><td><strong>Non-specific binding</strong></td>
+            <td>Will it also stick to everything else it meets?</td>
+            <td><span class="chip good">strongest</span></td></tr>
+        <tr><td><strong>Thermostability</strong></td>
+            <td>Will it survive being warmed, frozen, shipped and stored?</td>
+            <td><span class="chip">moderate</span></td></tr>
+        <tr><td><strong>Expression</strong></td>
+            <td>Can it actually be made, and will it stay dissolved?</td>
+            <td><span class="chip">moderate</span></td></tr>
+      </tbody>
+    </table>
+    <p>
+      The honest framing is that WHITTLE is <strong>good at throwing things
+      away</strong> and only <strong>suggestive about ranking</strong>. A
+      candidate at the bottom of a target's list has something specific and
+      identifiable wrong with it. A candidate at the top has nothing obviously
+      wrong with it, which is a weaker statement and a different one.
+    </p>
+
+    <h2 id="reading">How to read the numbers</h2>
+    <ul>
+      <li><strong>Nothing here is measured.</strong> Every value on this site is
+          predicted or estimated from the sequence, or from a structure that was
+          itself predicted. No molecule described here has been made.</li>
+      <li><strong>Scores are percentiles within one target.</strong> A score of 90
+          means "better than 90 per cent of the other candidates against this same
+          target". It does not mean 90 per cent of anything, and it cannot be
+          compared with a 90 under a different target. The five libraries differ
+          in size, construct and design strategy, so a pooled table across targets
+          would be meaningless and there is deliberately no way to build one.</li>
+      <li><strong>An error bar beats a point estimate.</strong> Where a prediction
+          carries an error estimate, as the melting temperature does, the error is
+          the more informative of the two numbers. A wide error means the model has
+          not seen anything resembling this sequence.</li>
+      <li><strong>An empty cell is an empty cell.</strong> A metric that has not
+          been computed is shown as pending, never filled with a default, an
+          average or a zero.</li>
+    </ul>
 
     <h2 id="honest">The weak axis, stated up front</h2>
     <p>
       Published benchmarks show that co-folding confidence does not reliably
-      discriminate cognate from non-cognate nanobody-antigen pairs. WHITTLE is
-      therefore strong at discarding and only suggestive about ranking. The affinity
-      axis is a co-folding confidence prior, it is labelled as such wherever it
-      appears, and the control-set tab reports what a scrambled-CDR negative control
-      did to it. If that control shows the axis cannot separate real sequences from
-      shuffled ones, that is reported as a finding and the axis is marked
-      non-discriminating rather than quietly kept.
+      distinguish a nanobody from its real partner from the same nanobody placed
+      against something it has no reason to bind. The binding axis is therefore a
+      prior, it is labelled as such wherever it appears, and the control set tab
+      reports what a negative control did to it.
+    </p>
+    <p>
+      That control is the test that matters. Fifty sequences per target have their
+      binding loops shuffled, which keeps every amino acid and changes only the
+      order, and they are then run through exactly the same code as the real
+      candidates. If a metric cannot separate a real candidate from its own
+      shuffled twin, that metric is measuring two proteins placed near each other
+      rather than two proteins binding, and it is reported as non-discriminating
+      rather than quietly kept in the score.
+    </p>
+    <p>
+      The same logic bounds what the control can prove. Shuffling a loop leaves
+      the amino acid composition untouched, so any metric computed from
+      composition alone is identical between a candidate and its twin by
+      construction. Those metrics are flagged in the code, and an axis built
+      mostly from them is reported as untestable by this control rather than as
+      having passed it.
     </p>
 
     <h2 id="workflow">Workflow</h2>
-    {% if diagram_svg %}
-    <div class="diagram">{{ diagram_svg | safe }}</div>
+  </div>
+
+  {% if diagram_svg %}
+  {# The figure sits outside .prose on purpose. Inside it the 760px reading
+     measure clamped the diagram to 730px, which is below its 912px native
+     width and reintroduces exactly the unreadable scaling this rewrite was
+     for. #}
+    <figure class="figure">
+      <div class="diagram">{{ diagram_svg | safe }}</div>
+      <figcaption>
+        Each box is a stage; each node links to the tool's citation in the
+        reference table below. Cheap checks run on all 2,500 candidates, the top
+        50 per target go on to co-folding, and 24 per target come out. The dotted
+        lines into the final ranking are the two inputs that are deliberately
+        weighted down: the co-folding prior, and what the controls say about it.
+      </figcaption>
+    </figure>
+  <div class="prose">
     {% else %}
+  <div class="prose">
     <table class="reftable">
       <caption class="sr-only">Tiers, what each one computes and how many candidates reach it</caption>
       <thead><tr><th>Tier</th><th>What it computes</th><th>Candidates</th></tr></thead>
@@ -62,6 +146,7 @@
     {% endif %}
 
     <h2 id="targets">Targets and constructs</h2>
+    <div class="widetable auto">
     <table class="reftable">
       <caption class="sr-only">The five targets and their constructs</caption>
       <thead><tr><th>Target</th><th>UniProt</th><th>Construct</th><th>Antigen</th><th>Complex</th><th>Notes</th></tr></thead>
@@ -83,20 +168,25 @@
         {% endfor %}
       </tbody>
     </table>
+    </div>
     <p>
       GLP1R is scoped to the N-terminal extracellular domain only, by explicit
-      decision. The 7TM bundle and the extracellular loops are excluded, so a GLP1R
-      result here cannot support any claim about binding the intact receptor in a
-      membrane. TNFa and TL1A are co-folded as homotrimers, because the epitope
-      commonly spans two subunits and a monomer run would be wrong rather than
-      merely cheaper.
+      decision. The seven-helix bundle that sits in the membrane and the loops
+      around it are excluded, so a GLP1R result here cannot support any claim
+      about binding the intact receptor in a cell. TNFa and TL1A are co-folded as
+      three-part assemblies, because the site a nanobody usually binds spans the
+      join between two subunits, and running them as single chains would be wrong
+      rather than merely cheaper. The EGFR and TNFa libraries are enriched in
+      histidine, which is a deliberate design choice intended to make binding
+      weaken inside the acidic compartment a cell pulls the complex into.
     </p>
 
     <h2 id="axes">Axes, and what they are made of</h2>
     <p>
-      Each axis is a weighted mean of the available component metrics, converted to
-      a percentile within the target. An axis whose components have not been
-      computed yet is shown as pending rather than filled with a placeholder.
+      Each axis is a weighted mean of whichever component metrics have been
+      computed, converted to a percentile within the target. An axis whose
+      components are not yet available is shown as pending rather than filled
+      with a placeholder.
     </p>
     <table class="reftable">
       <caption class="sr-only">What each scoring axis is computed from</caption>
@@ -118,10 +208,11 @@
 
     <h3>Axis correlation, per target</h3>
     <p>
-      Hydrophobic patch area feeds non-specificity, aggregation and expression, so
-      the axes are not independent by construction. The correlation matrix is
-      computed per target and any pair above 0.8 is stated here rather than left
-      implicit.
+      The axes are not independent by construction. Hydrophobic patch area feeds
+      non-specific binding, aggregation and expression at the same time, so two
+      axes moving together may be one piece of evidence counted twice rather than
+      two agreeing measurements. The correlation matrix is computed per target and
+      any pair above 0.8 is stated here rather than left implicit.
     </p>
     {% set flagged = [] %}
     {% for target, info in (axes.correlations or {}).items() %}
@@ -133,9 +224,132 @@
     <p style="color:var(--ink-3)">No axis pair correlates above 0.8 in any target
     for this run.</p>
     {% endif %}
+  </div>
 
+  <!-- ------------------------------------------------------- the parameters -->
+  <div class="prose">
+    <h2 id="parameters">Every parameter, and why it is here</h2>
+    <p>
+      All {{ meta.columns.total }} columns the table can show, in the five groups
+      the column chooser uses. For each one: what the number is in plain terms,
+      how it was arrived at, and what it should change about whether a candidate
+      is worth making. A parameter with no direction given is a flag rather than a
+      score, which means an extreme value is worth looking at without a preferred
+      side.
+    </p>
+  </div>
+
+  <div class="widetable">
+  {% for group in meta.columns.groups %}
+    <h3 class="paramgroup" id="param-{{ group.id }}">
+      {{ group.label }}
+      <span>{{ group.count }} parameter{{ '' if group.count == 1 else 's' }}</span>
+    </h3>
+    <table class="reftable paramtable">
+      <caption class="sr-only">{{ group.label }} parameters, what they are, how they
+        are calculated and why they matter</caption>
+      <thead>
+        <tr>
+          <th style="width:146px">Parameter</th>
+          <th style="width:88px">Direction</th>
+          <th>What it is</th>
+          <th>How it is calculated</th>
+          <th>Why it matters for selection</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for col in meta.columns.columns if col.group == group.id %}
+        {% set g = meta.columns.glossary.get(col.key) %}
+        <tr id="param-{{ col.key }}">
+          <td>
+            <strong>{{ col.label }}</strong>
+            {% if col.unit %}<span class="unit">{{ col.unit }}</span>{% endif %}
+            {# Whether a column is pending is per target, not global, so it is
+               stated on the candidates table rather than here. #}
+            <span class="unit">{% if col.tier is none %}derived{% else %}Tier {{ col.tier }}{% endif %}</span>
+          </td>
+          <td>
+            {% if col.higher_is_better is none %}
+              <span class="chip">flag</span>
+            {% elif col.higher_is_better %}
+              <span class="chip good">higher is better</span>
+            {% else %}
+              <span class="chip warn">lower is better</span>
+            {% endif %}
+          </td>
+          <td class="wrap">{{ g.plain if g else col.help }}</td>
+          <td class="wrap">{{ g.how if g else '' }}</td>
+          <td class="wrap">
+            {{ g.why if g else '' }}
+            {% if g and g.src %}
+            <a class="srclink" href="#ref-{{ g.src }}">{{ g.src.replace('_', ' ') }}</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endfor %}
+  </div>
+
+  <div class="prose">
+    <h2 id="additions">What has been added since the first version</h2>
+    <p>
+      The first version scored binding from co-folding confidence alone. That is
+      a single number from a single model, and the control set is what showed how
+      little it carries on its own. Four additions since then, each one a separate
+      piece of evidence about the same predicted complex:
+    </p>
+    <ul>
+      <li><strong>Agreement between five predictions.</strong> Each complex is
+          predicted five times from different starting noise. A candidate that
+          lands somewhere different every time has told you nothing, however good
+          the best of the five looks. See
+          <a href="#param-pose_consensus">pose agreement</a>.</li>
+      <li><strong>How well the two surfaces fit.</strong> A shape
+          complementarity statistic, which measures fit independently of how large
+          the interface is, so a small neat interface is not punished for being
+          small. See <a href="#param-sc">shape complementarity</a>.</li>
+      <li><strong>An inventory of the actual contacts.</strong> Hydrogen bonds,
+          salt bridges and hydrophobic contacts are detected individually, drawn
+          in the viewer and listed in the drawer, and the hydrogen bond count is
+          also reported per unit of buried area so that it is not simply restating
+          interface size. See
+          <a href="#param-hbond_per_100a2">hydrogen bond density</a>.</li>
+      <li><strong>Whether the binding loops are doing the binding.</strong> The
+          share of contacts made by the CDRs rather than by the conserved
+          scaffold. See <a href="#param-cdr_interface_fraction">CDR paratope</a>.</li>
+    </ul>
+    <p>
+      Two changes to how the controls are run matter as much as the metrics
+      themselves. Each shuffled control is now co-folded <strong>beside the
+      candidate it was shuffled from</strong>, so the comparison is paired and the
+      only difference inside a pair is the order of the loop residues. The earlier
+      unpaired comparison was confounded: the co-folded candidates are the top
+      ranks from Tier 1, and that rank is driven by surface hydrophobicity, so
+      they differ from a random sample in ways that have nothing to do with
+      shuffling. And the weights on the binding axis are now set from how well
+      each metric separates a real candidate from its own twin, rather than by
+      argument.
+    </p>
+    <p>
+      The shortlist is 24 per target, and 50 per target are co-folded so that the
+      24 are <strong>selected</strong> on the Tier 2 evidence rather than merely
+      annotated with it.
+    </p>
+  </div>
+
+  <div class="prose">
     <h2 id="references">References</h2>
     {% if about.references %}
+    <p>
+      Every tool and database used in the run, with the version or snapshot that
+      was used. Rows link back from the parameter table above.
+    </p>
+    {% endif %}
+  </div>
+  {% if about.references %}
+  <div class="widetable">
     <table class="reftable">
       <caption class="sr-only">Tools and databases used, with citations</caption>
       <thead><tr><th>Tool or database</th><th>Role</th><th>Version or snapshot</th><th>Citation</th><th>Licence</th></tr></thead>
@@ -165,13 +379,17 @@
         {% endfor %}
       </tbody>
     </table>
-    {% else %}
+  </div>
+  {% else %}
+  <div class="prose">
     <p style="color:var(--ink-3)">
       The reference table is generated from <code>config/references.yaml</code> and
       resolved through Crossref at build time. It appears here once that step has run.
     </p>
-    {% endif %}
+  </div>
+  {% endif %}
 
+  <div class="prose">
     <h2 id="provenance">Provenance</h2>
     {% if about.provenance %}
     <table class="reftable">
