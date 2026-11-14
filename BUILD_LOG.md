@@ -1531,3 +1531,7 @@ through to the drawer.
 - 2026-11-14 13:11 interface: TNFa published 58 co-folded complexes for the drawer, the highest-ipTM sample of each
 - 2026-11-14 13:11 interface: TNFa 340 samples across 68 candidates, 5 epitope bins, 61 of 68 contact more than one subunit
 - 2026-11-14 13:31 interactions: EGFR profiled 345 samples across 69 candidates, median 17 interactions per sample
+- 2026-11-14 13:47 interactions: GLP1R profiled 335 samples across 67 candidates, median 19 interactions per sample
+- 2026-11-14 14:03 interactions: PRLR profiled 340 samples across 68 candidates, median 12 interactions per sample
+- 2026-11-14 14:22 interactions: TL1A profiled 340 samples across 68 candidates, median 16 interactions per sample
+- 2026-11-14 14:43 interactions: TNFa profiled 340 samples across 68 candidates, median 16 interactions per sample
