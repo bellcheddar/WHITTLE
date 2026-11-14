@@ -688,3 +688,37 @@ Timestamped lines, newest at the bottom. Spec Section 0.1 item 6.
 - 2026-11-13 19:16 A silent degradation, the worst kind. TNP was installed and working, `shutil.which` could not see it because a stage invoked as `.pixi/envs/default/bin/python -m pipeline.x` does not get that environment's bin directory on PATH, and the control set would have shipped with no specificity axis at all. Fixed in two halves, because resolving the binary is not enough on its own: TNP is a console script that shells out to DSSP and ANARCI and inherits the PATH it is handed. mmseqs had the same exposure in Tier 0 and in the neighbour search.
 - 2026-11-13 19:18 A ranking fault found by reading the top of the table before starting a three and a half day queue that takes its input from it. Two candidates held rank 1 for their target while carrying no specificity value, and one of them was not even on the Pareto front. A geometric mean over fewer terms is systematically higher, so the desirability score was rewarding a missing axis rather than penalising a weak one. A candidate that cannot be placed on every axis this run computed now gets no desirability. After the fix no top-20 row in any target is missing a computed axis.
 - 2026-11-13 19:19 Tier 2 queue started: 100 complexes, cheapest target first, resumable, under caffeinate. Final Tier 1 ranking: 13 to 25 candidates on the Pareto front per target, and the leaders sit in the ninetieth percentile or above on all three computed axes.
+- 2026-11-13 19:22 build-db: EGFR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:22 build-db: GLP1R bundle, 500 rows, 38 columns with data, 2 pending
+- 2026-11-13 19:22 build-db: PRLR bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:22 build-db: TL1A bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:22 build-db: TNFa bundle, 500 rows, 32 columns with data, 8 pending
+- 2026-11-13 19:22 build-db: 15 bundles, 2527 kB total
+- 2026-11-13 19:23 schema: added 2 missing column(s) to the existing database: cofolds.edge_fraction, cofolds.edge_artefact
+- 2026-11-13 19:23 schema: whittle.sqlite has 12 tables (candidates, cofolds, controls, liabilities, provenance, qc, ranks, references, scores, structures, targets, thermostability)
+- 2026-11-13 19:24 cofold_bench: GLP1R GLP1R-0049, 238 aa complex
+- 2026-11-13 19:25 cofold_bench: baseline r3 s5 st200     1.13 min  ipTM 0.6411  pTM 0.7895  pLDDT 0.852
+- 2026-11-13 19:26 cofold_bench: recycling 1              0.95 min  ipTM 0.2355  pTM 0.6068  pLDDT 0.8471
+- 2026-11-13 19:27 cofold_bench: samples 2                0.77 min  ipTM 0.6847  pTM 0.8252  pLDDT 0.8478
+- 2026-11-13 19:28 cofold_bench: steps 100                0.77 min  ipTM 0.637  pTM 0.7965  pLDDT 0.8588
+- 2026-11-13 19:29 cofold_bench: msa 256                  0.94 min  ipTM 0.5346  pTM 0.7339  pLDDT 0.8444
+- 2026-11-13 19:29 cofold_bench: combined r1 s3 st100     0.60 min  ipTM 0.6775  pTM 0.8171  pLDDT 0.8401
+- 2026-11-13 19:29 cofold_bench: saving against baseline
+- 2026-11-13 19:29 cofold_bench:   recycling 1             15.4% faster, ipTM change -0.4056
+- 2026-11-13 19:29 cofold_bench:   samples 2               31.6% faster, ipTM change 0.0436
+- 2026-11-13 19:29 cofold_bench:   steps 100               31.6% faster, ipTM change -0.0041
+- 2026-11-13 19:29 cofold_bench:   msa 256                 16.4% faster, ipTM change -0.1065
+- 2026-11-13 19:29 cofold_bench:   combined r1 s3 st100    46.8% faster, ipTM change 0.0364
+- 2026-11-13 19:31 controls_run: sequence metrics computed for 367 controls
+- 2026-11-13 19:31 controls_run: 59 EGFR controls placed against the EGFR candidate distribution
+- 2026-11-13 19:31 controls_run: 56 GLP1R controls placed against the GLP1R candidate distribution
+- 2026-11-13 19:31 controls_run: 57 PRLR controls placed against the PRLR candidate distribution
+- 2026-11-13 19:31 controls_run: 52 TL1A controls placed against the TL1A candidate distribution
+- 2026-11-13 19:31 controls_run: 66 TNFa controls placed against the TNFa candidate distribution
+- 2026-11-13 19:31 controls_run: 290 control rows carry axis percentiles
+- 2026-11-13 19:31 tm_predict: 367 sequences, ESM-2 esm2_t33_650M_UR50D
+- 2026-11-13 19:32 cofold_bench: EGFR EGFR-0068, 745 aa complex
+- 2026-11-13 19:33 tm_model: 11 embeddings cached, 226 to compute
+- 2026-11-13 19:33 tm_model: ESM-2 embedded 8/226
+- 2026-11-13 19:33 tm_model: ESM-2 embedded 88/226
+- 2026-11-13 19:34 tm_model: ESM-2 embedded 168/226

@@ -156,6 +156,8 @@ CREATE TABLE IF NOT EXISTS cofolds (
     bsa_total                REAL,
     bsa_per_subunit_json     TEXT,
     n_subunits_contacted     INTEGER,
+    edge_fraction            REAL,      -- share of the interface on a cut edge
+    edge_artefact            INTEGER,   -- the pose needs the truncation to exist
     epitope_bin              INTEGER,
     interface_residues_json  TEXT,
     path                     TEXT,

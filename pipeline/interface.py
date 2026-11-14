@@ -34,6 +34,13 @@ from pipeline.common import (RUNS, TARGETS, connect, log, manifest_read,
 CONTACT_CUTOFF = 5.0          # heavy-atom distance, angstroms
 EPITOPE_JACCARD = 0.5         # two candidates share a bin above this overlap
 NANOBODY_CHAIN = "N"
+# A construct is a cut out of a larger protein, so its first and last residues
+# are a knife edge rather than a surface. Anything within this many residues of
+# either terminus is on that edge.
+EDGE_RESIDUES = 6
+# Above this share of the interface sitting on cut edges, the epitope is an
+# artefact of the construct and could not exist in the intact protein.
+EDGE_ARTEFACT_FRACTION = 0.30
 
 
 # --------------------------------------------------------------- parsing
@@ -99,7 +106,16 @@ def structures(run_dir: Path) -> list[Path]:
 
 def interface_residues(chains: dict[str, list[tuple]], antigen_chains: list[str]
                        ) -> dict:
-    """Antigen residues contacting the nanobody, and which chains they are on."""
+    """Antigen residues contacting the nanobody, and which chains they are on.
+
+    Also reports how much of the interface sits on the construct's cut edges.
+    Every antigen here is a slice of a larger protein, so its first and last
+    residues are a knife edge that does not exist as a surface in the real
+    molecule: for GLP1R the N-terminal edge of the ECD is where the 7TM bundle
+    continues, and a nanobody modelled binding there has found a hole in the
+    construct rather than an epitope. The smoke co-fold put three of eighteen
+    contacts on residues 1 to 3, which is what prompted the check.
+    """
     nano = chains.get(NANOBODY_CHAIN) or []
     if not nano:
         return {}
@@ -114,12 +130,33 @@ def interface_residues(chains: dict[str, list[tuple]], antigen_chains: list[str]
                     nano_contacts.add(nres)
                     break
     touched = [c for c, residues in contacts.items() if residues]
+
+    # Cut-edge analysis, per chain, using each chain's own residue range.
+    edge_hits = 0
+    total_hits = 0
+    for chain in antigen_chains:
+        numbers = [resnum for resnum, *_ in chains.get(chain, [])]
+        if not numbers:
+            continue
+        lo, hi = min(numbers), max(numbers)
+        for resnum in contacts.get(chain, ()):  # already a set
+            total_hits += 1
+            if resnum - lo < EDGE_RESIDUES or hi - resnum < EDGE_RESIDUES:
+                edge_hits += 1
+    edge_fraction = (edge_hits / total_hits) if total_hits else 0.0
+
     return {
         "per_chain": {c: sorted(r) for c, r in contacts.items() if r},
         "n_antigen_residues": sum(len(r) for r in contacts.values()),
         "n_nanobody_residues": len(nano_contacts),
         "n_subunits_contacted": len(touched),
         "chains_contacted": touched,
+        "n_edge_contacts": edge_hits,
+        "edge_fraction": round(edge_fraction, 3),
+        # A flag, not a score: the UI says so and nothing in the ranking reads
+        # it. What it means is that this pose should not be believed as an
+        # epitope on the intact protein.
+        "edge_artefact": 1 if edge_fraction > EDGE_ARTEFACT_FRACTION else 0,
         # The identity of an epitope, for binning. Residue numbers only, with
         # the chain dropped: in a homotrimer the same face on chain A and on
         # chain B is the same epitope.
@@ -277,6 +314,8 @@ def main() -> int:
                     "bsa_per_subunit_json": json.dumps(
                         areas.get("bsa_per_subunit") or {}),
                     "n_subunits_contacted": iface.get("n_subunits_contacted"),
+                    "edge_fraction": iface.get("edge_fraction"),
+                    "edge_artefact": iface.get("edge_artefact"),
                     "interface_residues_json": json.dumps(
                         iface.get("per_chain") or {}),
                     "epitope_key": iface.get("epitope_key") or [],
@@ -301,6 +340,7 @@ def main() -> int:
         columns = ["candidate_id", "target", "seed", "iptm", "ptm", "plddt",
                    "pae", "complex_iptm", "prodigy_dg", "bsa_total",
                    "bsa_per_subunit_json", "n_subunits_contacted",
+                   "edge_fraction", "edge_artefact",
                    "epitope_bin", "interface_residues_json", "path", "status"]
         conn.executemany(
             f"INSERT OR REPLACE INTO cofolds ({', '.join(columns)}) VALUES "
@@ -309,6 +349,12 @@ def main() -> int:
         conn.commit()
         multi = sum(1 for r in best.values()
                     if (r.get("n_subunits_contacted") or 0) > 1)
+        edge = sum(1 for r in best.values() if r.get("edge_artefact"))
+        if edge:
+            log(f"interface: {target} {edge} of {len(best)} candidates place more "
+                f"than {EDGE_ARTEFACT_FRACTION:.0%} of their interface on the "
+                f"construct's cut edges. Those poses are artefacts of the "
+                f"truncation and cannot be epitopes on the intact protein")
         log(f"interface: {target} {len(records)} samples across {len(best)} "
             f"candidates, {len(set(bins.values()))} epitope bins"
             + (f", {multi} of {len(best)} contact more than one subunit"
@@ -317,7 +363,8 @@ def main() -> int:
                                      "samples": len(records),
                                      "candidates": len(best),
                                      "bins": len(set(bins.values())),
-                                     "multi_subunit": multi})
+                                     "multi_subunit": multi,
+                                     "edge_artefacts": edge})
     conn.close()
     return 0
 

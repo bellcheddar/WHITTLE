@@ -8,7 +8,7 @@ run:
   shortlist_dir: shortlist          # one CSV per target, 500 rows each
   n_candidates_per_target: 500
   ranking_scope: within_target      # five independent Pareto fronts; NO global league table
-  tier2_top_n_per_target: 20
+  tier2_top_n_per_target: 24   # hard requirement: 24 designs per target
   cache_antigen_msa: true           # compute once per target, reuse across all candidates
 
 upstream:
