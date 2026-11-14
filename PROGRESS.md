@@ -76,18 +76,42 @@ only on the co-folding results.
 
 ---
 
-## In flight (started 2026-11-13 19:53)
+## In flight (restarted 2026-11-13 20:40 on MPS)
 
-- **Tier 2 co-folding queue**: 120 complexes, 24 per target, cheapest target
-  first (GLP1R, PRLR, TNFa, TL1A, EGFR), full quality (recycling 3, 5 samples,
-  200 steps). Running under `tools/supervise_tier2.sh`, which restarts the
-  queue on a non-zero exit, backs off, and stands down on an empty queue, on
-  `tools/tier2.stop`, or after 20 consecutive failures with no progress.
-  Progress: `data/tier2_supervisor.log` and `data/manifests/cofold.jsonl`.
-- **Control set**: TNP over all 367 controls, then the assertions, the vacuous
-  tests and the bundles. Until this lands, every vacuous test reports
-  "no scrambled control scored yet, so the strongest check has not run",
-  because none of the 250 scrambled controls carried a prediction.
+- **Tier 2 co-folding queue**: 250 complexes, **50 per target**, cheapest
+  target first, full quality (recycling 3, 5 samples, 200 steps), on **MPS**.
+  The shortlist takes the best 24 of the 50; Tier 2 is the last tier, so
+  co-folding exactly 24 would mean it selected nothing (DECISIONS 35).
+  `tools/overnight.sh` runs the night as one unit: scrambled controls for the
+  two cheapest targets first, then the candidates under
+  `tools/supervise_tier2.sh`, then the remaining controls and the affinity
+  calibration. Progress: `data/overnight.log`, `data/tier2_supervisor.log`
+  and `data/manifests/cofold.jsonl`.
+- **Affinity weights are provisional.** The axis blends seven interface
+  metrics weighted by argument. `tools/calibrate_affinity.py` proposes weights
+  from how well each separates a real candidate from a co-folded scrambled
+  one. Applying them is a deliberate edit, so the reasoning lands in a commit.
+
+## Control-set verdicts as of 2026-11-13 20:54
+
+| Axis | Reachable by the CDR shuffle | Verdict |
+|---|---|---|
+| Affinity | 100 per cent | pending, tonight's co-folded controls decide |
+| Specificity | 89 per cent | vacuous on EGFR (AUC 0.600) and TNFa (0.535), informative on the other three |
+| Thermo | 60 per cent | vacuous on EGFR (0.590) and TL1A (0.589), informative on the other three |
+| Expression | 33 per cent | **untestable by this control**, not vacuous |
+
+- The scrambled control preserves amino-acid composition exactly, so a
+  composition-only metric cannot move under it. Two thirds of the expression
+  axis is composition-only, so its AUC sits at chance by construction. An
+  axis the control cannot reach is now reported untestable rather than
+  non-discriminating.
+- **Open**: the expression axis needs a composition-varying negative control
+  before anything can be claimed about it either way. Not built.
+- EGFR is vacuous on both axes the control can test, which is the target
+  where it matters most.
+- No AUC anywhere exceeds 0.68. None of the sequence-level axes is a strong
+  discriminator.
 
 ## Open items carried forward
 

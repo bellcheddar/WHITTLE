@@ -1071,3 +1071,20 @@ fault), then the Tier 2 queue of 120 complexes under its supervisor.
 - 2026-11-13 20:54 build-db: TL1A bundle, 500 rows, 32 columns with data, 15 pending
 - 2026-11-13 20:54 build-db: TNFa bundle, 500 rows, 32 columns with data, 15 pending
 - 2026-11-13 20:54 build-db: 15 bundles, 2885 kB total
+- 2026-11-13 20:55 cofold: 14/20 (14 ok, 0 failed), 1.3 min for SCRAM-PRLR-004, about 0.1 hours left
+
+## 2026-11-13 20:40 Tier 2 restarted on MPS at 50 per target
+
+`config/hardware.toml` overrode `config/targets.yaml` and ran the queue on
+CPU: 4.6 min per GLP1R complex against 0.9 on MPS, 25 hours against 6. The
+eight CPU complexes were discarded rather than mixed in. Breadth raised to 50
+per target so the final 24 are selected at this tier rather than merely
+annotated.
+
+## 2026-11-13 20:54 Control set: three corrections
+
+An unrun check reported PASS; `controls_run` computed no thermostability
+components at all, so the thermo axis had never been tested on any control;
+and the expression axis was reported non-discriminating when the control
+cannot reach two thirds of it. All three fixed, with the verdicts now carried
+through to the drawer.
