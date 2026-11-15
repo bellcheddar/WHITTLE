@@ -1969,3 +1969,93 @@ through to the drawer.
 - 2026-11-14 18:51 interface: EGFR published 61 co-folded complexes for the drawer, the highest-ipTM sample of each
 - 2026-11-14 18:51 interface: EGFR 355 samples across 71 candidates, 7 epitope bins
 - 2026-11-14 18:56 build log: removed eight lines reading "score_external: EGFR specificity is not comparable" (18:26 to 18:45). They were written by pipeline/tests/test_scoring.py, which triggers that refusal on purpose against a fixture whose candidate ids look exactly like real ones, so the lines described events that never happened in a run. pipeline/tests/conftest.py now repoints WHITTLE_LOG for the suite, which is what that variable was added for. The four canonical_disulfide refusals at 18:40 are real and are kept.
+- 2026-11-14 19:12 interactions: EGFR profiled 355 samples across 71 candidates, median 17 interactions per sample
+- 2026-11-14 19:17 complementarity: EGFR Sc for 355 samples, median 0.523, range 0.057 to 0.637
+- 2026-11-14 19:17 score: ['affinity'] is computed, displayed and NOT ranked on; the ordering is ['specificity', 'thermo', 'expression']. See run.tier2_reorders_shortlist in config/targets.yaml and DECISIONS 50.
+- 2026-11-14 19:17 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'affinity': 439, 'specificity': 26} of 500
+- 2026-11-14 19:17 score: EGFR 26 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:17 score: EGFR 500 rows, 13 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:17 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'affinity': 443, 'specificity': 27} of 500
+- 2026-11-14 19:17 score: GLP1R 27 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:17 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:17 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 15} of 500
+- 2026-11-14 19:17 score: PRLR 15 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:17 score: PRLR 500 rows, 19 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:17 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 14} of 500
+- 2026-11-14 19:17 score: TL1A 14 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:17 score: TL1A 500 rows, 25 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:17 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 21} of 500
+- 2026-11-14 19:17 score: TNFa 21 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:17 score: TNFa 500 rows, 21 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:17 controls_run: 1117 control sequences, run blind. No published measurement is read by anything below.
+- 2026-11-14 19:17 controls_run: TNP over 134 control sequences on 12 cores
+- 2026-11-14 19:19 controls_run: TNP finished for 4 controls in 1.8 minutes
+- 2026-11-14 19:19 controls_run: TNP returned nothing for 130 of 134 sequences (97%), which it does without reporting a failure: {'EGFR': 21, 'TNFa': 29, 'GLP1R': 28, 'PRLR': 19, 'TL1A': 25, 'unknown': 8}. Those controls carry no specificity axis and drop out of the paired test with their parents. The paired comparison stays unbiased, because a shuffle has its parent's exact length and the dropout therefore acts on the pair rather than inside it.
+- 2026-11-14 19:19 controls_run: sequence metrics computed for 1117 controls
+- 2026-11-14 19:19 controls_run: 50 controls carry co-folded interface metrics, so the affinity axis is testable on them
+- 2026-11-14 19:19 controls_run: 209 EGFR controls placed against the EGFR candidate distribution
+- 2026-11-14 19:19 controls_run: 206 GLP1R controls placed against the GLP1R candidate distribution
+- 2026-11-14 19:19 controls_run: 207 PRLR controls placed against the PRLR candidate distribution
+- 2026-11-14 19:19 controls_run: 202 TL1A controls placed against the TL1A candidate distribution
+- 2026-11-14 19:19 controls_run: 216 TNFa controls placed against the TNFa candidate distribution
+- 2026-11-14 19:19 controls_run: 1040 control rows carry axis percentiles
+- 2026-11-14 19:19 vacuous_tests: FAIL affinity [pooled 24/50, p = 0.89] VACUOUS: does not separate real candidates from CDR-shuffled ones: pooled over all five targets, 24 of 50 pairs (48%, sign test p = 0.89), with 100% of the axis weight free to move. With 50 pairs the test has about 80 per cent power only against an effect of 70% or more, so what it rules out is a strong effect of the kind the thermostability axis shows. A weak one is not excluded, and separating those two would need more co-folded controls rather than a different reading of these. The axis is non-discriminating and is labelled as such wherever it appears. Per target: EGFR 4/10, GLP1R 4/10, PRLR 5/10, TL1A 6/10, TNFa 5/10, none of which reaches significance alone at this size.
+- 2026-11-14 19:19 vacuous_tests: PENDING expression [pooled 982/1000, p = 2.5e-263] UNTESTABLE: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so a result near chance is expected by construction rather than by failure. No synthetic control settles it either, because the two heaviest components are defined from composition and a deliberately insoluble sequence would score badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. Pooled over all five targets it is 982 of 1000 (98%, p = 2.5e-263), which is what a control that cannot move two thirds of the weight looks like.
+- 2026-11-14 19:19 vacuous_tests: PASS specificity [pooled 690/853, p = 7.7e-78] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 690 of 853 pairs (81%, sign test p = 7.7e-78). Per target: EGFR 132/171, GLP1R 144/165, PRLR 141/175, TL1A 140/172, TNFa 133/170, every one of which is significant on its own. 34 of 887 available pairs are unusable because the control carries no value on this axis, which for specificity is TNP declining to number the shuffled sequence. The dropout acts on the pair and not inside it, since a shuffle has its parent's exact length, so it costs sample size rather than skewing the comparison.
+- 2026-11-14 19:19 vacuous_tests: PASS thermo [pooled 837/1000, p = 9.8e-110] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 837 of 1000 pairs (84%, sign test p = 9.8e-110). Per target: EGFR 164/200, GLP1R 162/200, PRLR 174/200, TL1A 167/200, TNFa 170/200, every one of which is significant on its own.
+- 2026-11-14 19:20 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:20 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:20 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:20 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:20 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:20 build-db: 15 bundles, 3611 kB total
+- 2026-11-14 19:20 findings: FINDINGS.md written, 123 lines
+- 2026-11-14 19:21 score: ['affinity'] is computed, displayed and NOT ranked on; the ordering is ['specificity', 'thermo', 'expression']. See run.tier2_reorders_shortlist in config/targets.yaml and DECISIONS 50.
+- 2026-11-14 19:21 score: EGFR withheld an axis value from rows missing more than half the axis weight: {'affinity': 439, 'specificity': 26} of 500
+- 2026-11-14 19:21 score: EGFR 26 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:21 score: EGFR 500 rows, 13 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:21 score: GLP1R withheld an axis value from rows missing more than half the axis weight: {'affinity': 443, 'specificity': 27} of 500
+- 2026-11-14 19:21 score: GLP1R 27 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:21 score: GLP1R 500 rows, 15 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:21 score: PRLR withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 15} of 500
+- 2026-11-14 19:21 score: PRLR 15 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:21 score: PRLR 500 rows, 19 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:21 score: TL1A withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 14} of 500
+- 2026-11-14 19:21 score: TL1A 14 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:21 score: TL1A 500 rows, 25 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:21 score: TNFa withheld an axis value from rows missing more than half the axis weight: {'affinity': 442, 'specificity': 21} of 500
+- 2026-11-14 19:21 score: TNFa 21 rows carry no desirability because they are missing one of the computed axes ['specificity', 'thermo', 'expression']; they sort below every fully scored row
+- 2026-11-14 19:21 score: TNFa 500 rows, 21 on the Pareto front, axes available ['affinity', 'specificity', 'thermo', 'expression']
+- 2026-11-14 19:21 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:21 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:21 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:21 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:21 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:21 build-db: 15 bundles, 3611 kB total
+- 2026-11-14 19:21 findings: FINDINGS.md written, 123 lines
+- 2026-11-14 19:22 qc_pareto: EGFR 500 rows, stored front 13, independent front 27, DISAGREE
+- 2026-11-14 19:22 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: GLP1R 500 rows, stored front 15, independent front 17, DISAGREE
+- 2026-11-14 19:22 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: PRLR 500 rows, stored front 19, independent front 27, DISAGREE
+- 2026-11-14 19:22 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: TL1A 500 rows, stored front 25, independent front 35, DISAGREE
+- 2026-11-14 19:22 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: TNFa 500 rows, stored front 21, independent front 27, DISAGREE
+- 2026-11-14 19:22 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: EGFR 500 rows, stored front 13, independent front 13, AGREE
+- 2026-11-14 19:22 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: GLP1R 500 rows, stored front 15, independent front 15, AGREE
+- 2026-11-14 19:22 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: PRLR 500 rows, stored front 19, independent front 19, AGREE
+- 2026-11-14 19:22 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: TL1A 500 rows, stored front 25, independent front 25, AGREE
+- 2026-11-14 19:22 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:22 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
+- 2026-11-14 19:22 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 19:23 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:23 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:23 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:23 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:23 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 19:23 build-db: 15 bundles, 3611 kB total

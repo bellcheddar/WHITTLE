@@ -352,3 +352,33 @@ def test_a_component_constant_across_candidates_does_not_empty_the_axis(
     assert got["C1"].get("specificity") is not None, (
         "a component that is constant across the candidates must not empty "
         "the axis: it cannot move a rank-based percentile")
+
+
+def test_an_annotate_only_axis_cannot_change_the_desirability_ordering() -> None:
+    """DECISIONS 50 says Tier 2 annotates and does not reorder.
+
+    `pareto_fronts` honoured that from the start; `desirability` did not,
+    because `main` built its weights over every axis and `desirability`
+    iterates the weights it is handed. A co-folded candidate therefore got a
+    four-term geometric mean while the 440-odd candidates with no co-fold got
+    three, which is the asymmetry the function's own docstring warns about, and
+    it made co-folding a candidate move that candidate up the table on an axis
+    that failed its own control.
+    """
+    from pipeline.score import desirability
+
+    ordering = ["specificity", "thermo", "expression"]
+    weights = {axis: 1.0 for axis in ordering}
+    low = {"specificity": 60.0, "thermo": 60.0, "expression": 60.0,
+           "affinity": 1.0}
+    high = dict(low, affinity=99.0)
+    assert (desirability(low, weights, ordering)
+            == desirability(high, weights, ordering)), (
+        "the annotate-only axis moved the desirability ordering")
+
+    # And with affinity in the weights it does move it, which is what the
+    # defect was: the test would pass vacuously if the two were equal anyway.
+    leaky = dict(weights, affinity=1.0)
+    assert (desirability(low, leaky, ordering)
+            != desirability(high, leaky, ordering)), (
+        "fixture is not sensitive: affinity must change the value when weighted")

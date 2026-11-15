@@ -514,8 +514,20 @@ def score_external(conn, target: str, external: list[dict]) -> dict[str, dict]:
 
 def main() -> int:
     conn = connect()
-    weights = {axis: 1.0 for axis in RANK_AXES}  # the UI re-weights client side
     ordering = ordering_axes()
+    # Weighted over the ordering axes only, which is the whole of what
+    # "annotate, do not reorder" means for the rank. Built over RANK_AXES this
+    # handed `desirability` an affinity term, and `desirability` iterates the
+    # weights it is given, so the annotate-only axis went straight into the
+    # primary rank key while `pareto_fronts` was correctly excluding it. It was
+    # worse than a simple leak: `required` only covers the ordering axes, so
+    # affinity entered as an optional fourth term and a co-folded candidate got
+    # a four-term geometric mean against the other 440-odd candidates' three.
+    # That is the exact asymmetry this function's own docstring warns about,
+    # and it made co-folding a candidate change that candidate's rank, so the
+    # top 24 moved every time more co-folds landed. The axis doing the moving
+    # is the one that failed its control (DECISIONS 61).
+    weights = {axis: 1.0 for axis in ordering}  # the UI re-weights client side
     annotate_only = [a for a in RANK_AXES if a not in ordering]
     if annotate_only:
         log(f"score: {annotate_only} is computed, displayed and NOT ranked on; "

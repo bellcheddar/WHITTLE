@@ -67,8 +67,8 @@ targets and the per-target counts travel with it.
 
 | Axis | Pooled | Rate | p | Verdict | Per target |
 |---|---|---|---|---|---|
-| affinity | pending | | | pending | |
-| specificity | 679 of 839 | 81% | 9e-77 | informative | EGFR 130/169, GLP1R 141/162, PRLR 140/171, TL1A 137/169, TNFa 131/168 |
+| affinity | 24 of 50 | 48% | 0.9 | vacuous | EGFR 4/10, GLP1R 4/10, PRLR 5/10, TL1A 6/10, TNFa 5/10 |
+| specificity | 690 of 853 | 81% | 8e-78 | informative | EGFR 132/171, GLP1R 144/165, PRLR 141/175, TL1A 140/172, TNFa 133/170 |
 | thermo | 837 of 1000 | 84% | 1e-109 | informative | EGFR 164/200, GLP1R 162/200, PRLR 174/200, TL1A 167/200, TNFa 170/200 |
 | expression | 982 of 1000 | 98% | 3e-263 | untestable | EGFR 195/200, GLP1R 199/200, PRLR 199/200, TL1A 195/200, TNFa 194/200 |
 

@@ -25,8 +25,21 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from pipeline.common import TARGETS, connect, log  # noqa: E402
+from pipeline.score import ordering_axes  # noqa: E402
 
-AXES = ["axis_affinity", "axis_specificity", "axis_thermo", "axis_expression"]
+# The axes the front is actually computed over, which is not every axis that
+# has a percentile: an annotate-only axis is displayed and does not order
+# (DECISIONS 50 and 62). Read from the same config `pipeline.score` reads, so
+# the check cannot drift from what it is checking, while the implementation
+# below stays an independent one. Taking all four made this report a
+# disagreement on four of five targets the moment the ordering narrowed: with
+# more axes fewer points are dominated, so it found a larger front and called
+# the stored one incomplete. That is a different question, not a second
+# opinion, and spec Section 10 item 6 asks for a second opinion.
+AXES = [f"axis_{a}" for a in ordering_axes()]
+
+ALL_AXES = ["axis_affinity", "axis_specificity", "axis_thermo",
+            "axis_expression"]
 
 
 def on_front_bruteforce(points: list[dict]) -> set[int]:
