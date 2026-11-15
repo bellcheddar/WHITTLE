@@ -72,7 +72,7 @@ calibration and on the final QC pass.
 - [x] The specificity verdict re-measured after the artefact was found and the old one withdrawn (DECISIONS 59)
 - [x] Full QC pass: 44 tests, JS parse, template render, secret scan, style
 
-## Phase 4: about, provenance, polish, public release: about 95 percent
+## Phase 4: about, provenance, polish, public release: complete
 
 - [x] `config/references.yaml` resolved through Crossref; 29 of 29 DOIs verified
 - [x] Three seed DOIs found resolving to the wrong paper and corrected
@@ -87,8 +87,10 @@ calibration and on the final QC pass.
 - [x] Drawer slides over the page; white viewer; CDRs coloured in all three views
 - [x] Final QC pass and secret scan
 - [x] `tools/js_check.py` and `tools/template_check.py` gate the deploy
-- [ ] Remove the robots disallow and the noindex tag
-- [ ] Final deploy and push
+- [x] `tools/smoke_test.py` 34 of 34, checked against the registry not a literal
+- [x] Independent Pareto check agrees on all five, asking the same question
+- [x] Remove the robots disallow and the noindex tag
+- [x] Final deploy and push
 
 ---
 
@@ -163,6 +165,21 @@ shown beside it (DECISIONS 53).
   shares its parent's exact length.
 
 ## Open items carried forward
+
+- **`pipeline.interactions` does not resume.** `cofold`, `interface` and
+  `controls_run` all skip what their manifests say is done; `interactions` has
+  no manifest read, so adding two late candidates to EGFR cost a 22-minute
+  recompute of the 345 samples it already had, for about 40 seconds of new
+  work. Harmless since the write became an upsert, but the next late candidate
+  pays the same 22 minutes. A gap against `CLAUDE.md`'s "every stage is
+  resumable".
+- **Spec QC item 8 has not been re-measured since the drawer changed.** The
+  recorded pass is from before two columns were added to the drawer's per-seed
+  table, and the Chrome extension was disconnected when the re-run was
+  attempted. The static argument is that `.kv` is `width: 100%` with
+  `overflow-wrap: anywhere` on its cells, so the table's min-content width is
+  one character and it cannot exceed its container. That is reasoning, not a
+  measurement, and the item deserves the measurement.
 
 - Mol* fetches the RCSB entry list from the viewer's own UI on every
   initialisation, which fails and logs a console error on the live site. It is

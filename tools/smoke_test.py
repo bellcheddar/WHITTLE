@@ -127,8 +127,15 @@ def main() -> int:
     check("meta bundle", status == 200, f"status {status}")
     if status == 200:
         meta = json.loads(body)
-        check("48 columns", meta["columns"]["total"] == 48,
-              f"{meta['columns']['total']} columns")
+        # Checked against the registry rather than a literal, so adding a
+        # column does not fail the smoke test for the wrong reason. The
+        # registry has its own literal in `_self_check`, which is where the
+        # count is meant to be asserted once.
+        from pipeline.columns import COLUMNS
+        check(f"{len(COLUMNS)} columns",
+              meta["columns"]["total"] == len(COLUMNS),
+              f"{meta['columns']['total']} served against "
+              f"{len(COLUMNS)} in the registry")
         check("6 default columns", len(meta["columns"]["defaults"]) == 6,
               f"{len(meta['columns']['defaults'])} defaults")
         check("5 targets", len(meta["targets"]) == 5, f"{len(meta['targets'])} targets")
