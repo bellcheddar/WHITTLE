@@ -22,6 +22,9 @@ echo "==> Interaction profile across each finished interface (PLIP)"
 echo "==> Shape complementarity across each finished interface"
 "$PY" -m pipeline.complementarity
 
+echo "==> IMGT grid and per-residue secondary structure for the alignment panel"
+"$PY" -m pipeline.alignment
+
 echo "==> Re-ranking"
 "$PY" -m pipeline.score
 

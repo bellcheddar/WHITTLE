@@ -231,3 +231,14 @@ shown beside it (DECISIONS 53).
 - `pipeline/interactions.py` still has no resume logic: no manifest read and no
   skip, so a late candidate costs a 22-minute recompute. A gap against
   `CLAUDE.md`'s "every stage is resumable".
+
+- **The Candidates tab now carries an alignment panel** under the table: the
+  rows in contention on the IMGT grid, with the CDR bands, the camelid
+  hallmark tetrad, the canonical disulfide and every liability motif marked,
+  eight standard colour schemes, and per-row identity, BLOSUM62 similarity and
+  CDR3 identity against a reference row the reader picks. No aligner runs: the
+  columns are IMGT positions (DECISIONS 69). Secondary structure is per
+  residue from each candidate's own model by P-SEA; it found strand and coil
+  and no helix at all in any of the 2,499 models, which is what an
+  immunoglobulin beta sandwich looks like, and the legend says so rather than
+  showing an unused swatch.

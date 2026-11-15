@@ -34,6 +34,35 @@ tools:
     title: "ANARCI: antigen receptor numbering and receptor classification"
     licence: BSD-3-Clause
 
+  - key: imgt
+    role: The numbering scheme the alignment panel's columns are
+    doi: 10.1016/s0145-305x(02)00039-3
+    title: "IMGT unique numbering for immunoglobulin and T cell receptor variable
+      domains and Ig superfamily V-like domains"
+
+  - key: psea
+    role: Secondary structure per residue from the CA trace, for the alignment panel
+    doi: 10.1093/bioinformatics/13.3.291
+    title: "P-SEA: a new efficient assignment of secondary structure from C alpha
+      trace of proteins"
+
+  - key: biotite
+    role: The P-SEA implementation used, and structure parsing
+    doi: 10.1186/s12859-018-2367-z
+    title: "Biotite: a unifying open source computational biology framework in Python"
+    repo: https://github.com/biotite-dev/biotite
+    licence: BSD-3-Clause
+
+  - key: blosum62
+    role: The substitution matrix behind the alignment panel's similarity scores
+    doi: 10.1073/pnas.89.22.10915
+    title: "Amino acid substitution matrices from protein blocks"
+
+  - key: kytedoolittle
+    role: The hydropathy scale the alignment panel colours on
+    doi: 10.1016/0022-2836(82)90515-0
+    title: "A simple method for displaying the hydropathic character of a protein"
+
   - key: boltz2
     role: Nanobody-antigen co-folding and affinity prior
     repo: https://github.com/Novel-Therapeutics/boltz-community

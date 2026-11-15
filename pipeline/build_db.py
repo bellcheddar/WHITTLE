@@ -410,6 +410,136 @@ def components_not_run(conn) -> list[dict]:
     return out
 
 
+# IMGT places insertions around the middle of a loop: after the lower anchor
+# they ascend (111, 111A, 111B), before the upper anchor they descend (112B,
+# 112A, 112). These are the anchors that count down. Nothing is taken on trust:
+# `column_order` checks that every row's own residue order is a subsequence of
+# the order it produces, and raises if it is not.
+IMGT_DESCENDING = {33, 61, 112}
+
+
+def column_key(key: str) -> tuple[int, int]:
+    """Sort key for one IMGT column, insertion codes included."""
+    digits = "".join(ch for ch in key if ch.isdigit())
+    letters = "".join(ch for ch in key if ch.isalpha())
+    position = int(digits)
+    rank = 0 if not letters else sum(
+        (ord(ch) - 64) * 100 ** (len(letters) - i - 1)
+        for i, ch in enumerate(letters.upper()))
+    return (position, -rank if position in IMGT_DESCENDING else rank)
+
+
+def column_order(skeletons: list[list[str]], target: str) -> list[str]:
+    """Every distinct IMGT key, in the one order all the rows agree on."""
+    columns = sorted({key for skeleton in skeletons for key in skeleton},
+                     key=column_key)
+    at = {key: i for i, key in enumerate(columns)}
+    for skeleton in skeletons:
+        indices = [at[key] for key in skeleton]
+        if indices != sorted(indices):
+            wrong = [skeleton[i] for i in range(1, len(indices))
+                     if indices[i] <= indices[i - 1]]
+            raise SystemExit(
+                f"alignment: the IMGT column order disagrees with the residue "
+                f"order of a {target} row at {wrong[:6]}. The grid would put "
+                f"two residues of one sequence in the same column or in the "
+                f"wrong one, so nothing is written.")
+    return columns
+
+
+def alignment_bundle(conn, target: str) -> dict:
+    """One target's IMGT grid, as the alignment panel consumes it.
+
+    Every candidate is shipped, not just the shortlist, because the reader
+    chooses which rows to align and that choice is theirs to change: gates and
+    filters move the selection, and a bundle holding only the current 24 would
+    have to be rebuilt to follow it. It stays small because the IMGT key list
+    is nearly always one of about eighty skeletons per target, so the keys are
+    deduplicated and each row carries an index into them.
+
+    No alignment is performed here or in the browser. `pipeline/alignment.py`
+    says why: the numbering already places each residue, so the column is the
+    IMGT key.
+    """
+    from pipeline import numbering as nb
+
+    rows = conn.execute(
+        "SELECT a.candidate_id AS id, a.method, a.keys, a.sse, a.status, "
+        "       c.sequence, c.cdr3_cluster, c.hallmark_n, c.v_gene, "
+        "       r.rank, s.desirability "
+        "FROM alignment a "
+        "JOIN candidates c ON c.id = a.candidate_id "
+        "LEFT JOIN ranks r ON r.candidate_id = a.candidate_id "
+        "LEFT JOIN scores s ON s.candidate_id = a.candidate_id "
+        "WHERE a.target = ? ORDER BY COALESCE(r.rank, 1e9), a.candidate_id",
+        (target,)).fetchall()
+
+    liabilities: dict[str, list] = {}
+    kinds: list[str] = []
+    for row in conn.execute(
+            "SELECT l.candidate_id, l.kind, l.position, l.detail "
+            "FROM liabilities l JOIN candidates c ON c.id = l.candidate_id "
+            "WHERE c.target = ? ORDER BY l.candidate_id, l.position", (target,)):
+        if row["kind"] not in kinds:
+            kinds.append(row["kind"])
+        liabilities.setdefault(row["candidate_id"], []).append(
+            (row["position"] - 1, kinds.index(row["kind"])))
+
+    skeletons: list[list[str]] = []
+    index: dict[str, int] = {}
+    out = []
+    for row in rows:
+        keys = row["keys"] or ""
+        if keys not in index:
+            index[keys] = len(skeletons)
+            skeletons.append(keys.split(" ") if keys else [])
+        placed = len(skeletons[index[keys]])
+        offset = max(0, len(row["sequence"] or "") - placed)
+        # `status` records a row whose numbering placed fewer residues than the
+        # sequence has, which happens when an N-terminal extension cannot be
+        # numbered. The grid shows what was placed, and the row says so rather
+        # than sliding by the difference.
+        out.append({
+            "id": row["id"], "sk": index[keys],
+            "seq": (row["sequence"] or "")[-placed:] if placed else "",
+            "sse": row["sse"] or "",
+            "rank": row["rank"], "d": round(row["desirability"], 4)
+                if row["desirability"] is not None else None,
+            "cluster": row["cdr3_cluster"], "hallmark": row["hallmark_n"],
+            "vgene": row["v_gene"], "method": row["method"],
+            # The motif's position is an index into the full sequence; the
+            # grid is indexed by placed residue, and those differ for a row
+            # whose N-terminal extension could not be numbered. A motif inside
+            # that dropped stretch has no column to sit in and is left out
+            # rather than drawn on whichever residue is that many places in.
+            "lia": [[at - offset, kind]
+                    for at, kind in liabilities.get(row["id"], [])
+                    if at >= offset],
+            "note": row["status"] if row["status"] != "ok" else "",
+        })
+
+    columns = column_order(skeletons, target)
+    at = {key: i for i, key in enumerate(columns)}
+    spans = dict(nb.IMGT_CDR)
+    return {
+        "target": target,
+        "n": len(out),
+        "shortlist": int(targets_config()["run"].get(
+            "shortlist_per_target", 24)),
+        "cofolded": int(targets_config()["run"].get(
+            "tier2_top_n_per_target", 50)),
+        "columns": columns,
+        "skeletons": [[at[key] for key in skeleton] for skeleton in skeletons],
+        "liability_kinds": kinds,
+        "rows": out,
+        "cdr_spans": {k: list(v) for k, v in spans.items()},
+        "hallmark_positions": nb.HALLMARK_POSITIONS,
+        "disulfide_positions": [23, 104],
+        "sse_source": "P-SEA (Labesse 1997) over the CA trace of each "
+                      "candidate's own NanoBodyBuilder2 model",
+    }
+
+
 def about_bundle(conn) -> dict:
     refs = [dict(r) for r in conn.execute(
         'SELECT * FROM "references" ORDER BY sort_order, key')]
@@ -451,9 +581,12 @@ def main() -> int:
         bundle = candidate_bundle(conn, target, liabs)
         write_json(STATIC_DATA / f"candidates_{target}.json", bundle)
         write_json(STATIC_DATA / f"tm_{target}.json", tm_distribution(conn, target))
+        align = alignment_bundle(conn, target)
+        write_json(STATIC_DATA / f"alignment_{target}.json", align)
         log(f"build-db: {target} bundle, {bundle['n']} rows, "
             f"{len(bundle['columns_with_data'])} columns with data, "
-            f"{len(bundle['columns_pending'])} pending")
+            f"{len(bundle['columns_pending'])} pending; alignment "
+            f"{align['n']} rows over {len(align['skeletons'])} IMGT skeletons")
     write_json(STATIC_DATA / "controls.json", controls_bundle(conn))
     write_json(STATIC_DATA / "about.json", about_bundle(conn))
     write_json(STATIC_DATA / "qc.json", qc_bundle(conn))

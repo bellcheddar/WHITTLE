@@ -152,6 +152,16 @@ Deep link `#/t/<target>/nb/<id>` opens the drawer directly.
 - Plotly: custom partial bundle, `scatter` + `bar` + `parcoords` only. `parcoords` is **not** in `plotly.js-basic-dist-min`. Since 3.1 stopped using it, the Candidates tab loads Plotly on first drawer open (for the Tm histogram) rather than on page load; the Control set tab still loads it for its scatters.
 - Vendored assets cache-busted with `?v=<mtime>`.
 
+### 3.7 Alignment panel (full width, below the table)
+
+- **The columns are IMGT positions, not an alignment.** ANARCI has already placed every residue, so two residues share a column exactly when they share an IMGT key. No aligner runs, in the pipeline or in the browser. A progressive aligner is free to slide a CDR against a framework to buy a cheaper gap, and the moment it does a column stops meaning one structural position across the rows, which is the only thing the panel is for.
+- **Insertion order is IMGT's, not a sort.** After the lower anchor insertions ascend (111, 111A, 111B); into the upper anchor they descend (112B, 112A, 112). `pipeline/build_db.column_order` checks that every row's own residue order is a subsequence of the column order it produces and refuses to write the bundle if not.
+- **The selection follows the table.** Gates, the Pareto toggle, the search box and a brush on the trade-off plane all change which candidates are in contention; `refresh()` publishes the active ids on a `whittle:selection` event and the panel listens. The default is the shortlist. More than 60 rows is not something anyone reads, so the panel takes the best by rank and says so.
+- **Identity, similarity and the consensus are computed over the rows shown**, never precomputed, because the reader chooses the rows. Gaps are excluded from the denominator: a shorter CDR3 is a different loop length, not six substitutions. Clicking a row makes it the reference.
+- **The colour schemes are the standard ones** so they need no legend to a reader who knows them: Clustal X residue classes, BLOSUM62 against the column consensus, conservation, Kyte and Doolittle hydropathy, charge at pH 7.4, per-residue secondary structure, and the framework/CDR regions. Hues are muted; a hundred and thirty columns of saturated Clustal is not something you can look at.
+- Annotations sit on top of whichever scheme is active and never depend on it: the CDR band, the camelid hallmark and disulfide marks, and a dotted rule under any residue carrying a liability motif.
+- The grid is wide, so it scrolls inside its own card, never widening the page. The identifier block is sticky.
+
 ## 4. Control set tab
 
 Same table component, different data file. Above it, per axis, an observed-against-predicted scatter with R squared and a residual plot. Identity line dashed in ink-3; points in accent; any control that fails its assertion in poor.

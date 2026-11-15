@@ -1031,3 +1031,182 @@ h3.paramgroup span {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* ------------------------------------------------------- 3.7 alignment panel */
+/* A 24 by 133 grid of monospace cells. The sizes are in one place because they
+   have to agree: the ruler, the region band, every row, the consensus and the
+   agreement bars are separate flex rows that only line up because each cell is
+   exactly --alncell wide. */
+.alnbar { margin: 0 0 10px; }
+.alnbar select { max-width: 320px; }
+.alncheck {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.alnscroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+}
+#alngrid {
+  --alncell: 11px;
+  --alnlabel: 232px;
+  display: inline-block;
+  min-width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 16px;
+}
+#alngrid .placeholder { padding: 18px; font-family: inherit; color: var(--ink-3); }
+.alnrow { display: flex; align-items: stretch; white-space: nowrap; }
+.alnrow:hover .alnlabel { background: var(--ground); }
+.alnseq { display: inline-flex; }
+.alncell {
+  display: inline-block;
+  width: var(--alncell);
+  min-width: var(--alncell);
+  height: 16px;
+  text-align: center;
+  color: var(--ink);
+}
+.alncell.gap { color: var(--dominated); }
+/* The motif is on the residue, not instead of its colour: a dotted rule under
+   the letter survives every one of the colour schemes above it. */
+.alncell.liab { box-shadow: inset 0 -3px 0 -1px var(--poor-ink); }
+.alncell.nomodel { opacity: .55; }
+
+/* The label block is sticky, so the identifiers stay put while the sequence
+   scrolls. It is a button: clicking a row makes it the reference every
+   identity on the panel is measured against. */
+.alnlabel {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  width: var(--alnlabel);
+  min-width: var(--alnlabel);
+  padding: 0 10px 0 8px;
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.alnlabel.alnhcell { cursor: default; color: var(--ink-3); }
+.alnlabel.isref { background: var(--accent-wash); }
+.alnlabel.isref .alnid { font-weight: 700; color: var(--accent); }
+.alnrank {
+  width: 26px;
+  color: var(--ink-3);
+  text-align: right;
+  padding-right: 7px;
+  font-variant-numeric: tabular-nums;
+}
+.alnid { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; }
+.alnpct {
+  width: 40px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.alnpct.sim { color: var(--ink-3); }
+.alnpct.cdr { width: 36px; color: var(--ink-3); }
+.alnlegendlabel {
+  flex: 1 1 auto;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--ink-3);
+}
+
+.alnhead .alncell, .alnfoot .alncell { color: var(--ink-3); }
+/* A three-digit IMGT number does not fit an 11px cell and does not need to:
+   the next one is ten cells away, so the text is centred on its own column
+   and allowed to spill into the empty ones either side. */
+.alncell.ruler {
+  font-size: 9px;
+  height: 13px;
+  line-height: 13px;
+  overflow: visible;
+  position: relative;
+  font-variant-numeric: tabular-nums;
+}
+.alnrow.alnhead .alnseq { align-items: flex-end; }
+.alncell.mark { height: 9px; display: inline-flex; align-items: center; justify-content: center; }
+.alncell.mark i { display: block; width: 7px; height: 7px; border-radius: 50%; }
+.alncell.mark.hallmark i { background: var(--accent); }
+.alncell.mark.disulf i { background: var(--warn); }
+.alncell.band {
+  height: 13px;
+  background: var(--rule);
+  overflow: visible;
+  position: relative;
+}
+.alncell.band b {
+  position: absolute;
+  /* The label is wider than its 11px cell and spills into the neighbours. The
+     band cells that follow it paint their own background after it, which cut
+     the last character off, so the label is lifted above them. */
+  z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  line-height: 13px;
+  color: var(--ink-2);
+}
+.alncell.band.cdr1 { background: #B9CEF0; }
+.alncell.band.cdr2 { background: #A7D6BA; }
+.alncell.band.cdr3 { background: #EFD39A; }
+.alncell.cons { color: var(--ink); font-weight: 600; }
+.alncell.barcell {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 14px;
+}
+.alncell.barcell i {
+  display: block;
+  width: calc(var(--alncell) - 3px);
+  background: var(--dominated);
+  border-radius: 1px 1px 0 0;
+}
+.alnfoot { border-top: 1px solid var(--rule); }
+
+.alnlegendwrap { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+.alnkey { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; }
+.alnkey i {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  background: var(--rule);
+}
+.alnkey i.liabkey { box-shadow: inset 0 -3px 0 -1px var(--poor-ink); background: var(--surface); border: 1px solid var(--border); }
+.alnkey i.hallkey { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+.alnkey i.disulfkey { width: 9px; height: 9px; border-radius: 50%; background: var(--warn); }
+.alnkey i.hatch {
+  background: repeating-linear-gradient(45deg, var(--rule), var(--rule) 2px,
+              var(--surface) 2px, var(--surface) 4px);
+  border: 1px solid var(--border);
+}
+.alnnote { flex: 1 1 100%; color: var(--ink-3); }
+
+@media (max-width: 900px) {
+  /* At phone width the label block cannot take a third of the viewport. The
+     identifier and the rank stay; the three percentages move out of the way
+     rather than squeezing the sequence to nothing. */
+  #alngrid { --alnlabel: 118px; }
+  .alnpct { display: none; }
+  .alnlabel.alnhcell .alnlegendlabel { font-size: 9px; }
+}

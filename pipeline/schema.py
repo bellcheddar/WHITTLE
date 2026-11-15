@@ -272,6 +272,23 @@ CREATE TABLE IF NOT EXISTS provenance (
     value TEXT
 );
 
+-- The IMGT key for every residue of every candidate, plus per-residue
+-- secondary structure from that candidate's own model. This is what makes the
+-- alignment panel an alignment: two residues share a column when they share a
+-- key, so no aligner is run and no gap penalty can move a CDR against a
+-- framework. `pipeline/alignment.py` says why at more length.
+CREATE TABLE IF NOT EXISTS alignment (
+    candidate_id TEXT PRIMARY KEY REFERENCES candidates(id),
+    target       TEXT,
+    method       TEXT,      -- the numbering route that placed the residues
+    n_residues   INTEGER,
+    keys         TEXT,      -- space separated IMGT keys, one per placed residue
+    sse          TEXT,      -- one letter per placed residue: H, E, C; '' if none
+    sse_source   TEXT,
+    status       TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_alignment_target ON alignment(target);
+
 CREATE TABLE IF NOT EXISTS qc (
     key    TEXT PRIMARY KEY,
     value  TEXT,

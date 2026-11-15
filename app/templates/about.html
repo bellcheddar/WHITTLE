@@ -235,6 +235,40 @@
     </p>
     {% endif %}
 
+    <h2 id="alignment">The alignment panel</h2>
+    <p>
+      The panel under the candidate table is not the output of an aligner.
+      ANARCI has already placed every residue of every candidate on the IMGT
+      numbering, so two residues belong in the same column exactly when they
+      carry the same IMGT key, and the grid is read off the numbering rather
+      than computed. Nothing is aligned, here or in your browser.
+    </p>
+    <p>
+      That is a deliberate choice rather than a shortcut. A progressive aligner
+      such as MUSCLE or MAFFT, run over twenty-four VHHs, is free to slide a
+      CDR against a framework wherever that buys a cheaper gap. The moment it
+      does, a column stops meaning one structural position across the rows, and
+      a conserved framework position read off it is an artefact of the gap
+      penalty rather than a fact about the library. The IMGT grid cannot do
+      that: position 42 is position 42 in every row, or it is absent. It is
+      also what makes the hallmark positions, the canonical disulfide and the
+      CDR boundaries markable at all, since all four are defined on the
+      numbering.
+    </p>
+    <p>
+      Percent identity and BLOSUM62 similarity are computed over the rows on
+      screen, against whichever row you have made the reference, and over the
+      columns where both rows have a residue. A gap is left out of the
+      denominator rather than counted as a mismatch: a shorter CDR3 is a
+      different loop length, not six substitutions. The secondary structure
+      colouring is per residue, from that candidate's own predicted model by
+      P-SEA over the CA trace, so it is this nanobody rather than a consensus
+      cartoon. Fifty-five models in this run carry a germline N-terminal
+      heptad in place of a candidate's own unnumberable one; those residues are
+      a different sequence from the row they sit in, so they are left
+      unassigned rather than coloured with a structure that is not theirs.
+    </p>
+
     <h2 id="targets">Targets and constructs</h2>
     <div class="widetable auto">
     <table class="reftable">

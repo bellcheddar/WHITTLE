@@ -200,6 +200,40 @@
     <div class="panel" id="panel-neighbours" role="tabpanel" hidden></div>
   </aside>
 </div>
+
+<!-- --------------------------------------------- 3.7 alignment of the shortlist -->
+{# No aligner runs here or in the browser. ANARCI has already placed every
+   residue on its IMGT key, so a column is one numbered position in every row
+   (pipeline/alignment.py says why that is better than MUSCLE for a VHH set).
+   The grid is wide, so it scrolls inside its own card rather than widening the
+   page. #}
+<section class="card" id="alncard" aria-labelledby="alnhead">
+  <div class="cardhead">
+    <h2 id="alnhead">Alignment</h2>
+    <span class="hint">the rows in contention, on the IMGT numbering, with CDRs
+      and liability motifs marked</span>
+    <span class="spacer"></span>
+    <button type="button" class="btn" id="alncopy">Copy as FASTA</button>
+  </div>
+  <div class="panelbar alnbar">
+    <label for="alnrows">Rows</label>
+    <select id="alnrows"></select>
+    <label for="alnscheme">Colour by</label>
+    <select id="alnscheme"></select>
+    <label class="alncheck"><input type="checkbox" id="alnvariable">
+      Only the columns that vary</label>
+  </div>
+  <div class="alnscroll">
+    <div id="alngrid" role="img"
+         aria-label="A sequence alignment of the candidates in contention,
+                     one row each, on the IMGT numbering, with the complementarity
+                     determining regions, the camelid hallmark positions, the
+                     canonical disulfide and any liability motifs marked. Percent
+                     identity and BLOSUM62 similarity against a reference row are
+                     given beside each identifier."></div>
+  </div>
+  <p class="caption alnlegendwrap" id="alnlegend"></p>
+</section>
 {% endblock %}
 
 {% block scripts %}
@@ -210,4 +244,5 @@
      mark an axis that does not separate real candidates from shuffled ones. -->
 <script id="axisverdicts" type="application/json">{{ (meta.axis_verdicts or {}) | tojson }}</script>
 <script src="{{ url_for('static', filename='js/candidates.js') }}?v={{ asset_version('js/candidates.js') }}"></script>
+<script src="{{ url_for('static', filename='js/alignment.js') }}?v={{ asset_version('js/alignment.js') }}"></script>
 {% endblock %}

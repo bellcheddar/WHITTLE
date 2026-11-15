@@ -2233,3 +2233,57 @@ through to the drawer.
 - 2026-11-15 12:25 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
 - 2026-11-15 12:25 build-db: 15 bundles, 3621 kB total
 - 2026-11-15 12:25 findings: FINDINGS.md written, 161 lines
+- 2026-11-15 15:32 align: EGFR 500 rows, 77 distinct IMGT skeletons, 483 with secondary structure
+- 2026-11-15 15:33 align: GLP1R 500 rows, 83 distinct IMGT skeletons, 494 with secondary structure
+- 2026-11-15 15:33 align: PRLR 500 rows, 82 distinct IMGT skeletons, 496 with secondary structure
+- 2026-11-15 15:33 align: TL1A 500 rows, 90 distinct IMGT skeletons, 491 with secondary structure
+- 2026-11-15 15:34 align: TNFa 500 rows, 77 distinct IMGT skeletons, 480 with secondary structure
+- 2026-11-15 15:34 align: 2500 rows; secondary structure on 2444; 1 without a model; 55 refused: model sequence differs from the candidate sequence x55
+- 2026-11-15 15:35 align: EGFR 500 rows, 77 distinct IMGT skeletons, 500 with secondary structure
+- 2026-11-15 15:35 align: GLP1R 500 rows, 83 distinct IMGT skeletons, 500 with secondary structure
+- 2026-11-15 15:36 align: PRLR 500 rows, 82 distinct IMGT skeletons, 500 with secondary structure
+- 2026-11-15 15:36 align: TL1A 500 rows, 90 distinct IMGT skeletons, 500 with secondary structure
+- 2026-11-15 15:37 align: TNFa 500 rows, 77 distinct IMGT skeletons, 499 with secondary structure
+- 2026-11-15 15:37 align: 2500 rows; secondary structure on 2499; 1 without a model; 361 residues left unassigned because the model carries a different amino acid at that IMGT key
+- 2026-11-15 15:37 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:37 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 15:37 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 15:37 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 90 IMGT skeletons
+- 2026-11-15 15:37 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:37 build-db: 20 bundles, 4897 kB total
+- 2026-11-15 15:38 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:38 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 15:38 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 15:38 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 90 IMGT skeletons
+- 2026-11-15 15:38 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:38 build-db: 20 bundles, 4799 kB total
+- 2026-11-15 15:46 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:46 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 15:46 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 15:46 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 90 IMGT skeletons
+- 2026-11-15 15:46 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:46 build-db: 20 bundles, 4799 kB total
+- 2026-11-15 15:48 references: 37 rows. 34 of 34 DOIs verified against Crossref, 3 rows cited by repository and commit instead (spec 8.3 allows both). 30 provenance entries
+- 2026-11-15 15:49 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:49 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 15:49 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 15:49 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 90 IMGT skeletons
+- 2026-11-15 15:49 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:49 build-db: 20 bundles, 4801 kB total
+- 2026-11-15 15:50 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:50 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 15:50 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 15:50 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 90 IMGT skeletons
+- 2026-11-15 15:50 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 77 IMGT skeletons
+- 2026-11-15 15:50 build-db: 20 bundles, 4801 kB total
+- 2026-11-15 15:50 findings: FINDINGS.md written, 161 lines
+- 2026-11-15 15:50 qc_pareto: EGFR 500 rows, stored front 13, independent front 13, AGREE
+- 2026-11-15 15:50 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 15:50 qc_pareto: GLP1R 500 rows, stored front 15, independent front 15, AGREE
+- 2026-11-15 15:50 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 15:50 qc_pareto: PRLR 500 rows, stored front 19, independent front 19, AGREE
+- 2026-11-15 15:50 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 15:50 qc_pareto: TL1A 500 rows, stored front 25, independent front 25, AGREE
+- 2026-11-15 15:50 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 15:50 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
+- 2026-11-15 15:50 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)

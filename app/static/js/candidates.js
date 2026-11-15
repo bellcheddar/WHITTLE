@@ -253,6 +253,14 @@
       columns: cols.join(','), ids: rows.map((r) => r.id).join(',') });
     el('exportbtn').href = `/api/export.csv?${params.toString()}`;
     drawHero(rows);
+    /* The alignment panel follows the table rather than a fixed 24: gates, the
+       Pareto toggle, the search box and a brush all change which candidates
+       are in contention, and that change is the reason a reader is looking.
+       Published from here because `refresh` is the one place the active set is
+       settled; the panel owns what it does with it. */
+    document.dispatchEvent(new CustomEvent('whittle:selection', {
+      detail: { target: W.state.target, ids: rows.map((r) => r.id) },
+    }));
   }
 
   /* --------------------------------------------------------------- the table */
