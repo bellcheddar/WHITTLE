@@ -114,6 +114,7 @@
   let scheme = 'clustal';
   let selection = 'shortlist';
   let variableOnly = false;
+  let showControls = true;
 
   /* ------------------------------------------------------------ the grid */
 
@@ -343,7 +344,10 @@
       const kind = expanded.lia[c];
       const classes = ['alncell'];
       if (kind !== null && kind !== undefined) classes.push('liab');
-      if (expanded.sse[c] === '.') classes.push('nomodel');
+      // Dimmed only under the structural scheme: a residue the crystal did
+      // not resolve is a fact about the structure, not about the sequence,
+      // and dimming it under Clustal reads as a doubtful amino acid.
+      if (scheme === 'sse' && expanded.sse[c] === '.') classes.push('nomodel');
       const title = `${expanded.row.id} ${aa}${key}`
         + (kind !== null && kind !== undefined ? ` | ${liabilityTitle(kind, key)}` : '')
         + (expanded.sse[c] ? ` | ${SSE_WORD[expanded.sse[c]] || ''}` : '');
@@ -352,6 +356,27 @@
         + ` title="${W.escape(title)}">${aa}</span>`);
     });
     return cells.join('');
+  }
+
+  /** The known controls for this target, as drawn rows. They are kept out of
+      the consensus and the agreement bars on purpose: those describe the
+      library, and a control is the thing being compared against it, not a
+      member of it. */
+  function chosenControls() {
+    if (!data || !showControls) return [];
+    return (data.controls || []).map(expand);
+  }
+
+  function controlChip(row) {
+    if (row.role === 'binder') {
+      return `<span class="alnrole binder" title="A published nanobody with an `
+        + `experimental complex against ${W.escape(data.target)}. ${W.escape(row.note || '')}`
+        + `">binder</span>`;
+    }
+    return '<span class="alnrole framework" title="No nanobody against this '
+      + 'target has a published structure, so this is the deposited chain this '
+      + "target's own shortlist is most often nearest to. It is a framework "
+      + 'reference and does not bind this target.">framework</span>';
   }
 
   function render() {
@@ -366,18 +391,26 @@
       return;
     }
     const expanded = rows.map(expand);
+    const controls = chosenControls();
     const consensus = consensusOf(expanded);
 
+    // A control may reach a column no candidate does, so it keeps its column
+    // even though it is not in the consensus the column is measured by.
+    const controlled = new Set();
+    controls.forEach((e) => e.aa.forEach((aa, c) => { if (aa) controlled.add(c); }));
     let columnIndices = data.columns.map((_k, i) => i)
-      .filter((c) => consensus[c].occupied > 0);
+      .filter((c) => consensus[c].occupied > 0 || controlled.has(c));
     if (variableOnly) {
       columnIndices = columnIndices.filter(
-        (c) => consensus[c].identity < 1 || consensus[c].occupied < expanded.length);
+        (c) => consensus[c].identity < 1 || consensus[c].occupied < expanded.length
+          || controls.some((e) => e.aa[c] && e.aa[c] !== consensus[c].aa));
     }
 
-    const refRow = expanded.find((e) => e.row.id === reference) || expanded[0];
+    const refRow = expanded.concat(controls).find((e) => e.row.id === reference)
+      || expanded[0];
     reference = refRow.row.id;
     const scores = expanded.map((e) => scoreAgainst(e, refRow));
+    const controlScores = controls.map((e) => scoreAgainst(e, refRow));
     const { ruler, marks, band, cons, bars } = headerCells(columnIndices, consensus);
 
     const label = (e, score, i) => {
@@ -393,6 +426,27 @@
           : `${W.fmt(score.identity, 1)}%`}</span>`
         + `<span class="alnpct sim">${isRef ? ''
           : `${W.fmt(score.similarity, 1)}%`}</span>`
+        + `<span class="alnpct cdr">${score.cdr3 === null ? '-'
+          : `${W.fmt(score.cdr3, 0)}%`}</span>`
+        + '</button>';
+    };
+
+    const controlLabel = (e, score) => {
+      const row = e.row;
+      const isRef = row.id === reference;
+      const bits = [];
+      if (row.pdb) bits.push(`PDB ${row.pdb}`);
+      if (row.observed_tm) bits.push(`observed Tm ${row.observed_tm} deg C`);
+      bits.push(row.sse_source || 'no deposited chain on disk for this one, so '
+        + 'it carries no secondary structure here');
+      if (row.note) bits.push(row.note);
+      return `<button type="button" class="alnlabel${isRef ? ' isref' : ''}" `
+        + `data-id="${W.escape(row.id)}" title="${W.escape(bits.join(' | '))}">`
+        + `<span class="alnrank">${controlChip(row)}</span>`
+        + `<span class="alnid">${W.escape(row.pdb && row.chain
+          ? `${row.pdb} ${row.chain}` : row.name)}</span>`
+        + `<span class="alnpct">${isRef ? 'ref' : `${W.fmt(score.identity, 1)}%`}</span>`
+        + `<span class="alnpct sim">${isRef ? '' : `${W.fmt(score.similarity, 1)}%`}</span>`
         + `<span class="alnpct cdr">${score.cdr3 === null ? '-'
           : `${W.fmt(score.cdr3, 0)}%`}</span>`
         + '</button>';
@@ -420,6 +474,20 @@
       + `<span class="alnseq">${rowCells(e, columnIndices, consensus)}</span></div>`
     ).join('');
 
+    const controlRows = controls.length ? (
+      '<div class="alnrow alnsep"><span class="alnlabel alnhcell">'
+      + '<span class="alnlegendlabel" title="Published nanobodies on the same '
+      + 'grid. They are deliberately not part of the consensus below: that '
+      + 'describes the library, and these are what it is being compared '
+      + 'against.">known controls</span></span>'
+      + `<span class="alnseq">${columnIndices.map(() =>
+        '<span class="alncell"></span>').join('')}</span></div>`
+      + controls.map((e, i) =>
+        `<div class="alnrow alnctrl">${controlLabel(e, controlScores[i])}`
+        + `<span class="alnseq">${rowCells(e, columnIndices, consensus)}</span>`
+        + '</div>').join('')
+    ) : '';
+
     const foot = '<div class="alnrow alnfoot"><span class="alnlabel alnhcell">'
       + '<span class="alnlegendlabel" title="The commonest residue in each '
       + 'column, over the rows shown">consensus</span></span>'
@@ -430,7 +498,7 @@
       + '</span>'
       + `<span class="alnseq">${bars.join('')}</span></div>`;
 
-    host.innerHTML = head + bodyRows + foot;
+    host.innerHTML = head + bodyRows + controlRows + foot;
     host.querySelectorAll('.alnlabel[data-id]').forEach((node) => {
       node.addEventListener('click', () => {
         reference = node.dataset.id;
@@ -499,6 +567,18 @@
       + '<span class="alnkey"><i class="disulfkey"></i>canonical disulfide, '
       + 'IMGT 23 and 104</span>');
     const withModel = expanded.filter((e) => e.row.sse).length;
+    const shown = chosenControls();
+    const binders = shown.filter((e) => e.row.role === 'binder').length;
+    const controlNote = !shown.length ? ''
+      : (binders
+        ? `${binders} published nanobod${binders === 1 ? 'y' : 'ies'} with an `
+          + `experimental complex against ${data.target} are aligned below the `
+          + 'library, with secondary structure read off the deposited chain '
+          + 'rather than a model.'
+        : 'No nanobody against this target has a published structure, so the '
+          + 'control row is the deposited chain this shortlist is most often '
+          + 'nearest to. It is a framework reference and does not bind this '
+          + 'target.');
     node.innerHTML = parts.join('')
       + `<span class="alnnote">${rows.length} rows`
       + (truncated ? `, the best by rank of the ${rows.length + truncated} the `
@@ -509,7 +589,8 @@
       + `${variableOnly ? ', the ones that vary' : ''}. `
       + `Columns are IMGT positions, not an alignment: no aligner is run, so a `
       + `column is one numbered position in every row. Secondary structure on `
-      + `${withModel} of ${rows.length} rows, ${data.sse_source}.</span>`;
+      + `${withModel} of ${rows.length} rows, ${data.sse_source}. `
+      + `${controlNote}</span>`;
   }
 
   /* -------------------------------------------------------------- wiring */
@@ -548,6 +629,19 @@
       selectionSelect.value = selection;
       selectionSelect.addEventListener('change', () => {
         selection = selectionSelect.value; render();
+      });
+    }
+    const controlToggle = el('alncontrols');
+    if (controlToggle && !controlToggle.dataset.wired) {
+      controlToggle.dataset.wired = '1';
+      showControls = controlToggle.checked;
+      controlToggle.addEventListener('change', () => {
+        showControls = controlToggle.checked;
+        if (!showControls && reference
+            && (data.controls || []).some((c) => c.id === reference)) {
+          reference = null;           // the reference cannot be a hidden row
+        }
+        render();
       });
     }
     const varToggle = el('alnvariable');

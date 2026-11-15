@@ -46,9 +46,10 @@ def _rows(target: str = "EGFR"):
     conn.row_factory = sqlite3.Row
     try:
         rows = conn.execute(
-            "SELECT a.candidate_id, a.keys, a.sse, a.n_residues, c.sequence "
-            "FROM alignment a JOIN candidates c ON c.id = a.candidate_id "
-            "WHERE a.target = ?", (target,)).fetchall()
+            "SELECT a.row_id AS candidate_id, a.keys, a.sse, a.n_residues, "
+            "       a.residues, a.offset, c.sequence "
+            "FROM alignment a JOIN candidates c ON c.id = a.row_id "
+            "WHERE a.target = ? AND a.kind = 'candidate'", (target,)).fetchall()
     finally:
         conn.close()
     if not rows:
@@ -73,16 +74,18 @@ def test_no_row_repeats_an_imgt_key() -> None:
         assert len(keys) == len(set(keys)), row["candidate_id"]
 
 
-def test_the_residues_placed_are_the_tail_of_the_candidate_sequence() -> None:
-    """A row that places fewer residues than it has, because an N-terminal
-    extension could not be numbered, must lose them from the front. Losing
-    them anywhere else would slide the whole row against the grid."""
+def test_the_residues_placed_are_a_contiguous_run_of_the_sequence() -> None:
+    """ANARCI declines residues at the ends, never in the middle, so the
+    placed residues are a contiguous stretch and `offset` says where it
+    starts. Taking them from the wrong end would slide the whole row against
+    the grid, and the motifs with it."""
     for row in _rows():
-        n = row["n_residues"]
-        if not n:
-            continue
-        assert row["sequence"].endswith(row["sequence"][-n:])
-        assert len(row["sequence"][-n:]) == n
+        placed, offset = row["residues"], row["offset"]
+        assert placed, row["candidate_id"]
+        assert len(placed) == row["n_residues"], row["candidate_id"]
+        assert offset >= 0, row["candidate_id"]
+        assert row["sequence"][offset:offset + len(placed)] == placed, \
+            row["candidate_id"]
 
 
 def test_secondary_structure_is_one_letter_per_placed_residue() -> None:
@@ -117,7 +120,12 @@ def test_the_bundle_grid_reconstructs_each_candidate_s_own_sequence() -> None:
                 assert len(skeleton) == len(row["seq"])
                 assert all(0 <= c < n_columns for c in skeleton)
                 assert skeleton == sorted(skeleton)
-                assert stored[row["id"]].endswith(row["seq"])
+                # A contiguous run of the sequence, from either end: the
+                # numbering declines residues at the front (an unnumberable
+                # N-terminal extension) and at the back (TNFa-0500's corrupt
+                # J region drops 21). Slicing the tail off the sequence, as
+                # this bundle first did, slid that row 21 columns.
+                assert row["seq"] in stored[row["id"]], row["id"]
     finally:
         conn.close()
 
@@ -161,3 +169,65 @@ def test_every_liability_lands_on_the_residue_it_names() -> None:
         assert checked > 500
     finally:
         conn.close()
+
+
+def _controls(target: str):
+    if not DB.exists():
+        pytest.skip("no database built")
+    conn = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    try:
+        return conn.execute(
+            "SELECT row_id, label, residues, sse, status AS role "
+            "FROM alignment WHERE target = ? AND kind = 'control'",
+            (target,)).fetchall()
+    finally:
+        conn.close()
+
+
+def test_every_target_gets_at_least_one_known_control_row() -> None:
+    for target in ("EGFR", "GLP1R", "PRLR", "TL1A", "TNFa"):
+        rows = _controls(target)
+        assert rows, f"{target} has no control row in the alignment"
+        assert all(r["residues"] for r in rows), target
+
+
+def test_every_control_row_is_actually_a_nanobody() -> None:
+    """The row says "known control nanobody", so it has to be one.
+
+    SAbDab-nano carries conventional VH domains and TCR variable domains as
+    well as VHHs, and selecting by antigen rather than by sequence picks them
+    up: five of the twelve chains that matched an EGFR or TNFa complex were
+    not nanobodies. ANARCI numbers all of them happily, because they are all
+    V-set folds, so the hallmark tetrad is what separates them.
+    """
+    from pipeline import numbering as nb
+
+    for target in ("EGFR", "GLP1R", "PRLR", "TL1A", "TNFa"):
+        for row in _controls(target):
+            numb = nb.number_many([("q", row["residues"])])["q"]
+            _intact, n_camelid, detail = nb.hallmark(numb)
+            assert n_camelid >= 3, (target, row["label"], detail)
+
+
+def test_a_control_s_secondary_structure_fits_its_own_row() -> None:
+    for target in ("EGFR", "GLP1R", "PRLR", "TL1A", "TNFa"):
+        for row in _controls(target):
+            if not row["sse"]:
+                continue
+            assert len(row["sse"]) == len(row["residues"]), row["label"]
+            assert set(row["sse"]) <= set("HEC.-"), row["label"]
+
+
+def test_a_receptor_does_not_count_as_its_cytokine() -> None:
+    """"tumor necrosis factor receptor superfamily member 17" is BCMA, and it
+    starts with the string that names TNF-alpha."""
+    from pipeline.neighbours import antigen_matches
+
+    assert antigen_matches(["tumor necrosis factor"], "TNFa")
+    assert antigen_matches(["glycerol|sulfate ion|tumor necrosis factor"], "TNFa")
+    assert not antigen_matches(
+        ["tumor necrosis factor receptor superfamily member 17"], "TNFa")
+    assert not antigen_matches(
+        ["tumor necrosis factor receptor superfamily member 9|sulfate ion"], "TNFa")
+    assert antigen_matches(["epidermal growth factor receptor"], "EGFR")

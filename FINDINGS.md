@@ -53,7 +53,7 @@ This is why the spec asks for per-region identity rather than a whole-chain numb
 
 | Control kind | Rows |
 |---|---|
-| known | 94 |
+| known | 84 |
 | multi target | 23 |
 | scrambled | 1000 |
 

@@ -53,6 +53,14 @@ TARGET_ANTIGEN_PATTERNS = {
     "TNFa": ("tumor necrosis factor", "tumour necrosis factor", "tnf-alpha",
              "tnf alpha", "tnfa"),
 }
+# A receptor whose name begins with the cytokine's is not the cytokine.
+# "tumor necrosis factor receptor superfamily member 17" is BCMA, and six of
+# the thirteen SAbDab-nano chains that matched the TNFa patterns were
+# receptors: BCMA three times, CD40, 4-1BB and TNFR2. A nanobody against any
+# of those is not a TNF-alpha binder and cannot be asked to score like one.
+TARGET_ANTIGEN_EXCLUSIONS = {
+    "TNFa": ("receptor superfamily", "receptor type", "tnf receptor", "tnfr"),
+}
 
 BADGE_IDENTITY = 0.95
 THREE_TO_ONE = {
@@ -118,11 +126,25 @@ def load_reference() -> list[dict]:
 
 
 def antigen_matches(antigens: list[str], target: str) -> bool:
+    """Does any one antigen in this structure name the target itself?
+
+    Tested per component rather than over the joined string. A structure
+    carries its ligands and buffer in the same list, and a name that merely
+    begins with the target's is a different molecule: see
+    TARGET_ANTIGEN_EXCLUSIONS.
+    """
     patterns = TARGET_ANTIGEN_PATTERNS.get(target)
     if not patterns:
         return False
-    joined = " | ".join(antigens)
-    return any(p in joined for p in patterns)
+    excluded = TARGET_ANTIGEN_EXCLUSIONS.get(target, ())
+    for antigen in antigens or []:
+        for part in str(antigen).split("|"):
+            part = part.strip().lower()
+            if not part or any(bad in part for bad in excluded):
+                continue
+            if any(pattern in part for pattern in patterns):
+                return True
+    return False
 
 
 # ------------------------------------------------------------------- identity

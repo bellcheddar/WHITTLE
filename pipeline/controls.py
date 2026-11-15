@@ -173,7 +173,10 @@ def build_known_binders(conn) -> list[dict]:
     (spec Section 9 opening line). If one cannot be resolved it is logged and
     dropped rather than invented.
     """
-    from pipeline.neighbours import antigen_matches, load_reference
+    from pipeline import numbering as nb
+    from pipeline.common import RateLimiter
+    from pipeline.neighbours import (antigen_matches, fetch_chain,
+                                     load_reference, write_reference_chain)
 
     try:
         reference = load_reference()
@@ -182,15 +185,46 @@ def build_known_binders(conn) -> list[dict]:
             f"are dropped rather than invented")
         return []
     rows = []
+    # SAbDab-nano is a nanobody database and 11 per cent of its chains are not
+    # nanobodies: measured over the 1,390 unique chains in this snapshot, 152
+    # carry none or one of the camelid hallmark tetrad. They are conventional
+    # VH domains (WVRQAPGKGLEWVS rather than WFRQAPGKERE) and TCR variable
+    # domains, which ANARCI numbers happily because they are all V-set folds.
+    # It does not reach the nearest-neighbour column, because a VHH query
+    # retrieves VHHs: zero of the 2,500 candidates has a non-VHH as its
+    # nearest neighbour. It reaches here, because this selection is by antigen
+    # rather than by sequence, and a TCR domain cannot be asked to land in the
+    # top quartile of a nanobody affinity axis. So the tetrad is checked, by
+    # the same graded rule control 6 uses.
+    def is_vhh(sequence: str) -> tuple[bool, str]:
+        numb = nb.number_many([("q", sequence)])["q"]
+        _intact, n_camelid, detail = nb.hallmark(numb)
+        return n_camelid >= 3, detail
+
+    dropped: list[str] = []
+    # The deposited chain of every binder control, kept locally. The alignment
+    # panel reads its secondary structure off the real structure rather than a
+    # model, and the drawer can show it; both would otherwise be a request to
+    # RCSB from each visitor, which the read-only droplet does not make.
+    limiter = RateLimiter(per_second=2.5)
+    fetched = 0
     for target in TARGETS_WITH_REFERENCES:
         matched = [r for r in reference if antigen_matches(r["antigens"], target)]
-        for i, ref in enumerate(sorted(matched, key=lambda r: r["pdb"])[:12], 1):
+        vhh = []
+        for ref in sorted(matched, key=lambda r: r["pdb"]):
+            ok, detail = is_vhh(ref["sequence"])
+            if ok:
+                vhh.append(ref)
+            else:
+                dropped.append(f"{ref['pdb'].upper()} chain {ref['chain']} ({detail})")
+        for i, ref in enumerate(vhh[:12], 1):
             rows.append({
                 "id": f"BIND-{target}-{i:02d}",
                 "target": target,
                 "name": f"{ref['pdb'].upper()} chain {ref['chain']}",
                 "sequence": ref["sequence"],
                 "pdb_id": ref["pdb"].upper(),
+                "chain": ref["chain"],
                 "kind": "known",
                 "blind": 1,
                 "notes": f"Experimental nanobody-{target} complex. Antigen: "
@@ -198,8 +232,19 @@ def build_known_binders(conn) -> list[dict]:
                 "assertion": f"must land in the top quartile of the {target} "
                              f"affinity axis and bin to its published epitope",
             })
-        log(f"controls: {len(matched)} SAbDab-nano nanobodies with a {target} "
-            f"complex; {min(len(matched), 12)} taken as positive controls")
+            if not write_reference_chain(ref["pdb"], ref["chain"]):
+                fetch_chain(ref["pdb"], ref["chain"], limiter)
+                if write_reference_chain(ref["pdb"], ref["chain"]):
+                    fetched += 1
+        log(f"controls: {len(matched)} SAbDab-nano chains with a {target} "
+            f"complex, {len(vhh)} of them VHH by the hallmark tetrad; "
+            f"{min(len(vhh), 12)} taken as positive controls")
+    if dropped:
+        log(f"controls: {len(dropped)} chains dropped as not VHH: "
+            + "; ".join(dropped))
+    if fetched:
+        log(f"controls: {fetched} deposited chains fetched and kept locally "
+            f"for the binder controls")
     return rows
 
 
@@ -387,7 +432,7 @@ def main() -> int:
         "predicted_expression, predicted_tm FROM controls")}
 
     conn.execute("DELETE FROM controls")
-    columns = ["id", "target", "name", "source_doi", "pdb_id", "sequence",
+    columns = ["id", "target", "name", "source_doi", "pdb_id", "chain", "sequence",
                "observed_kd", "observed_tm", "observed_expression",
                "predicted_affinity", "predicted_thermo", "predicted_specificity",
                "predicted_expression", "predicted_tm", "kind", "blind",

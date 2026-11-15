@@ -2287,3 +2287,134 @@ through to the drawer.
 - 2026-11-15 15:50 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
 - 2026-11-15 15:50 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
 - 2026-11-15 15:50 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 15:55 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 15:55 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 15:56 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 15:56 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 15:56 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-15 15:56 controls: 7 SAbDab-nano nanobodies with a TNFa complex; 7 taken as positive controls
+- 2026-11-15 15:56 controls: 1112 control rows written {'scrambled': 1000, 'known': 89, 'multi_target': 23}; 1035 carry predictions from an earlier blind run
+- 2026-11-15 15:56 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-15 15:56 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-15 15:56 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-15 15:56 controls: ATTENTION control_5_scrambled_EGFR: real mean 50.0, shuffled mean 60.5, difference -10.5 percentile points
+- 2026-11-15 15:56 controls: ATTENTION control_5_scrambled_GLP1R: real mean 50.0, shuffled mean 70.0, difference -20.0 percentile points
+- 2026-11-15 15:56 controls: ATTENTION control_5_scrambled_PRLR: real mean 50.0, shuffled mean 51.4, difference -1.4 percentile points
+- 2026-11-15 15:56 controls: ATTENTION control_5_scrambled_TL1A: real mean 50.0, shuffled mean 47.5, difference 2.5 percentile points
+- 2026-11-15 15:56 controls: ATTENTION control_5_scrambled_TNFa: real mean 50.0, shuffled mean 49.6, difference 0.4 percentile points
+- 2026-11-15 15:56 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-15 15:59 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 15:59 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 15:59 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-15 15:59 controls: 7 SAbDab-nano nanobodies with a TNFa complex; 7 taken as positive controls
+- 2026-11-15 15:59 controls: 7 deposited chains fetched and kept locally for the binder controls
+- 2026-11-15 15:59 controls: 1112 control rows written {'scrambled': 1000, 'known': 89, 'multi_target': 23}; 1035 carry predictions from an earlier blind run
+- 2026-11-15 15:59 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-15 15:59 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-15 15:59 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-15 15:59 controls: ATTENTION control_5_scrambled_EGFR: real mean 50.0, shuffled mean 60.5, difference -10.5 percentile points
+- 2026-11-15 15:59 controls: ATTENTION control_5_scrambled_GLP1R: real mean 50.0, shuffled mean 70.0, difference -20.0 percentile points
+- 2026-11-15 15:59 controls: ATTENTION control_5_scrambled_PRLR: real mean 50.0, shuffled mean 51.4, difference -1.4 percentile points
+- 2026-11-15 15:59 controls: ATTENTION control_5_scrambled_TL1A: real mean 50.0, shuffled mean 47.5, difference 2.5 percentile points
+- 2026-11-15 15:59 controls: ATTENTION control_5_scrambled_TNFa: real mean 50.0, shuffled mean 49.6, difference 0.4 percentile points
+- 2026-11-15 15:59 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-15 16:00 align: EGFR 505 rows (5 of them known controls: 4KRL chain B, 4KRN chain A, 4KRP chain B, 7OM4 chain B, 8UKV chain C), 79 distinct IMGT skeletons, 500 with secondary structure
+- 2026-11-15 16:00 align: GLP1R 501 rows (1 of them known controls: 9QK1 chain F), 83 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:01 align: PRLR 501 rows (1 of them known controls: 9QK1 chain F), 82 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:01 align: TL1A 501 rows (1 of them known controls: 5LHR chain B), 91 distinct IMGT skeletons, 500 with secondary structure
+- 2026-11-15 16:02 align: TNFa 507 rows (7 of them known controls: 21TV chain A1, 5M2I chain G, 5M2J chain D, 5M2M chain D, 9BN7 chain D, 9DJW chain AA, 9JEC chain D), 82 distinct IMGT skeletons, 499 with secondary structure
+- 2026-11-15 16:02 align: 2500 rows; secondary structure on 2499; 1 without a model; 361 residues left unassigned; 15 known control rows, 2 of them with secondary structure from a deposited chain
+- 2026-11-15 16:02 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 16:02 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-15 16:02 controls: 7 SAbDab-nano nanobodies with a TNFa complex; 7 taken as positive controls
+- 2026-11-15 16:02 controls: 1112 control rows written {'scrambled': 1000, 'known': 89, 'multi_target': 23}; 1035 carry predictions from an earlier blind run
+- 2026-11-15 16:02 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-15 16:02 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-15 16:02 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-15 16:02 controls: ATTENTION control_5_scrambled_EGFR: real mean 50.0, shuffled mean 60.5, difference -10.5 percentile points
+- 2026-11-15 16:02 controls: ATTENTION control_5_scrambled_GLP1R: real mean 50.0, shuffled mean 70.0, difference -20.0 percentile points
+- 2026-11-15 16:02 controls: ATTENTION control_5_scrambled_PRLR: real mean 50.0, shuffled mean 51.4, difference -1.4 percentile points
+- 2026-11-15 16:02 controls: ATTENTION control_5_scrambled_TL1A: real mean 50.0, shuffled mean 47.5, difference 2.5 percentile points
+- 2026-11-15 16:02 controls: ATTENTION control_5_scrambled_TNFa: real mean 50.0, shuffled mean 49.6, difference 0.4 percentile points
+- 2026-11-15 16:02 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-15 16:04 align: EGFR 505 rows (5 of them known controls: 4KRL chain B, 4KRN chain A, 4KRP chain B, 7OM4 chain B, 8UKV chain C), 79 distinct IMGT skeletons, 505 with secondary structure
+- 2026-11-15 16:04 align: GLP1R 501 rows (1 of them known controls: 9QK1 chain F), 83 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:04 align: PRLR 501 rows (1 of them known controls: 9QK1 chain F), 82 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:05 align: TL1A 501 rows (1 of them known controls: 5LHR chain B), 91 distinct IMGT skeletons, 500 with secondary structure
+- 2026-11-15 16:05 align: TNFa 507 rows (7 of them known controls: 21TV chain A1, 5M2I chain G, 5M2J chain D, 5M2M chain D, 9BN7 chain D, 9DJW chain AA, 9JEC chain D), 82 distinct IMGT skeletons, 504 with secondary structure
+- 2026-11-15 16:05 align: 2500 rows; secondary structure on 2499; 1 without a model; 381 residues left unassigned; 15 known control rows, 12 of them with secondary structure from a deposited chain
+- 2026-11-15 16:06 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 79 IMGT skeletons
+- 2026-11-15 16:06 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 16:06 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:06 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 91 IMGT skeletons
+- 2026-11-15 16:06 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:06 build-db: 20 bundles, 4823 kB total
+- 2026-11-15 16:07 align: EGFR 505 rows (5 of them known controls: 4KRL chain B, 4KRN chain A, 4KRP chain B, 7OM4 chain B, 8UKV chain C), 79 distinct IMGT skeletons, 505 with secondary structure
+- 2026-11-15 16:08 align: GLP1R 501 rows (1 of them known controls: 9QK1 chain F), 83 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:08 align: PRLR 501 rows (1 of them known controls: 9QK1 chain F), 82 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:09 align: TL1A 501 rows (1 of them known controls: 5LHR chain B), 91 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:09 align: TNFa 507 rows (7 of them known controls: 21TV chain A1, 5M2I chain G, 5M2J chain D, 5M2M chain D, 9BN7 chain D, 9DJW chain AA, 9JEC chain D), 82 distinct IMGT skeletons, 504 with secondary structure
+- 2026-11-15 16:09 align: 2500 rows; secondary structure on 2499; 1 without a model; 381 residues left unassigned; 15 known control rows, 13 of them with secondary structure from a deposited chain
+- 2026-11-15 16:09 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 79 IMGT skeletons
+- 2026-11-15 16:09 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 16:09 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:09 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 91 IMGT skeletons
+- 2026-11-15 16:09 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:09 build-db: 20 bundles, 4823 kB total
+- 2026-11-15 16:10 align: EGFR 505 rows (5 of them known controls: 4KRL chain B, 4KRN chain A, 4KRP chain B, 7OM4 chain B, 8UKV chain C), 79 distinct IMGT skeletons, 505 with secondary structure
+- 2026-11-15 16:11 align: GLP1R 501 rows (1 of them known controls: 9QK1 chain F), 83 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:11 align: PRLR 501 rows (1 of them known controls: 9QK1 chain F), 82 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:11 align: TL1A 501 rows (1 of them known controls: 5LHR chain B), 91 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:12 align: TNFa 507 rows (7 of them known controls: 21TV chain A1, 5M2I chain G, 5M2J chain D, 5M2M chain D, 9BN7 chain D, 9DJW chain AA, 9JEC chain D), 82 distinct IMGT skeletons, 507 with secondary structure
+- 2026-11-15 16:12 align: 2500 rows; secondary structure on 2499; 1 without a model; 381 residues left unassigned; 15 known control rows, 13 of them with secondary structure from a deposited chain
+- 2026-11-15 16:12 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 79 IMGT skeletons
+- 2026-11-15 16:12 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 16:12 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:12 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 91 IMGT skeletons
+- 2026-11-15 16:12 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:12 build-db: 20 bundles, 4824 kB total
+- 2026-11-15 16:15 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 79 IMGT skeletons
+- 2026-11-15 16:15 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 16:15 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:15 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 91 IMGT skeletons
+- 2026-11-15 16:15 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:15 build-db: 20 bundles, 4824 kB total
+- 2026-11-15 16:16 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 16:17 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 16:18 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-15 16:18 controls: 5 SAbDab-nano chains with a EGFR complex, 5 of them VHH by the hallmark tetrad; 5 taken as positive controls
+- 2026-11-15 16:18 controls: 7 SAbDab-nano chains with a TNFa complex, 2 of them VHH by the hallmark tetrad; 2 taken as positive controls
+- 2026-11-15 16:18 controls: 5 chains dropped as not VHH: 21TV chain A1 (42V!VH 49G!VH 50L 52W!VH); 5M2J chain D (42V!VH 49G!VH 50L 52W!VH); 9BN7 chain D (42Y 49T? 50N? 52E?); 9DJW chain AA (42Y 49T? 50N? 52E?); 9JEC chain D (42V!VH 49G!VH 50L 52W!VH)
+- 2026-11-15 16:18 controls: 1107 control rows written {'scrambled': 1000, 'known': 84, 'multi_target': 23}; 1030 carry predictions from an earlier blind run
+- 2026-11-15 16:18 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-15 16:18 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-15 16:18 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-15 16:18 controls: ATTENTION control_5_scrambled_EGFR: real mean 50.0, shuffled mean 60.5, difference -10.5 percentile points
+- 2026-11-15 16:18 controls: ATTENTION control_5_scrambled_GLP1R: real mean 50.0, shuffled mean 70.0, difference -20.0 percentile points
+- 2026-11-15 16:18 controls: ATTENTION control_5_scrambled_PRLR: real mean 50.0, shuffled mean 51.4, difference -1.4 percentile points
+- 2026-11-15 16:18 controls: ATTENTION control_5_scrambled_TL1A: real mean 50.0, shuffled mean 47.5, difference 2.5 percentile points
+- 2026-11-15 16:18 controls: ATTENTION control_5_scrambled_TNFa: real mean 50.0, shuffled mean 49.6, difference 0.4 percentile points
+- 2026-11-15 16:18 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-15 16:19 align: EGFR 505 rows (5 of them known controls: 4KRL chain B, 4KRN chain A, 4KRP chain B, 7OM4 chain B, 8UKV chain C), 79 distinct IMGT skeletons, 505 with secondary structure
+- 2026-11-15 16:20 align: GLP1R 501 rows (1 of them known controls: 9QK1 chain F), 83 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:20 align: PRLR 501 rows (1 of them known controls: 9QK1 chain F), 82 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:20 align: TL1A 501 rows (1 of them known controls: 5LHR chain B), 91 distinct IMGT skeletons, 501 with secondary structure
+- 2026-11-15 16:21 align: TNFa 502 rows (2 of them known controls: 5M2I chain G, 5M2M chain D), 79 distinct IMGT skeletons, 502 with secondary structure
+- 2026-11-15 16:21 align: 2500 rows; secondary structure on 2499; 1 without a model; 380 residues left unassigned; 10 known control rows, 10 of them with secondary structure from a deposited chain
+- 2026-11-15 16:21 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 79 IMGT skeletons
+- 2026-11-15 16:21 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 83 IMGT skeletons
+- 2026-11-15 16:21 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 82 IMGT skeletons
+- 2026-11-15 16:21 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 91 IMGT skeletons
+- 2026-11-15 16:21 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending; alignment 500 rows over 79 IMGT skeletons
+- 2026-11-15 16:21 build-db: 20 bundles, 4817 kB total
+- 2026-11-15 16:21 findings: FINDINGS.md written, 161 lines
+- 2026-11-15 16:22 qc_pareto: EGFR 500 rows, stored front 13, independent front 13, AGREE
+- 2026-11-15 16:22 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 16:22 qc_pareto: GLP1R 500 rows, stored front 15, independent front 15, AGREE
+- 2026-11-15 16:22 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 16:22 qc_pareto: PRLR 500 rows, stored front 19, independent front 19, AGREE
+- 2026-11-15 16:22 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 16:22 qc_pareto: TL1A 500 rows, stored front 25, independent front 25, AGREE
+- 2026-11-15 16:22 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 16:22 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
+- 2026-11-15 16:22 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)

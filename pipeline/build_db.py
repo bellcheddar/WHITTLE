@@ -447,6 +447,14 @@ def column_order(skeletons: list[list[str]], target: str) -> list[str]:
     return columns
 
 
+def named(label: str | None) -> tuple[str | None, str | None]:
+    """("4KRL", "B") out of "4KRL chain B", or (None, None)."""
+    import re
+
+    match = re.fullmatch(r"(\w{4})\s+chain\s+(\w{1,4})", (label or "").strip())
+    return (match.group(1), match.group(2)) if match else (None, None)
+
+
 def alignment_bundle(conn, target: str) -> dict:
     """One target's IMGT grid, as the alignment panel consumes it.
 
@@ -464,15 +472,16 @@ def alignment_bundle(conn, target: str) -> dict:
     from pipeline import numbering as nb
 
     rows = conn.execute(
-        "SELECT a.candidate_id AS id, a.method, a.keys, a.sse, a.status, "
+        "SELECT a.row_id AS id, a.method, a.keys, a.residues, a.offset, "
+        "       a.sse, a.status, "
         "       c.sequence, c.cdr3_cluster, c.hallmark_n, c.v_gene, "
         "       r.rank, s.desirability "
         "FROM alignment a "
-        "JOIN candidates c ON c.id = a.candidate_id "
-        "LEFT JOIN ranks r ON r.candidate_id = a.candidate_id "
-        "LEFT JOIN scores s ON s.candidate_id = a.candidate_id "
-        "WHERE a.target = ? ORDER BY COALESCE(r.rank, 1e9), a.candidate_id",
-        (target,)).fetchall()
+        "JOIN candidates c ON c.id = a.row_id "
+        "LEFT JOIN ranks r ON r.candidate_id = a.row_id "
+        "LEFT JOIN scores s ON s.candidate_id = a.row_id "
+        "WHERE a.target = ? AND a.kind = 'candidate' "
+        "ORDER BY COALESCE(r.rank, 1e9), a.row_id", (target,)).fetchall()
 
     liabilities: dict[str, list] = {}
     kinds: list[str] = []
@@ -493,15 +502,14 @@ def alignment_bundle(conn, target: str) -> dict:
         if keys not in index:
             index[keys] = len(skeletons)
             skeletons.append(keys.split(" ") if keys else [])
-        placed = len(skeletons[index[keys]])
-        offset = max(0, len(row["sequence"] or "") - placed)
+        offset = row["offset"] or 0
         # `status` records a row whose numbering placed fewer residues than the
         # sequence has, which happens when an N-terminal extension cannot be
         # numbered. The grid shows what was placed, and the row says so rather
         # than sliding by the difference.
         out.append({
             "id": row["id"], "sk": index[keys],
-            "seq": (row["sequence"] or "")[-placed:] if placed else "",
+            "seq": row["residues"] or "",
             "sse": row["sse"] or "",
             "rank": row["rank"], "d": round(row["desirability"], 4)
                 if row["desirability"] is not None else None,
@@ -518,6 +526,36 @@ def alignment_bundle(conn, target: str) -> dict:
             "note": row["status"] if row["status"] != "ok" else "",
         })
 
+    # The known controls share the grid, so their skeletons go in before the
+    # column order is settled: a control with a longer CDR3 than anything in
+    # the library still needs its own columns.
+    controls = []
+    for row in conn.execute(
+            "SELECT a.row_id AS id, a.keys, a.residues, a.sse, a.sse_source, "
+            "       a.status AS role, "
+            "       a.method, a.label, c.pdb_id, c.chain, c.sequence, c.notes, "
+            "       c.observed_tm, c.observed_kd "
+            "FROM alignment a LEFT JOIN controls c ON c.id = a.row_id "
+            "WHERE a.target = ? AND a.kind = 'control' ORDER BY a.row_id",
+            (target,)):
+        keys = row["keys"] or ""
+        if keys not in index:
+            index[keys] = len(skeletons)
+            skeletons.append(keys.split(" ") if keys else [])
+        controls.append({
+            "id": row["id"], "sk": index[keys],
+            "seq": row["residues"] or "",
+            "sse": row["sse"] or "", "sse_source": row["sse_source"] or "",
+            "name": row["label"] or row["id"],
+            # A framework reference is synthesised by the alignment stage and
+            # is not a row of `controls`, so its entry and chain come back off
+            # the label the stage wrote, which is "<PDB> chain <X>".
+            "pdb": row["pdb_id"] or named(row["label"])[0],
+            "chain": row["chain"] or named(row["label"])[1], "role": row["role"], "method": row["method"],
+            "observed_tm": row["observed_tm"], "observed_kd": row["observed_kd"],
+            "note": row["notes"] or "",
+        })
+
     columns = column_order(skeletons, target)
     at = {key: i for i, key in enumerate(columns)}
     spans = dict(nb.IMGT_CDR)
@@ -532,6 +570,7 @@ def alignment_bundle(conn, target: str) -> dict:
         "skeletons": [[at[key] for key in skeleton] for skeleton in skeletons],
         "liability_kinds": kinds,
         "rows": out,
+        "controls": controls,
         "cdr_spans": {k: list(v) for k, v in spans.items()},
         "hallmark_positions": nb.HALLMARK_POSITIONS,
         "disulfide_positions": [23, 104],

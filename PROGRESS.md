@@ -242,3 +242,17 @@ shown beside it (DECISIONS 53).
   and no helix at all in any of the 2,499 models, which is what an
   immunoglobulin beta sandwich looks like, and the legend says so rather than
   showing an unused swatch.
+
+- **Known control nanobodies are aligned beside every target** (DECISIONS 71).
+  Getting there found that SAbDab-nano's antigen match was treating TNF
+  receptors as TNF-alpha, and that five of the chains it returned were not
+  nanobodies at all: three conventional VH domains and two TCR variable
+  domains. Both are fixed; TNFa now has two binder controls rather than
+  twelve, which is the honest count. The nearest-neighbour column and the
+  experimental-structure badge are unaffected, measured: none of the 2,500
+  candidates has a non-VHH as its nearest experimental neighbour.
+- Two deposited chains, 21TV chain A1 and 9DJW chain AA, cannot be extracted
+  by `write_reference_chain`: PDB format holds one character in column 22 and
+  these chain ids are two. Both turned out not to be nanobodies, so nothing is
+  missing from the panel today, but a two-character chain id will be dropped
+  silently the next time one matters. Writing mmCIF rather than PDB is the fix.

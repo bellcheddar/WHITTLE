@@ -231,6 +231,7 @@ CREATE TABLE IF NOT EXISTS controls (
     name                   TEXT,
     source_doi             TEXT,
     pdb_id                 TEXT,
+    chain                  TEXT,   -- the chain of pdb_id this sequence is
     sequence               TEXT,
     observed_kd            REAL,
     observed_tm            REAL,
@@ -278,16 +279,20 @@ CREATE TABLE IF NOT EXISTS provenance (
 -- key, so no aligner is run and no gap penalty can move a CDR against a
 -- framework. `pipeline/alignment.py` says why at more length.
 CREATE TABLE IF NOT EXISTS alignment (
-    candidate_id TEXT PRIMARY KEY REFERENCES candidates(id),
+    row_id       TEXT PRIMARY KEY,   -- a candidates.id, or a controls.id
+    kind         TEXT NOT NULL,      -- candidate | control
     target       TEXT,
     method       TEXT,      -- the numbering route that placed the residues
     n_residues   INTEGER,
     keys         TEXT,      -- space separated IMGT keys, one per placed residue
+    residues     TEXT,      -- the residues the numbering placed, in order
+    offset       INTEGER,   -- where `residues` starts in the full sequence
     sse          TEXT,      -- one letter per placed residue: H, E, C; '' if none
     sse_source   TEXT,
+    label        TEXT,      -- display name, for a control the panel synthesises
     status       TEXT
 );
-CREATE INDEX IF NOT EXISTS idx_alignment_target ON alignment(target);
+CREATE INDEX IF NOT EXISTS idx_alignment_target ON alignment(target, kind);
 
 CREATE TABLE IF NOT EXISTS qc (
     key    TEXT PRIMARY KEY,

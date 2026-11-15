@@ -269,6 +269,31 @@
       unassigned rather than coloured with a structure that is not theirs.
     </p>
 
+    <p>
+      Each target's alignment carries at least one known control. For EGFR and
+      TNFa those are published nanobodies with an experimental complex against
+      that target, taken from SAbDab-nano; GLP1R, PRLR and TL1A have none, which
+      is the same coverage gap the Control set tab states, so their control row
+      is instead the deposited chain their own shortlist is most often nearest
+      to. That row is a framework reference and the panel says so: it does not
+      bind the target. Either way the control's secondary structure is read off
+      the deposited chain rather than a predicted model, and the controls are
+      kept out of the consensus and the agreement bars, which describe the
+      library they are being compared against.
+    </p>
+    <p>
+      Five of the twelve chains that matched an EGFR or TNFa complex are not
+      nanobodies and were dropped. Three are conventional VH domains, carrying
+      WVRQAPGKGLEWVS where a VHH carries WFRQAPGKERE, and two are T cell
+      receptor variable domains. ANARCI numbers all of them, because they are
+      all V-set folds, so the camelid hallmark tetrad is what separates them.
+      Across the whole SAbDab-nano snapshot, 152 of 1,390 unique chains carry
+      none or one of the four. This does not reach the nearest-neighbour column
+      or the experimental-structure badge, because a nanobody query retrieves
+      nanobodies: none of the 2,500 candidates has a non-VHH as its nearest
+      experimental neighbour.
+    </p>
+
     <h2 id="targets">Targets and constructs</h2>
     <div class="widetable auto">
     <table class="reftable">

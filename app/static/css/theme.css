@@ -1056,7 +1056,9 @@ h3.paramgroup span {
 }
 #alngrid {
   --alncell: 11px;
-  --alnlabel: 232px;
+  /* Wide enough for a control's role chip and its entry and chain without
+     ellipsis: "BINDER  4KRL B  70.2% 78.2% 29%". */
+  --alnlabel: 272px;
   display: inline-block;
   min-width: 100%;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -1209,4 +1211,29 @@ h3.paramgroup span {
   #alngrid { --alnlabel: 118px; }
   .alnpct { display: none; }
   .alnlabel.alnhcell .alnlegendlabel { font-size: 9px; }
+}
+
+/* The known controls sit below the library with a rule between them. They are
+   not in the consensus or the agreement bars, so the separation has to be
+   visible rather than implied by the order. */
+.alnrow.alnsep { border-top: 2px solid var(--border); height: 15px; }
+.alnrow.alnsep .alncell { height: 15px; }
+.alnrow.alnsep .alnlabel { align-items: center; }
+.alnrow.alnctrl .alnlabel { background: var(--ground); }
+.alnrow.alnctrl .alnlabel.isref { background: var(--accent-wash); }
+.alnrow.alnctrl .alnrank { width: 58px; padding-right: 7px; text-align: left; }
+.alnrole {
+  display: inline-block;
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+.alnrole.binder { background: var(--good-bg); color: var(--good-ink); }
+.alnrole.framework { background: var(--rule); color: var(--ink-3); }
+@media (max-width: 900px) {
+  #alngrid { --alnlabel: 150px; }
+  .alnrow.alnctrl .alnrank { width: 54px; }
 }
