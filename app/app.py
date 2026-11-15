@@ -277,6 +277,13 @@ def api_export():
     ids = {i for i in (request.args.get("ids", "").split(",")) if i}
     if ids:
         rows = [r for r in rows if r["id"] in ids]
+    # Rank 1 first, matching the table the reader exported from. The bundle is
+    # written in id order, so without this a file whose own deliverable name is
+    # "ranked candidates exportable as CSV" (spec Section 12) came out in the
+    # library's arbitrary file order, and the first row of the export was not
+    # the first row on screen. An unranked row sorts last rather than first.
+    rows = sorted(rows, key=lambda r: (r.get("rank") is None,
+                                       r.get("rank") or 0, r.get("id") or ""))
     keys = wanted or (list(rows[0]) if rows else [])
     out = io.StringIO()
     out.write(f"# WHITTLE {meta().get('run_id')} - {target} - percentiles are "

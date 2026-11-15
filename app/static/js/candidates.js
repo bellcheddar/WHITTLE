@@ -158,7 +158,22 @@
         return value >= range[0] && value <= range[1];
       });
     }
-    return rows;
+    // Rank 1 first. The bundle is written in id order, so without this the
+    // table opened on EGFR-0001 at rank 251 and a reader's first impression of
+    // the page was the library's arbitrary file order rather than its ranking.
+    //
+    // Sorted on a copy, never in place: `applyGates` returns `bundle.rows`
+    // itself when no gate is active, so sorting the result would permanently
+    // reorder the bundle every other view reads from.
+    return rows.slice().sort((a, b) => {
+      const x = a.rank; const y = b.rank;
+      const xn = (x === null || x === undefined);
+      const yn = (y === null || y === undefined);
+      if (xn && yn) return (a.id || '').localeCompare(b.id || '');
+      if (xn) return 1;                // an unranked row sorts last, not first
+      if (yn) return -1;
+      return x - y;
+    });
   }
 
   function filterWords() {
@@ -229,6 +244,12 @@
       renderVertical: 'virtual',     // 500 x 41 cells is not a naive DOM table
       index: 'id',
       placeholder: 'No candidate matches the current filters.',
+      // Matches the order `activeRows` hands over, so Tabulator's own sort
+      // indicator agrees with what is on screen. Only set when the rank column
+      // is actually shown: Tabulator warns and ignores a sort on a column it
+      // has no definition for, and the column set is the reader's to change.
+      initialSort: cols.some((c) => c.field === 'rank')
+        ? [{ column: 'rank', dir: 'asc' }] : undefined,
       rowFormatter: (row) => {
         if (row.getData().on_front) row.getElement().classList.add('on-front');
       },
