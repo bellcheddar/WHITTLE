@@ -431,6 +431,41 @@ def section_stability(conn) -> list[str]:
             cells.append(f"{(entry.get('dropped') or {}).get(axis, '-')} of {n}")
         lines.append("| " + " | ".join(cells) + " |")
     lines += ["", re_.get("finding", ""), ""]
+
+    tm, _ = qc_value(conn, "shortlist_tm_uncertainty")
+    if tm:
+        try:
+            block = json.loads(tm)
+        except json.JSONDecodeError:
+            block = {}
+        per = block.get("per_target") or {}
+        if per:
+            lines += [
+                "### The thermostability model's error bar moves more than any "
+                "reweighting",
+                "",
+                block.get("finding", ""),
+                "",
+                f"| Target | Kept of {n}, mean | Worst draw | In every draw | "
+                f"Ever shortlisted | Predicted Tm IQR | Median error bar |",
+                "|---|---|---|---|---|---|---|",
+            ]
+            for target, row in per.items():
+                lines.append(
+                    f"| {target} | {row['mean_kept']} | {row['min_kept']} | "
+                    f"{row['always_in']} | {row['ever_in']} of "
+                    f"{row['n_competing']} | {row['tm_iqr']} deg C | "
+                    f"+/-{row['median_tm_err']} deg C |")
+            lines += [
+                "",
+                "Nothing here changes a rank. What orders the table is a "
+                "decision recorded in `DECISIONS.md`, not something a "
+                "quality-control script may alter. What it changes is how the "
+                "shortlist should be read, and the reading it supports is a "
+                "de-risked band whose internal ordering this axis cannot "
+                "carry.",
+                "",
+            ]
     if reweight_ok is False:
         lines += [
             "That row is marked for attention on the QC panel rather than "

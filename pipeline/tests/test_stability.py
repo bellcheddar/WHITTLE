@@ -115,3 +115,50 @@ def test_the_boundary_numbers_are_the_ones_the_table_stores(tmp_path) -> None:
     assert result["d_next"] == pytest.approx(ds[24])
     assert result["gap"] == pytest.approx(round(ds[23] - ds[24], 4))
     assert result["margin_over_median"] > 0
+
+
+def test_a_multi_target_control_takes_its_own_target_s_percentiles(tmp_path) -> None:
+    """`controls.attach_predictions` keyed its lookup on the sequence alone.
+
+    A multi-target control is the same sequence submitted against more than
+    one target, so a key of the sequence alone collapses every one of its rows
+    onto whichever candidate the query returned last. Observed on 2026-11-14:
+    MULTI-06 carried PRLR-0247's affinity percentile of 89.47 under GLP1R,
+    where its own candidate row GLP1R-0443 scores 30.36. Every axis is a
+    within-target percentile against a different distribution, so a value
+    carried across targets is meaningless, and it lands on the one control
+    least able to survive it: the promiscuity control asks whether a sequence
+    scores alike against unrelated antigens, and identical numbers can only
+    ever answer yes.
+    """
+    import hashlib
+    import sqlite3
+
+    from pipeline import schema
+    from pipeline.controls import attach_predictions
+
+    conn = sqlite3.connect(tmp_path / "c.sqlite")
+    conn.row_factory = sqlite3.Row
+    conn.executescript(schema.SCHEMA)
+    sequence = "QVQLVESGGGLVQAGGSLRLSCAAS"
+    digest = hashlib.md5(sequence.encode()).hexdigest()
+    for target, affinity in (("GLP1R", 30.36), ("PRLR", 89.47)):
+        conn.execute("INSERT INTO targets (target) VALUES (?)", (target,))
+        cid = f"{target}-0001"
+        conn.execute("INSERT INTO candidates (id, target, sequence, seq_md5, "
+                     "length) VALUES (?,?,?,?,?)",
+                     (cid, target, sequence, digest, len(sequence)))
+        conn.execute("INSERT INTO scores (candidate_id, target, axis_affinity) "
+                     "VALUES (?,?,?)", (cid, target, affinity))
+    conn.commit()
+
+    rows = [{"id": "MULTI-06-GLP1R", "target": "GLP1R", "sequence": sequence},
+            {"id": "MULTI-06-PRLR", "target": "PRLR", "sequence": sequence}]
+    attach_predictions(conn, rows)
+    got = {r["id"]: r["predicted_affinity"] for r in rows}
+    assert got["MULTI-06-GLP1R"] == 30.36, (
+        "a multi-target control must take the percentile of the candidate row "
+        f"for its own target, not another target's; got {got}")
+    assert got["MULTI-06-PRLR"] == 89.47
+    assert got["MULTI-06-GLP1R"] != got["MULTI-06-PRLR"], (
+        "identical values across targets is the defect this test exists for")

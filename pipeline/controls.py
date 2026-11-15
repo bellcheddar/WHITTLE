@@ -249,20 +249,33 @@ def attach_predictions(conn, rows: list[dict]) -> None:
     scrambled row whose parent is in the table) takes the candidate's scores
     directly. The rest are predicted by the same code paths and are filled when
     those stages have run over the control sequences.
+
+    The lookup is keyed on the sequence **and the target**, which matters more
+    here than anywhere else in the build. A multi-target control is by
+    definition the same sequence submitted against more than one target, so a
+    key of the sequence alone collapses all of its rows onto whichever
+    candidate the query happened to return last. That is the pooling CLAUDE.md
+    forbids, and it lands on the one control least able to survive it: the
+    promiscuity control exists to ask whether a sequence scores alike against
+    unrelated antigens, and with one target's scores copied across every row it
+    could only ever answer yes. Observed on 2026-11-14: MULTI-06 carried
+    PRLR-0247's affinity of 89.5 under GLP1R, where its own candidate row
+    GLP1R-0443 scores 30.4. Every axis is a within-target percentile against a
+    different distribution, so a value is meaningless away from its target.
     """
-    by_md5 = {}
+    by_key = {}
     for row in conn.execute(
-            "SELECT c.seq_md5, s.axis_affinity, s.axis_specificity, s.axis_thermo, "
-            "s.axis_expression, t.tm_pred FROM candidates c "
+            "SELECT c.seq_md5, c.target, s.axis_affinity, s.axis_specificity, "
+            "s.axis_thermo, s.axis_expression, t.tm_pred FROM candidates c "
             "LEFT JOIN scores s ON s.candidate_id = c.id "
             "LEFT JOIN thermostability t ON t.candidate_id = c.id"):
-        by_md5[row["seq_md5"]] = dict(row)
+        by_key[(row["seq_md5"], row["target"])] = dict(row)
 
     import hashlib
 
     for rec in rows:
         digest = hashlib.md5(rec["sequence"].encode()).hexdigest()
-        match = by_md5.get(digest)
+        match = by_key.get((digest, rec.get("target")))
         if not match:
             continue
         rec["predicted_affinity"] = match["axis_affinity"]

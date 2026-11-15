@@ -292,6 +292,16 @@
         return;
       }
 
+      if (key === 'shortlist_tm_uncertainty') {
+        const per = Object.entries(value.per_target || {}).sort()
+          .map(([t2, row]) => `${W.escape(t2)} keeps ${row.mean_kept} of 24, `
+            + `${row.always_in} in every draw, ${row.ever_in} ever`)
+          .join('; ');
+        out.innerHTML = `${W.escape(value.finding || '')}`
+          + (per ? `<br><span class="qcnote">${per}</span>` : '');
+        return;
+      }
+
       if (key === 'shortlist_boundary' || key === 'shortlist_reweighting') {
         // Both of these are tabulated in full in the panel above, so the QC
         // row carries the finding and one number per target rather than

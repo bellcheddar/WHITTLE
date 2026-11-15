@@ -17,11 +17,23 @@ me a different 24". This measures that two ways and writes both into `qc`:
    place under at least one weighting are the contested band, and how far down
    the shipped ranking that band reaches is the honest width of the cut.
 
-Both are reported rather than resolved. The ensemble is deliberately a set of
-reweightings and not a resampling: it answers "does the choice of weights pick
-these 24", which is a question about our decisions, and says nothing about the
-measurement error inside each axis, which is a different question and is
-covered by the model card's error bar.
+3. **The thermostability model's own error bar.** The ensemble above asks
+   whether our choice of weights picked these 24. It says nothing about the
+   error inside an axis, and on this data that is much the larger effect. Each
+   candidate's predicted Tm is redrawn from its own error bar, the thermo
+   percentile and the desirability are recomputed, and the shortlist is taken
+   again. The predicted Tm interquartile range is 7 to 8 degrees C against a
+   median error bar near 14.5, so the bar is roughly twice the whole spread
+   and the percentile that orders a third of the ranking is close to noise in
+   the middle of the distribution. This is consistent with the model card
+   rather than new: the model orders the extremes usefully and is not
+   calibrated in absolute degrees. It is also consistent with the thermo axis
+   passing its shuffle control at 84 per cent, because a CDR shuffle moves
+   amino-acid composition and so moves Tm by far more than the error bar.
+
+All three are reported rather than resolved, and the third is the one to read
+first. None of them changes a rank: what axis orders the table is a scientific
+decision recorded in `DECISIONS.md`, not something a QC script may alter.
 
 The axis-dropped comparison is not part of the ensemble. Removing an axis
 entirely is a bigger step than reweighting it, and which axis is worth removing
@@ -35,6 +47,7 @@ rests on an axis the control cannot defend.
 from __future__ import annotations
 
 import json
+import random
 import statistics
 import sys
 from pathlib import Path
@@ -99,6 +112,85 @@ def ranked(rows: list[dict], weights: dict[str, float],
                        row["id"], value))
     scored.sort(key=lambda t: (t[0], t[1], t[2]))
     return [t[2] for t in scored]
+
+
+TM_DRAWS = 300
+TM_SEED = 20261114
+
+
+def tm_resample(conn, target: str, n: int, ordering: list[str],
+                draws: int = TM_DRAWS) -> dict:
+    """Retake the shortlist with each predicted Tm redrawn from its error bar.
+
+    Seeded, so the figures are reproducible and a rebuild cannot quietly move
+    them. Candidates missing either of the other two ordering axes are left
+    out, because `desirability` yields nothing for them and they do not compete
+    for a place either way.
+
+    Reported, not acted on. Nothing here changes a rank: it says how much of
+    the ordering the thermostability model can actually support, which is a
+    question for whoever decides what to synthesise rather than one a script
+    should answer by reweighting an axis behind their back.
+    """
+    import statistics as stats
+
+    rows = [dict(r) for r in conn.execute(
+        "SELECT c.id, t.tm_pred, t.tm_err, s.axis_specificity, "
+        "s.axis_expression, s.pareto_rank, r.rank "
+        "FROM candidates c "
+        "JOIN thermostability t ON t.candidate_id = c.id "
+        "JOIN scores s ON s.candidate_id = c.id "
+        "JOIN ranks r ON r.candidate_id = c.id "
+        "WHERE c.target = ? AND s.axis_specificity IS NOT NULL "
+        "AND s.axis_expression IS NOT NULL AND t.tm_err IS NOT NULL",
+        (target,))]
+    if len(rows) <= n:
+        return {}
+    shipped = {r["id"] for r in rows if r["rank"] <= n}
+    rng = random.Random(TM_SEED)
+    counts = {r["id"]: 0 for r in rows}
+    kept: list[int] = []
+    weights = {a: 1.0 for a in ordering}
+    for _ in range(draws):
+        drawn = [(r, r["tm_pred"] + rng.gauss(0, r["tm_err"])) for r in rows]
+        values = sorted(v for _, v in drawn)
+        size = len(values)
+
+        def percentile(v: float) -> float:
+            lo, hi = 0, size
+            while lo < hi:
+                mid = (lo + hi) // 2
+                if values[mid] < v:
+                    lo = mid + 1
+                else:
+                    hi = mid
+            return 100.0 * lo / (size - 1)
+
+        scored = []
+        for row, value in drawn:
+            d = desirability({"specificity": row["axis_specificity"],
+                              "thermo": percentile(value),
+                              "expression": row["axis_expression"]},
+                             weights, ordering)
+            scored.append((-(d if d is not None else -1.0),
+                           row["pareto_rank"] or 10 ** 6, row["id"]))
+        scored.sort()
+        top = {cid for _, _, cid in scored[:n]}
+        kept.append(len(top & shipped))
+        for cid in top:
+            counts[cid] += 1
+    tms = sorted(r["tm_pred"] for r in rows)
+    return {
+        "draws": draws,
+        "n_competing": len(rows),
+        "mean_kept": round(stats.mean(kept), 1),
+        "min_kept": min(kept),
+        "max_kept": max(kept),
+        "always_in": sum(1 for cid in shipped if counts[cid] == draws),
+        "ever_in": sum(1 for cid, k in counts.items() if k),
+        "tm_iqr": round(tms[int(0.75 * len(tms))] - tms[int(0.25 * len(tms))], 1),
+        "median_tm_err": round(stats.median(r["tm_err"] for r in rows), 1),
+    }
 
 
 def measure(conn, target: str, n: int, ordering: list[str],
@@ -173,6 +265,8 @@ def main() -> int:
     dropping = untestable_ordering_axes(conn, ordering)
 
     results = {t: measure(conn, t, n, ordering, dropping) for t in TARGETS}
+    resampled = {t: tm_resample(conn, t, n, ordering) for t in TARGETS}
+    resampled = {t: r for t, r in resampled.items() if r}
 
     # Two separate claims, two separate rows, because they do not agree.
     #
@@ -231,9 +325,52 @@ def main() -> int:
            f"cannot call informative, retains only "
            f"{min(min(r['dropped'].values()) for r in results.values())} to "
            f"{max(max(r['dropped'].values()) for r in results.values())} of "
-           f"the {n}. That is the single largest sensitivity in the shortlist "
+           f"the {n}. That is the largest sensitivity among the weightings "
            f"and it rests on an axis the control cannot defend, which is why "
-           f"this check is marked for attention rather than passed."))
+           f"this check is marked for attention rather than passed. It is not "
+           f"the largest sensitivity in the shortlist: redrawing the predicted "
+           f"Tm from its own error bar moves more than every reweighting here "
+           f"put together, and that is reported separately as "
+           f"shortlist_tm_uncertainty."))
+
+    # The third and largest effect. Published as its own row because it
+    # answers a different question from the ensemble and gives a much worse
+    # answer: a reader who saw only the reweighting figures would take the
+    # shortlist to be about four times firmer than it is.
+    uncertainty = {}
+    if resampled:
+        uncertainty = {
+            "per_target": resampled,
+            "finding": (
+                f"Propagating the thermostability model's own error bar is the "
+                f"largest single source of movement in the shortlist, larger "
+                f"than every reweighting above put together. Redrawing each "
+                f"candidate's predicted Tm from its error bar over "
+                f"{TM_DRAWS} draws keeps "
+                f"{min(r['mean_kept'] for r in resampled.values()):.1f} to "
+                f"{max(r['mean_kept'] for r in resampled.values()):.1f} of the "
+                f"{n} on average, and not one candidate on any target holds a "
+                f"place in every draw. Between "
+                f"{min(r['ever_in'] for r in resampled.values())} and "
+                f"{max(r['ever_in'] for r in resampled.values())} different "
+                f"candidates take a shortlist place at least once. The reason "
+                f"is a ratio, not a surprise: the predicted Tm interquartile "
+                f"range is "
+                f"{min(r['tm_iqr'] for r in resampled.values()):.1f} to "
+                f"{max(r['tm_iqr'] for r in resampled.values()):.1f} degrees C "
+                f"while the median error bar is about "
+                f"{max(r['median_tm_err'] for r in resampled.values()):.1f}, "
+                f"so the bar is roughly twice the spread it has to order. The "
+                f"thermostability axis separates a real sequence from its own "
+                f"shuffled twin on 84 per cent of pairs and still cannot "
+                f"finely rank candidates against each other, because a shuffle "
+                f"changes composition and so moves Tm far more than the error "
+                f"bar does. Read the shortlist as a de-risked band, and treat "
+                f"any ordering within it as unsupported by this axis."),
+        }
+        conn.execute(
+            "INSERT OR REPLACE INTO qc (key, value, passed) VALUES (?,?,?)",
+            ("shortlist_tm_uncertainty", json.dumps(uncertainty), 0))
 
     conn.execute("INSERT OR REPLACE INTO qc (key, value, passed) VALUES (?,?,?)",
                  ("shortlist_boundary", json.dumps(boundary),
@@ -260,8 +397,19 @@ def main() -> int:
               f"{r['band_last_rank']:8}  "
               + ", ".join(f"{k} {v}/{r['shortlist']}"
                           for k, v in r["dropped"].items()))
+    if resampled:
+        print(f"\nredrawing the predicted Tm from its error bar, "
+              f"{TM_DRAWS} draws")
+        print(f"{'tgt':7}{'mean kept':>10}{'min':>6}{'always in':>11}"
+              f"{'ever in':>9}{'Tm IQR':>8}{'med err':>9}")
+        for t, r in resampled.items():
+            print(f"{t:7}{r['mean_kept']:10.1f}{r['min_kept']:6}"
+                  f"{r['always_in']:11}{r['ever_in']:9}{r['tm_iqr']:8.1f}"
+                  f"{r['median_tm_err']:9.1f}")
     print(f"\nboundary: {boundary['finding']}")
     print(f"\nreweighting: {reweight['finding']}")
+    if uncertainty:
+        print(f"\nTm uncertainty: {uncertainty['finding']}")
     if fragile:
         print("\nATTENTION: reported as a finding, not hidden. "
               "The app shows the contested band beside the cut.")

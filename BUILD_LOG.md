@@ -2083,3 +2083,67 @@ through to the drawer.
 - 2026-11-14 20:40 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
 - 2026-11-14 20:40 build-db: 15 bundles, 3619 kB total
 - 2026-11-14 20:40 findings: FINDINGS.md written, 141 lines
+- 2026-11-14 21:58 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-14 21:58 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-14 21:58 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-14 21:58 controls: 1117 control rows written {'scrambled': 1000, 'known': 94, 'multi_target': 23}; 1040 carry predictions from an earlier blind run
+- 2026-11-14 21:58 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-14 21:58 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-14 21:58 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-14 21:58 controls: ATTENTION control_5_scrambled_EGFR: real mean 50.0, shuffled mean 60.5, difference -10.5 percentile points
+- 2026-11-14 21:58 controls: ATTENTION control_5_scrambled_GLP1R: real mean 50.0, shuffled mean 70.0, difference -20.0 percentile points
+- 2026-11-14 21:58 controls: ATTENTION control_5_scrambled_PRLR: real mean 50.0, shuffled mean 51.4, difference -1.4 percentile points
+- 2026-11-14 21:58 controls: ATTENTION control_5_scrambled_TL1A: real mean 50.0, shuffled mean 47.5, difference 2.5 percentile points
+- 2026-11-14 21:58 controls: ATTENTION control_5_scrambled_TNFa: real mean 50.0, shuffled mean 49.6, difference 0.4 percentile points
+- 2026-11-14 21:58 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-14 21:59 neighbours: SAbDab-nano reference set, 1390 unique VH sequences from 2656 structure instances
+- 2026-11-14 21:59 controls: 5 SAbDab-nano nanobodies with a EGFR complex; 5 taken as positive controls
+- 2026-11-14 21:59 controls: 13 SAbDab-nano nanobodies with a TNFa complex; 12 taken as positive controls
+- 2026-11-14 21:59 controls: 1117 control rows written {'scrambled': 1000, 'known': 94, 'multi_target': 23}; 1040 carry predictions from an earlier blind run
+- 2026-11-14 21:59 controls: PASS control_3_tm_sanity: 0 of 2500 predictions above 95 deg C; hottest 91.1
+- 2026-11-14 21:59 controls: PASS control_4_trimer_TNFa: 311 of 340 co-folds contact more than one subunit
+- 2026-11-14 21:59 controls: PASS control_4_trimer_TL1A: 304 of 340 co-folds contact more than one subunit
+- 2026-11-14 21:59 controls: ATTENTION control_5_scrambled_EGFR: real mean 50.0, shuffled mean 60.5, difference -10.5 percentile points
+- 2026-11-14 21:59 controls: ATTENTION control_5_scrambled_GLP1R: real mean 50.0, shuffled mean 70.0, difference -20.0 percentile points
+- 2026-11-14 21:59 controls: ATTENTION control_5_scrambled_PRLR: real mean 50.0, shuffled mean 51.4, difference -1.4 percentile points
+- 2026-11-14 21:59 controls: ATTENTION control_5_scrambled_TL1A: real mean 50.0, shuffled mean 47.5, difference 2.5 percentile points
+- 2026-11-14 21:59 controls: ATTENTION control_5_scrambled_TNFa: real mean 50.0, shuffled mean 49.6, difference 0.4 percentile points
+- 2026-11-14 21:59 controls: PASS control_6_hallmark: 0.993 agreement under the three-of-four rule the upstream column implements
+- 2026-11-14 22:02 stability: EGFR d@24 0.8083 against d@25 0.8037 (gap 0.0046) and median 0.4168; 17 of 24 firm across the ensemble, contested band to rank 41, axis-dropped retention {'expression': 15}
+- 2026-11-14 22:02 stability: GLP1R d@24 0.7539 against d@25 0.7530 (gap 0.0009) and median 0.4212; 13 of 24 firm across the ensemble, contested band to rank 44, axis-dropped retention {'expression': 13}
+- 2026-11-14 22:02 stability: PRLR d@24 0.7543 against d@25 0.7541 (gap 0.0002) and median 0.4193; 11 of 24 firm across the ensemble, contested band to rank 50, axis-dropped retention {'expression': 9}
+- 2026-11-14 22:02 stability: TL1A d@24 0.7671 against d@25 0.7616 (gap 0.0055) and median 0.4274; 18 of 24 firm across the ensemble, contested band to rank 43, axis-dropped retention {'expression': 10}
+- 2026-11-14 22:02 stability: TNFa d@24 0.8058 against d@25 0.8032 (gap 0.0026) and median 0.4097; 7 of 24 firm across the ensemble, contested band to rank 49, axis-dropped retention {'expression': 13}
+- 2026-11-14 22:02 stability: EGFR d@24 0.8083 against d@25 0.8037 (gap 0.0046) and median 0.4168; 17 of 24 firm across the ensemble, contested band to rank 41, axis-dropped retention {'expression': 15}
+- 2026-11-14 22:02 stability: GLP1R d@24 0.7539 against d@25 0.7530 (gap 0.0009) and median 0.4212; 13 of 24 firm across the ensemble, contested band to rank 44, axis-dropped retention {'expression': 13}
+- 2026-11-14 22:02 stability: PRLR d@24 0.7543 against d@25 0.7541 (gap 0.0002) and median 0.4193; 11 of 24 firm across the ensemble, contested band to rank 50, axis-dropped retention {'expression': 9}
+- 2026-11-14 22:02 stability: TL1A d@24 0.7671 against d@25 0.7616 (gap 0.0055) and median 0.4274; 18 of 24 firm across the ensemble, contested band to rank 43, axis-dropped retention {'expression': 10}
+- 2026-11-14 22:02 stability: TNFa d@24 0.8058 against d@25 0.8032 (gap 0.0026) and median 0.4097; 7 of 24 firm across the ensemble, contested band to rank 49, axis-dropped retention {'expression': 13}
+- 2026-11-14 22:02 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:02 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:02 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:02 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:02 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:02 build-db: 15 bundles, 3623 kB total
+- 2026-11-14 22:03 findings: FINDINGS.md written, 161 lines
+- 2026-11-14 22:04 qc_pareto: EGFR 500 rows, stored front 13, independent front 13, AGREE
+- 2026-11-14 22:04 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 22:04 qc_pareto: GLP1R 500 rows, stored front 15, independent front 15, AGREE
+- 2026-11-14 22:04 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 22:04 qc_pareto: PRLR 500 rows, stored front 19, independent front 19, AGREE
+- 2026-11-14 22:04 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 22:04 qc_pareto: TL1A 500 rows, stored front 25, independent front 25, AGREE
+- 2026-11-14 22:04 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 22:04 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
+- 2026-11-14 22:04 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-14 22:04 vacuous_tests: FAIL affinity [pooled 24/50, p = 0.89] VACUOUS: does not separate real candidates from CDR-shuffled ones: pooled over all five targets, 24 of 50 pairs (48%, sign test p = 0.89), with 100% of the axis weight free to move. With 50 pairs the test has about 80 per cent power only against an effect of 70% or more, so what it rules out is a strong effect of the kind the thermostability axis shows. A weak one is not excluded, and separating those two would need more co-folded controls rather than a different reading of these. The axis is non-discriminating and is labelled as such wherever it appears. Per target: EGFR 4/10, GLP1R 4/10, PRLR 5/10, TL1A 6/10, TNFa 5/10, none of which reaches significance alone at this size.
+- 2026-11-14 22:04 vacuous_tests: PENDING expression [pooled 982/1000, p = 2.5e-263] UNTESTABLE: this control cannot test this axis: 67% of its component weight reads only amino-acid composition or the framework, both of which a CDR shuffle preserves exactly, so a result near chance is expected by construction rather than by failure. No synthetic control settles it either, because the two heaviest components are defined from composition and a deliberately insoluble sequence would score badly by arithmetic and not by evidence. Deciding this axis needs measured expression or solubility on real nanobodies, of which this control set has none, so it stays untested rather than informative or non-discriminating. Pooled over all five targets it is 982 of 1000 (98%, p = 2.5e-263), which is what a control that cannot move two thirds of the weight looks like.
+- 2026-11-14 22:04 vacuous_tests: PASS specificity [pooled 690/853, p = 7.7e-78] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 690 of 853 pairs (81%, sign test p = 7.7e-78). Per target: EGFR 132/171, GLP1R 144/165, PRLR 141/175, TL1A 140/172, TNFa 133/170, every one of which is significant on its own. 34 of 887 available pairs are unusable because the control carries no value on this axis, which for specificity is TNP declining to number the shuffled sequence. The dropout acts on the pair and not inside it, since a shuffle has its parent's exact length, so it costs sample size rather than skewing the comparison.
+- 2026-11-14 22:04 vacuous_tests: PASS thermo [pooled 837/1000, p = 9.8e-110] INFORMATIVE: clearly separates a candidate from its own CDR-shuffled twin: pooled over all five targets, 837 of 1000 pairs (84%, sign test p = 9.8e-110). Per target: EGFR 164/200, GLP1R 162/200, PRLR 174/200, TL1A 167/200, TNFa 170/200, every one of which is significant on its own.
+- 2026-11-14 22:04 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:04 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:04 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:04 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:04 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 22:04 build-db: 15 bundles, 3623 kB total
+- 2026-11-14 22:04 findings: FINDINGS.md written, 161 lines

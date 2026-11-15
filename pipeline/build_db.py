@@ -225,7 +225,8 @@ def stability_block(conn) -> dict:
     check has not run rather than implying the cut is firm.
     """
     out: dict = {}
-    for key in ("shortlist_boundary", "shortlist_reweighting"):
+    for key in ("shortlist_boundary", "shortlist_reweighting",
+                "shortlist_tm_uncertainty"):
         row = conn.execute("SELECT value, passed FROM qc WHERE key = ?",
                            (key,)).fetchone()
         if not row:

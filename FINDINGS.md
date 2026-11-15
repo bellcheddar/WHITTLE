@@ -99,9 +99,15 @@ candidates were scored on. See DECISIONS 59.
 
 ## What the scrambled control did to the affinity axis
 
-The affinity axis depends on the co-folding tier, which has not completed for this run. Until it does, the axis is null everywhere and the app shows it as pending rather than as a number.
+| Target | Result | Verdict |
+|---|---|---|
+| EGFR | real mean 50.0, shuffled mean 60.5, difference -10.5 percentile points | Spec 9 item 5. If the axis does not separate them it is non-discriminating, which is a finding to report, not a failure to hide. | **does not separate** |
+| GLP1R | real mean 50.0, shuffled mean 70.0, difference -20.0 percentile points | Spec 9 item 5. If the axis does not separate them it is non-discriminating, which is a finding to report, not a failure to hide. | **does not separate** |
+| PRLR | real mean 50.0, shuffled mean 51.4, difference -1.4 percentile points | Spec 9 item 5. If the axis does not separate them it is non-discriminating, which is a finding to report, not a failure to hide. | **does not separate** |
+| TL1A | real mean 50.0, shuffled mean 47.5, difference 2.5 percentile points | Spec 9 item 5. If the axis does not separate them it is non-discriminating, which is a finding to report, not a failure to hide. | **does not separate** |
+| TNFa | real mean 50.0, shuffled mean 49.6, difference 0.4 percentile points | Spec 9 item 5. If the axis does not separate them it is non-discriminating, which is a finding to report, not a failure to hide. | **does not separate** |
 
-This is the control that matters most (spec Section 9 item 5). Published benchmarks show co-folding confidence does not reliably discriminate cognate from non-cognate nanobody-antigen pairs, so there is a real chance this axis cannot separate real candidates from CDR-shuffled ones. **If that happens it is a finding, not a failure**: the axis is marked non-discriminating wherever it appears and it does not drive the Pareto front.
+**This is a finding, not a failure.** Where the affinity axis does not separate real candidates from CDR-shuffled ones it is marked non-discriminating wherever it appears, and it does not drive the Pareto front. That is the honest reading of what co-folding confidence can and cannot do for nanobody specificity.
 
 ## Axis independence and double counting
 
@@ -127,7 +133,21 @@ The ordering axes are specificity, thermo, expression. Desirability is their wei
 | TL1A | 0.949 | 0.767 | 0.762 | 0.427 | 0.0055 | 18 of 24 | rank 43 | 10 of 24 |
 | TNFa | 0.945 | 0.806 | 0.803 | 0.410 | 0.0026 | 7 of 24 | rank 49 | 13 of 24 |
 
-Of the 24 shortlisted, 7 to 18 hold a place under every one of the 7 weightings in the ensemble. The contested band reaches rank 50, so a reader choosing their own weights in the UI would see roughly that many candidates competing for 24 places. Dropping expression, which the scrambled control cannot call informative, retains only 9 to 15 of the 24. That is the single largest sensitivity in the shortlist and it rests on an axis the control cannot defend, which is why this check is marked for attention rather than passed.
+Of the 24 shortlisted, 7 to 18 hold a place under every one of the 7 weightings in the ensemble. The contested band reaches rank 50, so a reader choosing their own weights in the UI would see roughly that many candidates competing for 24 places. Dropping expression, which the scrambled control cannot call informative, retains only 9 to 15 of the 24. That is the largest sensitivity among the weightings and it rests on an axis the control cannot defend, which is why this check is marked for attention rather than passed. It is not the largest sensitivity in the shortlist: redrawing the predicted Tm from its own error bar moves more than every reweighting here put together, and that is reported separately as shortlist_tm_uncertainty.
+
+### The thermostability model's error bar moves more than any reweighting
+
+Propagating the thermostability model's own error bar is the largest single source of movement in the shortlist, larger than every reweighting above put together. Redrawing each candidate's predicted Tm from its error bar over 300 draws keeps 8.7 to 12.1 of the 24 on average, and not one candidate on any target holds a place in every draw. Between 101 and 116 different candidates take a shortlist place at least once. The reason is a ratio, not a surprise: the predicted Tm interquartile range is 7.1 to 8.3 degrees C while the median error bar is about 14.9, so the bar is roughly twice the spread it has to order. The thermostability axis separates a real sequence from its own shuffled twin on 84 per cent of pairs and still cannot finely rank candidates against each other, because a shuffle changes composition and so moves Tm far more than the error bar does. Read the shortlist as a de-risked band, and treat any ordering within it as unsupported by this axis.
+
+| Target | Kept of 24, mean | Worst draw | In every draw | Ever shortlisted | Predicted Tm IQR | Median error bar |
+|---|---|---|---|---|---|---|
+| EGFR | 12.1 | 7 | 0 | 101 of 474 | 8.3 deg C | +/-14.8 deg C |
+| GLP1R | 9.7 | 4 | 0 | 108 of 473 | 7.2 deg C | +/-14.3 deg C |
+| PRLR | 8.7 | 4 | 0 | 116 of 485 | 7.1 deg C | +/-14.3 deg C |
+| TL1A | 11.4 | 6 | 0 | 105 of 486 | 8.0 deg C | +/-14.5 deg C |
+| TNFa | 10.4 | 4 | 0 | 101 of 479 | 7.9 deg C | +/-14.9 deg C |
+
+Nothing here changes a rank. What orders the table is a decision recorded in `DECISIONS.md`, not something a quality-control script may alter. What it changes is how the shortlist should be read, and the reading it supports is a de-risked band whose internal ordering this axis cannot carry.
 
 That row is marked for attention on the QC panel rather than passed. It is a property of the shortlist worth stating plainly: the 24 are a de-risked band and not a ranked list, and the ordering inside the band is a suggestion. Anyone choosing how many genes to order should read the contested band as the real width of the cut.
 
