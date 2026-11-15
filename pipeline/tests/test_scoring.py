@@ -382,3 +382,75 @@ def test_an_annotate_only_axis_cannot_change_the_desirability_ordering() -> None
     assert (desirability(low, leaky, ordering)
             != desirability(high, leaky, ordering)), (
         "fixture is not sensitive: affinity must change the value when weighted")
+
+
+# --------------------------------------------------- the table's sort order
+
+def test_every_numeric_column_gets_a_numeric_sorter() -> None:
+    """Tabulator's default sorter is "string" and `columnDef` set none.
+
+    Every one of the 42 numeric columns therefore sorted lexicographically on
+    a header click: a predicted Tm of 100.1 below 68.7, and `rank` as 1, 10,
+    100, 101. It was invisible until an `initialSort` on rank put a
+    string-sorted column on screen at load on 2026-11-14.
+
+    The rule in `candidates.js` names the textual kinds and treats every other
+    kind as numeric, which is the round that survives a new column. The first
+    attempt named the numeric kinds instead and missed `axis_profile`: its
+    `kind` is `spark` because of how the cell is drawn, while its field is
+    `axis_affinity`, a percentile, so it kept the string sorter and sorted
+    1.67, 10, 100, 11.67 with its empties out of place.
+
+    This test reads the rule out of the bundle it is written for rather than
+    restating it: for every registry column, if the data holds a string the
+    kind must be textual, and otherwise it must not be.
+    """
+    import json
+    import re
+    from pathlib import Path
+
+    import pytest
+
+    root = Path(__file__).resolve().parent.parent.parent
+    static = root / "app" / "static" / "data"
+    if not (static / "meta.json").exists():
+        pytest.skip("bundles not built in this checkout")
+
+    source = (root / "app" / "static" / "js" / "candidates.js").read_text()
+    match = re.search(r"const TEXTUAL_KINDS = \[([^\]]*)\]", source)
+    assert match, "could not find TEXTUAL_KINDS in candidates.js"
+    textual = {piece.strip().strip("'\"") for piece in
+               match.group(1).split(",") if piece.strip()}
+    assert textual, "TEXTUAL_KINDS must not be empty"
+
+    meta = json.loads((static / "meta.json").read_text())
+    registry = {c["key"]: c for c in meta["columns"]["columns"]}
+    rows: list[dict] = []
+    for target in [t["target"] for t in meta["targets"]]:
+        path = static / f"candidates_{target}.json"
+        if path.exists():
+            rows += json.loads(path.read_text())["rows"]
+    assert rows, "no candidate rows to check the kinds against"
+
+    # `axis_profile` draws a sparkline over a different field; the sorter
+    # follows the field, which is the whole point of this test.
+    field_of = {"axis_profile": "axis_affinity"}
+
+    wrong: list[str] = []
+    for key, col in registry.items():
+        field = field_of.get(key, key)
+        values = [r.get(field) for r in rows]
+        present = [v for v in values if v is not None]
+        if not present:
+            continue
+        holds_text = any(isinstance(v, str) for v in present)
+        is_textual = col["kind"] in textual
+        if holds_text and not is_textual:
+            wrong.append(f"{key} (field {field}, kind {col['kind']}) holds "
+                         f"strings and would get the number sorter")
+        if not holds_text and is_textual:
+            wrong.append(f"{key} (field {field}, kind {col['kind']}) holds "
+                         f"numbers and would get the string sorter")
+    assert not wrong, (
+        "the sorter a column gets must match what its field holds: "
+        + "; ".join(wrong))

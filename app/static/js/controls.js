@@ -163,16 +163,27 @@
         + `<span style="color:var(--ink-3);font-weight:400">`
         + `&middot; the same sequence against `
         + `${count} ${count === 1 ? 'target' : 'targets'}</span>`,
+      // Tabulator's default sorter is "string", so these four
+      // percentile columns sorted lexicographically on a header click
+      // until 2026-11-14, the same defect the candidate table had.
       columns: [
         { title: 'Row', field: 'id', frozen: true, width: 190 },
         { title: 'Target', field: 'target', cssClass: '' },
         { title: 'Affinity', field: 'predicted_affinity', cssClass: 'num',
+          sorter: 'number',
+          sorterParams: { alignEmptyValues: 'bottom' },
           formatter: (c) => W.pctCell(c.getValue()) },
         { title: 'Specificity', field: 'predicted_specificity', cssClass: 'num',
+          sorter: 'number',
+          sorterParams: { alignEmptyValues: 'bottom' },
           formatter: (c) => W.pctCell(c.getValue()) },
         { title: 'Thermostability', field: 'predicted_thermo', cssClass: 'num',
+          sorter: 'number',
+          sorterParams: { alignEmptyValues: 'bottom' },
           formatter: (c) => W.pctCell(c.getValue()) },
         { title: 'Expression', field: 'predicted_expression', cssClass: 'num',
+          sorter: 'number',
+          sorterParams: { alignEmptyValues: 'bottom' },
           formatter: (c) => W.pctCell(c.getValue()) },
         { title: 'Reading', field: 'notes', cssClass: '', minWidth: 240 },
       ],

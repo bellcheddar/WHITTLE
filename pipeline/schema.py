@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS structures (
     ppc                  REAL,      -- patch positive charge
     pnc                  REAL,      -- patch negative charge
     sfvcsp_na            REAL,      -- SFvCSP: not applicable to a single-domain VHH
-    tnp_flags            TEXT,
+    tnp_flags            INTEGER,  -- a count; TEXT here stored it as "0".."5"
     tnp_version          TEXT,
     tnp_percentile       REAL,
     swi                  REAL,

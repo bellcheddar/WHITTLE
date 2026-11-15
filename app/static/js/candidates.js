@@ -89,6 +89,10 @@
     };
   }
 
+  // Kinds whose field really holds text. Everything else sorts as a number:
+  // see the note on `sorter` below for why the list is written this way round.
+  const TEXTUAL_KINDS = ['text'];
+
   function columnDef(key) {
     const col = BY_KEY[key];
     if (!col) return null;
@@ -99,6 +103,27 @@
       formatter: formatterFor(col),
       cssClass: col.kind === 'num' || col.kind === 'pct' ? 'num' : '',
       headerSortTristate: true,
+      // Tabulator's default sorter is "string", and nothing here ever set one,
+      // so every numeric column in the table sorted lexicographically: rank
+      // came out 1, 10, 100, 101 and a predicted Tm of 100.1 sorted below
+      // 68.7. It applied to all 42 num and pct columns, on every header click,
+      // and was invisible until `initialSort` put a string-sorted rank on
+      // screen at load.
+      //
+      // The rule names the textual kinds and treats everything else as
+      // numeric, rather than naming the numeric ones. `kind` describes how a
+      // cell is DRAWN, not what the field holds: `axis_profile` draws a
+      // sparkline and is kind `spark`, but its field is `axis_affinity`, a
+      // percentile. Listing the numeric kinds left that one on the string
+      // sorter, which sorted it 1.67, 10, 100, 11.67 and misplaced its
+      // empties. The chip and badge columns are numeric underneath too, being
+      // counts and 0 or 1.
+      sorter: TEXTUAL_KINDS.includes(col.kind) ? 'string' : 'number',
+      // A row with no value sorts to the bottom in both directions rather
+      // than counting as zero. Affinity is null for 450 of each target's 500
+      // candidates, so treating absent as smallest would have filled the top
+      // of a descending sort with rows carrying nothing.
+      sorterParams: { alignEmptyValues: 'bottom' },
       minWidth: col.key === 'id' ? 150 : 86,
     };
     if (col.key === 'id') { def.frozen = true; def.width = 168; }
