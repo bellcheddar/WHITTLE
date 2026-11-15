@@ -2059,3 +2059,27 @@ through to the drawer.
 - 2026-11-14 19:23 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
 - 2026-11-14 19:23 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
 - 2026-11-14 19:23 build-db: 15 bundles, 3611 kB total
+- 2026-11-14 20:36 stability: EGFR d@24 0.8083 against d@25 0.8037 (gap 0.0046) and median 0.4168; 17 of 24 firm across the ensemble, contested band to rank 41, axis-dropped retention {'expression': 15}
+- 2026-11-14 20:36 stability: GLP1R d@24 0.7539 against d@25 0.7530 (gap 0.0009) and median 0.4212; 13 of 24 firm across the ensemble, contested band to rank 44, axis-dropped retention {'expression': 13}
+- 2026-11-14 20:36 stability: PRLR d@24 0.7543 against d@25 0.7541 (gap 0.0002) and median 0.4193; 11 of 24 firm across the ensemble, contested band to rank 50, axis-dropped retention {'expression': 9}
+- 2026-11-14 20:36 stability: TL1A d@24 0.7671 against d@25 0.7616 (gap 0.0055) and median 0.4274; 18 of 24 firm across the ensemble, contested band to rank 43, axis-dropped retention {'expression': 10}
+- 2026-11-14 20:36 stability: TNFa d@24 0.8058 against d@25 0.8032 (gap 0.0026) and median 0.4097; 7 of 24 firm across the ensemble, contested band to rank 49, axis-dropped retention {'expression': 13}
+- 2026-11-14 20:36 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:36 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:36 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:36 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:36 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:36 build-db: 15 bundles, 3619 kB total
+- 2026-11-14 20:38 findings: FINDINGS.md written, 141 lines
+- 2026-11-14 20:39 stability: EGFR d@24 0.8083 against d@25 0.8037 (gap 0.0046) and median 0.4168; 17 of 24 firm across the ensemble, contested band to rank 41, axis-dropped retention {'expression': 15}
+- 2026-11-14 20:39 stability: GLP1R d@24 0.7539 against d@25 0.7530 (gap 0.0009) and median 0.4212; 13 of 24 firm across the ensemble, contested band to rank 44, axis-dropped retention {'expression': 13}
+- 2026-11-14 20:39 stability: PRLR d@24 0.7543 against d@25 0.7541 (gap 0.0002) and median 0.4193; 11 of 24 firm across the ensemble, contested band to rank 50, axis-dropped retention {'expression': 9}
+- 2026-11-14 20:39 stability: TL1A d@24 0.7671 against d@25 0.7616 (gap 0.0055) and median 0.4274; 18 of 24 firm across the ensemble, contested band to rank 43, axis-dropped retention {'expression': 10}
+- 2026-11-14 20:39 stability: TNFa d@24 0.8058 against d@25 0.8032 (gap 0.0026) and median 0.4097; 7 of 24 firm across the ensemble, contested band to rank 49, axis-dropped retention {'expression': 13}
+- 2026-11-14 20:40 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:40 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:40 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:40 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:40 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-14 20:40 build-db: 15 bundles, 3619 kB total
+- 2026-11-14 20:40 findings: FINDINGS.md written, 141 lines

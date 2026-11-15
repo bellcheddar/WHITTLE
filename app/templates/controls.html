@@ -72,6 +72,69 @@
   <p class="caption" id="promisccaption"></p>
 </section>
 
+{# The shortlist is the deliverable, so its own stability is a control and
+   belongs on this tab rather than in a commit message. Rendered server side
+   from the meta bundle: no JS, so it is there with scripting off. #}
+{% set stab = meta.shortlist_stability or {} %}
+{% set boundary = stab.boundary or {} %}
+{% set reweight = stab.reweighting or {} %}
+{% if boundary.per_target %}
+<section class="card" aria-labelledby="stabhead">
+  <div class="cardhead">
+    <h2 id="stabhead">How firm is the cut at {{ boundary.shortlist_per_target or 24 }}?</h2>
+    <span class="hint">the shortlist re-derived under every weighting a reader could choose</span>
+  </div>
+  <p style="margin:0 0 10px;font-size:12.5px;color:var(--ink-2);max-width:900px">
+    {{ boundary.finding }}
+  </p>
+  <table class="reftable">
+    <caption class="sr-only">Shortlist boundary and reweighting stability per target</caption>
+    <thead>
+      <tr>
+        <th>Target</th><th>Best</th><th>Rank {{ boundary.shortlist_per_target or 24 }}</th>
+        <th>Rank {{ (boundary.shortlist_per_target or 24) + 1 }}</th><th>Median</th>
+        <th>Gap at the cut</th><th>On the front</th>
+        <th>Firm under every weighting</th><th>Contested band reaches</th>
+        {% for axis in reweight.untestable_axes_dropped or [] %}
+        <th>Without {{ axis }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for target, row in boundary.per_target.items() %}
+      {% set re = (reweight.per_target or {}).get(target) or {} %}
+      <tr>
+        <td><strong>{{ target }}</strong></td>
+        <td>{{ '%.3f'|format(row.d_first) }}</td>
+        <td>{{ '%.3f'|format(row.d_last) }}</td>
+        <td>{{ '%.3f'|format(row.d_next) }}</td>
+        <td>{{ '%.3f'|format(row.d_median) }}</td>
+        <td>{{ '%.4f'|format(row.gap) }}</td>
+        <td>{{ row.on_front }} of {{ boundary.shortlist_per_target or 24 }}</td>
+        <td>{{ re.firm if re.firm is not none else '-' }} of {{ boundary.shortlist_per_target or 24 }}</td>
+        <td>rank {{ re.band_last_rank or row.band_last_rank }}</td>
+        {% for axis in reweight.untestable_axes_dropped or [] %}
+        <td>{{ (re.dropped or {}).get(axis, '-') }} of {{ boundary.shortlist_per_target or 24 }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p style="margin:10px 0 0;font-size:12.5px;color:var(--ink-2);max-width:900px">
+    {{ reweight.finding }}
+  </p>
+  <p class="caption" style="margin-top:8px">
+    The ensemble is
+    {% for name in reweight.ensemble or [] %}<code>{{ name }}</code>{% if not loop.last %}, {% endif %}{% endfor %}.
+    Desirability is a weighted geometric mean of the ordering axes' percentiles,
+    and the weights are the reader's to set, so the ensemble asks what the
+    shortlist would have been under each of those choices. It does not ask what
+    the measurement error inside an axis would do, which is a different question
+    and is the error bar on the predicted Tm rather than this table.
+  </p>
+</section>
+{% endif %}
+
 <section class="card" aria-labelledby="qchead">
   <div class="cardhead">
     <h2 id="qchead">QC panel</h2>

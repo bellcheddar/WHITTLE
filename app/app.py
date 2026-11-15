@@ -91,7 +91,11 @@ def meta() -> dict:
                 "columns": [], "defaults": []}, "axes": {}, "axes_pending": [],
                 "tier_counts": {}, "axis_verdicts": {},
                 "axis_verdict_pooled": {}, "n_scrambled_controls": 0,
-                "scrambled_per_target": 0}
+                "scrambled_per_target": 0,
+                # Empty rather than absent: the Control set tab guards on
+                # `boundary.per_target`, so an empty block hides the panel
+                # instead of asserting that the cut at 24 is firm.
+                "shortlist_stability": {}}
     return data
 
 

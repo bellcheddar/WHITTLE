@@ -113,6 +113,24 @@ Every axis is checked for the ways a column can look like a measurement while ca
 
 Axes flagged as vacuous: affinity, expression.
 
+## How firm is the cut at 24?
+
+The shortlist is a band, not an ordering. Every target places its 24th candidate between 0.33 and 0.40 desirability above the library median, so the 24 are genuinely separated from the 449 to 462 others that carry a value on all three ordering axes. The cut itself is not: the gap between rank 24 and rank 25 runs from 0.0002 to 0.0055, so there is no sense in which candidate 24 beats candidate 25. Read the shortlist as the top band and the ordering inside it as a suggestion.
+
+The ordering axes are specificity, thermo, expression. Desirability is their weighted geometric mean and the weights are set in the UI, so the shipped equal weighting is one choice among many. The ensemble below re-derives the shortlist under each of 7: equal weights, and each axis doubled and halved in turn. A candidate is firm if it holds a place under all of them.
+
+| Target | Best | Rank 24 | Rank 25 | Median | Gap at the cut | Firm under every weighting | Contested band reaches | Without expression |
+|---|---|---|---|---|---|---|---|---|
+| EGFR | 0.969 | 0.808 | 0.804 | 0.417 | 0.0046 | 17 of 24 | rank 41 | 15 of 24 |
+| GLP1R | 0.926 | 0.754 | 0.753 | 0.421 | 0.0009 | 13 of 24 | rank 44 | 13 of 24 |
+| PRLR | 0.854 | 0.754 | 0.754 | 0.419 | 0.0002 | 11 of 24 | rank 50 | 9 of 24 |
+| TL1A | 0.949 | 0.767 | 0.762 | 0.427 | 0.0055 | 18 of 24 | rank 43 | 10 of 24 |
+| TNFa | 0.945 | 0.806 | 0.803 | 0.410 | 0.0026 | 7 of 24 | rank 49 | 13 of 24 |
+
+Of the 24 shortlisted, 7 to 18 hold a place under every one of the 7 weightings in the ensemble. The contested band reaches rank 50, so a reader choosing their own weights in the UI would see roughly that many candidates competing for 24 places. Dropping expression, which the scrambled control cannot call informative, retains only 9 to 15 of the 24. That is the single largest sensitivity in the shortlist and it rests on an axis the control cannot defend, which is why this check is marked for attention rather than passed.
+
+That row is marked for attention on the QC panel rather than passed. It is a property of the shortlist worth stating plainly: the 24 are a de-risked band and not a ranked list, and the ordering inside the band is a suggestion. Anyone choosing how many genes to order should read the contested band as the real width of the cut.
+
 ## The thermostability model
 
 Its validation, its failure modes and the gap between a grouped and a row-wise split are in [MODEL_CARD.md](MODEL_CARD.md). The short version: it orders nanobodies usefully and does not place them correctly on the absolute temperature scale, which is why the axis is a within-target percentile and the degrees carry an error bar.

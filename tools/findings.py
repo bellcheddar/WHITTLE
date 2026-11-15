@@ -379,6 +379,71 @@ def section_axes(conn) -> list[str]:
     return lines
 
 
+def section_stability(conn) -> list[str]:
+    """How firm the cut at 24 is. Written from `tools/shortlist_stability.py`.
+
+    The shortlist is the deliverable, so a reader is owed the sensitivity of
+    the thing they would act on, not only the sensitivity of the axes that
+    produced it.
+    """
+    lines = ["## How firm is the cut at 24?", ""]
+    boundary, _ = qc_value(conn, "shortlist_boundary")
+    reweight, reweight_ok = qc_value(conn, "shortlist_reweighting")
+    if not boundary:
+        return lines + ["Not measured for this run.", ""]
+    try:
+        bo = json.loads(boundary)
+        re_ = json.loads(reweight) if reweight else {}
+    except json.JSONDecodeError:
+        return lines + ["Not measured for this run.", ""]
+
+    n = bo.get("shortlist_per_target", 24)
+    dropped = re_.get("untestable_axes_dropped") or []
+    header = (f"| Target | Best | Rank {n} | Rank {n + 1} | Median | Gap at the "
+              f"cut | Firm under every weighting | Contested band reaches |")
+    rule = "|---|---|---|---|---|---|---|---|"
+    for axis in dropped:
+        header += f" Without {axis} |"
+        rule += "---|"
+    lines += [
+        bo.get("finding", ""),
+        "",
+        f"The ordering axes are {', '.join(bo.get('ordering_axes') or [])}. "
+        f"Desirability is their weighted geometric mean and the weights are set "
+        f"in the UI, so the shipped equal weighting is one choice among many. "
+        f"The ensemble below re-derives the shortlist under each of "
+        f"{len(re_.get('ensemble') or []) or 7}: equal weights, and each axis "
+        f"doubled and halved in turn. A candidate is firm if it holds a place "
+        f"under all of them.",
+        "",
+        header,
+        rule,
+    ]
+    for target, row in (bo.get("per_target") or {}).items():
+        entry = (re_.get("per_target") or {}).get(target) or {}
+        cells = [target,
+                 f"{row['d_first']:.3f}", f"{row['d_last']:.3f}",
+                 f"{row['d_next']:.3f}", f"{row['d_median']:.3f}",
+                 f"{row['gap']:.4f}",
+                 f"{entry.get('firm', '-')} of {n}",
+                 f"rank {entry.get('band_last_rank', row.get('band_last_rank'))}"]
+        for axis in dropped:
+            cells.append(f"{(entry.get('dropped') or {}).get(axis, '-')} of {n}")
+        lines.append("| " + " | ".join(cells) + " |")
+    lines += ["", re_.get("finding", ""), ""]
+    if reweight_ok is False:
+        lines += [
+            "That row is marked for attention on the QC panel rather than "
+            "passed. It is a property of the shortlist worth stating plainly: "
+            f"the {n} are a de-risked band and not a ranked list, and the "
+            "ordering inside the band is a suggestion. Anyone choosing how "
+            "many genes to order should read the contested band as the real "
+            "width of the cut.",
+            "",
+        ]
+    return lines
+
+
 def main() -> int:
     conn = connect()
     built = conn.execute("SELECT COUNT(*) FROM candidates").fetchone()[0]
@@ -398,6 +463,7 @@ def main() -> int:
     lines += section_controls(conn)
     lines += section_scrambled(conn)
     lines += section_axes(conn)
+    lines += section_stability(conn)
 
     model_card = ROOT / "MODEL_CARD.md"
     if model_card.exists():

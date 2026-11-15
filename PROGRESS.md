@@ -179,7 +179,22 @@ shown beside it (DECISIONS 53).
   attempted. The static argument is that `.kv` is `width: 100%` with
   `overflow-wrap: anywhere` on its cells, so the table's min-content width is
   one character and it cannot exceed its container. That is reasoning, not a
-  measurement, and the item deserves the measurement.
+  measurement, and the item deserves the measurement. Retried at 20:45 on
+  2026-11-14 and the extension reported not connected again, so the new
+  "How firm is the cut" table on the Control set tab is also unmeasured at
+  phone width. It is a `.reftable` like the three already on that tab, which
+  were measured, and it has nine columns against the references table's five,
+  so it is the widest table on the site and the likeliest to need the
+  measurement.
+
+- **The shortlist is a band, not a ranked list, and this is now measured.**
+  `tools/shortlist_stability.py` reports 7 to 18 of each target's 24 holding a
+  place under all seven weightings in the ensemble, with the contested band
+  reaching rank 50 and only 9 to 15 of 24 surviving the removal of the
+  expression axis the scrambled control calls untestable. Published on the
+  Candidates hero, the Control set tab, the About tab and `FINDINGS.md`
+  (DECISIONS 63). Not a defect: a property of the deliverable that a reader
+  deciding how many genes to order needs.
 
 - Mol* fetches the RCSB entry list from the viewer's own UI on every
   initialisation, which fails and logs a console error on the live site. It is

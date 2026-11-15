@@ -216,6 +216,29 @@ def tm_distribution(conn, target: str) -> dict:
     }
 
 
+def stability_block(conn) -> dict:
+    """The shortlist boundary and the reweighting ensemble, for the hero.
+
+    `tools/shortlist_stability.py` writes both into `qc`. The candidates page
+    draws the contested band at the cut line and the controls page tabulates
+    it, so the numbers have to reach the browser. Absent, both views say the
+    check has not run rather than implying the cut is firm.
+    """
+    out: dict = {}
+    for key in ("shortlist_boundary", "shortlist_reweighting"):
+        row = conn.execute("SELECT value, passed FROM qc WHERE key = ?",
+                           (key,)).fetchone()
+        if not row:
+            continue
+        try:
+            payload = json.loads(row[0])
+        except (TypeError, ValueError):
+            continue
+        payload["passed"] = None if row[1] is None else bool(row[1])
+        out[key.replace("shortlist_", "")] = payload
+    return out
+
+
 def meta_bundle(conn, targets: list[dict]) -> dict:
     run_cfg = targets_config().get("run", {}) or {}
     n_total = conn.execute("SELECT COUNT(*) FROM candidates").fetchone()[0]
@@ -283,6 +306,7 @@ def meta_bundle(conn, targets: list[dict]) -> dict:
         "axes_pending": provisional,
         "axis_verdicts": verdicts,
         "axis_verdict_pooled": pooled,
+        "shortlist_stability": stability_block(conn),
         # The About page used to hard-code "250 deliberately broken
         # sequences" and "Fifty sequences per target", both of which went
         # stale the moment the control set was scaled. Statistics a reader is

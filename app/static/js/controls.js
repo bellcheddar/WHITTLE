@@ -292,6 +292,24 @@
         return;
       }
 
+      if (key === 'shortlist_boundary' || key === 'shortlist_reweighting') {
+        // Both of these are tabulated in full in the panel above, so the QC
+        // row carries the finding and one number per target rather than
+        // repeating the table. The finding is the point of the check: the
+        // boundary row passes because the band is real and the reweighting
+        // row is marked for attention because a third of the shortlist turns
+        // on an axis the scrambled control cannot call informative.
+        const per = Object.entries(value.per_target || {}).sort()
+          .map(([t2, row]) => key === 'shortlist_boundary'
+            ? `${W.escape(t2)} gap ${Number(row.gap).toFixed(4)}`
+            : `${W.escape(t2)} ${row.firm} firm, band to rank `
+              + `${row.band_last_rank}`)
+          .join('; ');
+        out.innerHTML = `${W.escape(value.finding || '')}`
+          + (per ? `<br><span class="qcnote">${per}</span>` : '');
+        return;
+      }
+
       const text = JSON.stringify(value);
       out.textContent = text.length > 300 ? text.slice(0, 300) + '...' : text;
     });

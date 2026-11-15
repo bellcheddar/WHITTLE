@@ -253,6 +253,33 @@
   ];
   const SHORTLIST = META.shortlist_per_target || 24;
 
+  /* Which of the shortlist places are contested.
+
+     `tools/shortlist_stability.py` reruns the desirability ordering under an
+     ensemble of seven weightings: equal, and each ordering axis doubled and
+     halved in turn. A candidate holding a place under all seven is firm; one
+     that loses it under some weighting is still in the 24 this run shipped,
+     but a reader moving the weight sliders would see it go. Drawing the two
+     the same way would let the ladder read as a settled ordering of 24 when
+     the honest reading is a band of roughly 50 competing for 24 places. */
+  function stabilityFor(target) {
+    const block = (META.shortlist_stability || {});
+    const re = ((block.reweighting || {}).per_target || {})[target] || null;
+    const bo = ((block.boundary || {}).per_target || {})[target] || null;
+    if (!re && !bo) return null;
+    return {
+      firm: re ? re.firm : null,
+      ensemble: ((block.reweighting || {}).ensemble || []).length || null,
+      dropped: re ? re.dropped || {} : {},
+      bandLast: re ? re.band_last_rank : (bo ? bo.band_last_rank : null),
+      contestedIn: new Set((re && re.contested_in) || []),
+      contestedOut: new Set((re && re.contested_out) || []),
+      gap: bo ? bo.gap : null,
+      dLast: bo ? bo.d_last : null,
+      dNext: bo ? bo.d_next : null,
+    };
+  }
+
   // Lower is better for these, so their percentile is flipped before it is
   // shaded or sorted. Taken from the column registry where it is declared.
   function lowerIsBetter(field) {
@@ -541,6 +568,7 @@
       return;
     }
 
+    const stab = stabilityFor(W.state.target);
     const medians = {};
     HERO_AXES.forEach(([field]) => { medians[field] = medianOf(field); });
 
@@ -553,10 +581,26 @@
 
     pool.forEach((r, i) => {
       if (i === SHORTLIST && want > SHORTLIST) {
-        html += `<div class="cutline">shortlist of ${SHORTLIST} stops here</div>`;
+        // The cut is the one number on this page a reader will act on, so it
+        // carries its own uncertainty rather than being drawn as a clean break.
+        const band = stab && stab.gap !== null && stab.gap !== undefined
+          ? ` &middot; rank ${SHORTLIST} beats rank ${SHORTLIST + 1} by `
+            + `${stab.gap.toFixed(4)} desirability`
+          : '';
+        html += `<div class="cutline">shortlist of ${SHORTLIST} stops here`
+          + `${band}</div>`;
       }
       const inShort = i < SHORTLIST;
-      html += `<div class="lrow${inShort ? ' inshort' : ''}" tabindex="0"`
+      const contested = stab && inShort && stab.contestedIn.has(r.id);
+      const entrant = stab && !inShort && stab.contestedOut.has(r.id);
+      const mark = (contested ? ' contested' : '') + (entrant ? ' entrant' : '');
+      html += `<div class="lrow${inShort ? ' inshort' : ''}${mark}"`
+        + (contested ? ' title="In the shortlist this run shipped, but it'
+            + ' loses its place under at least one weighting in the ensemble"'
+            : entrant ? ' title="Outside the shortlist this run shipped, but it'
+            + ' takes a place under at least one weighting in the ensemble"'
+            : '')
+        + ` tabindex="0"`
         + ` role="button" data-id="${W.escape(r.id)}"`
         + ` aria-label="Open ${W.escape(r.id)}">`
         + `<span class="pos">${i + 1}</span>`
@@ -604,7 +648,13 @@
       !bundle.rows.some((r) => r[field] !== null && r[field] !== undefined));
     el('ladderkey').innerHTML = 'tick = population median'
       + (pending.length ? ` &middot; hatched = ${pending
-          .map(([, , long]) => long.toLowerCase()).join(' and ')} not computed` : '');
+          .map(([, , long]) => long.toLowerCase()).join(' and ')} not computed` : '')
+      + (stab && stab.firm !== null
+          ? ` &middot; solid bar = holds a place under all ${stab.ensemble}`
+            + ` weightings (${stab.firm} of ${SHORTLIST});`
+            + ` hollow bar = contested, and the band reaches rank`
+            + ` ${stab.bandLast}`
+          : '');
   }
 
   /* ------------------------------------------------------ the trade-off plane */

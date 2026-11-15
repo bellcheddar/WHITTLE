@@ -306,6 +306,14 @@ main {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .lrow.inshort .cid { box-shadow: -7px 0 0 -3px var(--accent); }
+/* A contested shortlist place: in the 24 this run shipped, lost under at
+   least one weighting in the reweighting ensemble. The bar goes grey rather
+   than away, because the candidate is still shortlisted and the marker is
+   about how firmly, not about how good it is. An entrant is the mirror image,
+   outside the 24 and inside under some weighting. See
+   tools/shortlist_stability.py. */
+.lrow.inshort.contested .cid { box-shadow: -7px 0 0 -3px var(--ink-3); }
+.lrow.entrant .cid { box-shadow: -7px 0 0 -4px var(--ink-3); }
 .track { position: relative; height: 15px; background: var(--rule); border-radius: 2px; overflow: hidden; }
 .track i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--dominated); }
 .track i.hi { background: var(--accent); }

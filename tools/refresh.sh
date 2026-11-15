@@ -31,6 +31,7 @@ echo "==> Control assertions, including the scrambled negative control"
 echo "==> QC"
 "$PY" tools/qc_pareto.py || true
 "$PY" tools/vacuous_tests.py || true
+"$PY" tools/shortlist_stability.py || true
 
 echo "==> Bundles and findings"
 "$PY" -m pipeline.build_db
