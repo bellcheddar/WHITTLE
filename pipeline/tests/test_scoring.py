@@ -454,3 +454,79 @@ def test_every_numeric_column_gets_a_numeric_sorter() -> None:
     assert not wrong, (
         "the sorter a column gets must match what its field holds: "
         + "; ".join(wrong))
+
+
+def test_absence_copy_matches_the_data_it_describes() -> None:
+    """The hand-written "did not run" copy dies with the thing it describes.
+
+    Three places say in words that TemStaPro and Aggrescan3D produced nothing:
+    the column registry's help and glossary, the drawer's tooltips, and the
+    About tab's tier table. The About table itself is generated from the
+    database by `build_db.components_not_run`, so it cannot go stale; these
+    strings can. If a later run populates either column, the claim becomes a
+    lie the moment it is true, and this test is what fails instead of a reader
+    noticing.
+    """
+    import sqlite3
+    from pathlib import Path
+
+    from pipeline.columns import COLUMNS, GLOSSARY
+
+    root = Path(__file__).resolve().parents[2]
+    db = root / "data" / "whittle.sqlite"
+    if not db.exists():
+        pytest.skip("no database built")
+
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    try:
+        filled = {
+            "temstapro": conn.execute(
+                "SELECT COUNT(temstapro) AS n FROM thermostability").fetchone()["n"],
+            "aggrescan3d": conn.execute(
+                "SELECT COUNT(aggrescan3d) AS n FROM structures").fetchone()["n"],
+            "thermompnn_ddg": conn.execute(
+                "SELECT COUNT(thermompnn_ddg) AS n FROM thermostability").fetchone()["n"],
+        }
+    finally:
+        conn.close()
+
+    claims = {
+        "temstapro": [
+            ("pipeline/columns.py registry help",
+             [c["help"] for c in COLUMNS if c["key"] == "temstapro"][0]),
+            ("pipeline/columns.py glossary", GLOSSARY["temstapro"]["how"]),
+            ("app/static/js/candidates.js drawer tooltip",
+             (root / "app/static/js/candidates.js").read_text()),
+            ("app/templates/about.html tier table",
+             (root / "app/templates/about.html").read_text()),
+        ],
+        "aggrescan3d": [
+            ("app/static/js/candidates.js drawer tooltip",
+             (root / "app/static/js/candidates.js").read_text()),
+        ],
+    }
+    # Phrases that assert the absence. Each must be gone once a value exists.
+    absence_phrases = {
+        "temstapro": ["did not run", "is not installed", "Not run in this build"],
+        "aggrescan3d": ["Dropped on licence grounds"],
+    }
+
+    for column, n in filled.items():
+        for where, text in claims.get(column, []):
+            stated = [p for p in absence_phrases.get(column, []) if p in text]
+            if n:
+                assert not stated, (
+                    f"{where} still says {stated} about {column}, but "
+                    f"{n} rows now carry a value. Remove the claim.")
+    # And the claim must actually be made somewhere, not merely be absent
+    # everywhere, or an empty column goes back to reading as a measurement
+    # nobody got round to.
+    for column in ("temstapro", "aggrescan3d"):
+        if filled[column]:
+            continue
+        said = any(p in text
+                   for _, text in claims[column]
+                   for p in absence_phrases[column])
+        assert said, (f"{column} is empty for every row and nothing in the app "
+                      f"says so. Name the absence or drop the column.")

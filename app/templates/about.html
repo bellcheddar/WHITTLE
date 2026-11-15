@@ -25,40 +25,42 @@
       cheap checks on everything and the expensive checks only on what survives.
       Each candidate is judged on four things:
     </p>
-    <table class="reftable">
-      <caption class="sr-only">The four axes in plain terms</caption>
-      <thead><tr><th>Axis</th><th>The question it asks</th><th>Confidence</th></tr></thead>
-      <tbody>
-        {#- The chip is read from the control set's own verdict, not typed
-            here. Typed ratings went stale twice in one day: once when the
-            paired test moved thermostability from moderate to strongest, and
-            once when pooling moved non-specific binding off "mixed". -#}
-        {% set CHIP = {
-             'informative': ('good', 'strongest'),
-             'weak': ('warn', 'weak but measurable'),
-             'vacuous': ('warn', 'no separation'),
-             'inverted': ('warn', 'runs backwards'),
-             'untestable': ('', 'untested'),
-             'pending': ('', 'not yet tested')} %}
-        {% macro chip(axis) -%}
-          {%- set v = (meta.axis_verdict_pooled or {}).get(axis, {}).get('verdict', 'pending') -%}
-          {%- set cls, word = CHIP.get(v, ('', v)) -%}
-          <span class="chip {{ cls }}">{{ word }}</span>
-        {%- endmacro %}
-        <tr><td><strong>Binding</strong></td>
-            <td>Does it look like it will stick to the thing it was designed for?</td>
-            <td>{{ chip('affinity') }}</td></tr>
-        <tr><td><strong>Non-specific binding</strong></td>
-            <td>Will it also stick to everything else it meets?</td>
-            <td>{{ chip('specificity') }}</td></tr>
-        <tr><td><strong>Thermostability</strong></td>
-            <td>Will it survive being warmed, frozen, shipped and stored?</td>
-            <td>{{ chip('thermo') }}</td></tr>
-        <tr><td><strong>Expression</strong></td>
-            <td>Can it actually be made, and will it stay dissolved?</td>
-            <td>{{ chip('expression') }}</td></tr>
-      </tbody>
-    </table>
+    <div class="widetable auto">
+      <table class="reftable">
+        <caption class="sr-only">The four axes in plain terms</caption>
+        <thead><tr><th>Axis</th><th>The question it asks</th><th>Confidence</th></tr></thead>
+        <tbody>
+          {#- The chip is read from the control set's own verdict, not typed
+              here. Typed ratings went stale twice in one day: once when the
+              paired test moved thermostability from moderate to strongest, and
+              once when pooling moved non-specific binding off "mixed". -#}
+          {% set CHIP = {
+               'informative': ('good', 'strongest'),
+               'weak': ('warn', 'weak but measurable'),
+               'vacuous': ('warn', 'no separation'),
+               'inverted': ('warn', 'runs backwards'),
+               'untestable': ('', 'untested'),
+               'pending': ('', 'not yet tested')} %}
+          {% macro chip(axis) -%}
+            {%- set v = (meta.axis_verdict_pooled or {}).get(axis, {}).get('verdict', 'pending') -%}
+            {%- set cls, word = CHIP.get(v, ('', v)) -%}
+            <span class="chip {{ cls }}">{{ word }}</span>
+          {%- endmacro %}
+          <tr><td><strong>Binding</strong></td>
+              <td>Does it look like it will stick to the thing it was designed for?</td>
+              <td>{{ chip('affinity') }}</td></tr>
+          <tr><td><strong>Non-specific binding</strong></td>
+              <td>Will it also stick to everything else it meets?</td>
+              <td>{{ chip('specificity') }}</td></tr>
+          <tr><td><strong>Thermostability</strong></td>
+              <td>Will it survive being warmed, frozen, shipped and stored?</td>
+              <td>{{ chip('thermo') }}</td></tr>
+          <tr><td><strong>Expression</strong></td>
+              <td>Can it actually be made, and will it stay dissolved?</td>
+              <td>{{ chip('expression') }}</td></tr>
+        </tbody>
+      </table>
+    </div>
     <p>
       Those confidence ratings are not opinions. Each axis is scored for
       {{ meta.n_scrambled_controls or 250 }} deliberately broken sequences as
@@ -204,27 +206,29 @@
   <div class="prose">
     {% else %}
   <div class="prose">
-    <table class="reftable">
-      <caption class="sr-only">Tiers, what each one computes and how many candidates reach it</caption>
-      <thead><tr><th>Tier</th><th>What it computes</th><th>Candidates</th></tr></thead>
-      <tbody>
-        <tr><td>Tier 0, sequence</td>
-            <td>IMGT numbering and CDRs, hallmark tetrad, liability motifs, charge and pI, disulfides, CDR3 clustering</td>
-            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier0 or 0) }}</td></tr>
-        <tr><td>Tier 1, structure</td>
-            <td>NanoBodyBuilder2 model, TNP developability, surface patches, solubility, nativeness, humanness, nearest experimental neighbour</td>
-            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier1 or 0) }}</td></tr>
-        <tr><td>Tier 1b, thermostability</td>
-            <td>The WHITTLE apparent-Tm model with a per-row error estimate, cross-checked against TemStaPro</td>
-            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier1b or 0) }}</td></tr>
-        <tr><td>Tier 2, co-folding</td>
-            <td>boltz-community co-folds, five seeds, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR</td>
-            <td class="num">{{ '{:,}'.format(meta.tier_counts.tier2 or 0) }}</td></tr>
-        <tr><td>Ranking</td>
-            <td>Within-target percentiles, Pareto non-dominated sorting, Derringer-Suich desirability, axis correlation matrix</td>
-            <td class="num">{{ '{:,}'.format(meta.n_candidates or 0) }}</td></tr>
-      </tbody>
-    </table>
+    <div class="widetable auto">
+      <table class="reftable">
+        <caption class="sr-only">Tiers, what each one computes and how many candidates reach it</caption>
+        <thead><tr><th>Tier</th><th>What it computes</th><th>Candidates</th></tr></thead>
+        <tbody>
+          <tr><td>Tier 0, sequence</td>
+              <td>IMGT numbering and CDRs, hallmark tetrad, liability motifs, charge and pI, disulfides, CDR3 clustering</td>
+              <td class="num">{{ '{:,}'.format(meta.tier_counts.tier0 or 0) }}</td></tr>
+          <tr><td>Tier 1, structure</td>
+              <td>NanoBodyBuilder2 model, TNP developability, surface patches, solubility, nativeness, humanness, nearest experimental neighbour</td>
+              <td class="num">{{ '{:,}'.format(meta.tier_counts.tier1 or 0) }}</td></tr>
+          <tr><td>Tier 1b, thermostability</td>
+              <td>The WHITTLE apparent-Tm model with a per-row error estimate. The TemStaPro cross-check the spec asks for did not run: see <a href="#notrun">components that did not run</a></td>
+              <td class="num">{{ '{:,}'.format(meta.tier_counts.tier1b or 0) }}</td></tr>
+          <tr><td>Tier 2, co-folding</td>
+              <td>boltz-community co-folds, five seeds, cheapest target first: GLP1R, PRLR, TNFa, TL1A, EGFR</td>
+              <td class="num">{{ '{:,}'.format(meta.tier_counts.tier2 or 0) }}</td></tr>
+          <tr><td>Ranking</td>
+              <td>Within-target percentiles, Pareto non-dominated sorting, Derringer-Suich desirability, axis correlation matrix</td>
+              <td class="num">{{ '{:,}'.format(meta.n_candidates or 0) }}</td></tr>
+        </tbody>
+      </table>
+    </div>
     <p style="font-size:11px;color:var(--ink-3)">
       The rendered workflow diagram is produced at build time and appears here once
       Phase 4 has run.
@@ -274,23 +278,25 @@
       components are not yet available is shown as pending rather than filled
       with a placeholder.
     </p>
-    <table class="reftable">
-      <caption class="sr-only">What each scoring axis is computed from</caption>
-      <thead><tr><th>Axis</th><th>Tier</th><th>Components</th></tr></thead>
-      <tbody>
-        {% for name, info in (axes.axes or {}).items() %}
-        <tr>
-          <td><strong>{{ name }}</strong></td>
-          <td>{% if info.available %}{{ info.tier }}{% else %}<span class="chip">pending</span>{% endif %}</td>
-          <td class="wrap">
-            {% for c in info.components %}
-            {{ c.note }}{% if c.sign < 0 %} (lower is better){% endif %}{% if not loop.last %}; {% endif %}
-            {% endfor %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="widetable auto">
+      <table class="reftable">
+        <caption class="sr-only">What each scoring axis is computed from</caption>
+        <thead><tr><th>Axis</th><th>Tier</th><th>Components</th></tr></thead>
+        <tbody>
+          {% for name, info in (axes.axes or {}).items() %}
+          <tr>
+            <td><strong>{{ name }}</strong></td>
+            <td>{% if info.available %}{{ info.tier }}{% else %}<span class="chip">pending</span>{% endif %}</td>
+            <td class="wrap">
+              {% for c in info.components %}
+              {{ c.note }}{% if c.sign < 0 %} (lower is better){% endif %}{% if not loop.last %}; {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
     <h3>Axis correlation, per target</h3>
     <p>
@@ -331,50 +337,52 @@
       {{ group.label }}
       <span>{{ group.count }} parameter{{ '' if group.count == 1 else 's' }}</span>
     </h3>
-    <table class="reftable paramtable">
-      <caption class="sr-only">{{ group.label }} parameters, what they are, how they
-        are calculated and why they matter</caption>
-      <thead>
-        <tr>
-          <th style="width:146px">Parameter</th>
-          <th style="width:88px">Direction</th>
-          <th>What it is</th>
-          <th>How it is calculated</th>
-          <th>Why it matters for selection</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for col in meta.columns.columns if col.group == group.id %}
-        {% set g = meta.columns.glossary.get(col.key) %}
-        <tr id="param-{{ col.key }}">
-          <td>
-            <strong>{{ col.label }}</strong>
-            {% if col.unit %}<span class="unit">{{ col.unit }}</span>{% endif %}
-            {# Whether a column is pending is per target, not global, so it is
-               stated on the candidates table rather than here. #}
-            <span class="unit">{% if col.tier is none %}derived{% else %}Tier {{ col.tier }}{% endif %}</span>
-          </td>
-          <td>
-            {% if col.higher_is_better is none %}
-              <span class="chip">flag</span>
-            {% elif col.higher_is_better %}
-              <span class="chip good">higher is better</span>
-            {% else %}
-              <span class="chip warn">lower is better</span>
-            {% endif %}
-          </td>
-          <td class="wrap">{{ g.plain if g else col.help }}</td>
-          <td class="wrap">{{ g.how if g else '' }}</td>
-          <td class="wrap">
-            {{ g.why if g else '' }}
-            {% if g and g.src %}
-            <a class="srclink" href="#ref-{{ g.src }}">{{ g.src.replace('_', ' ') }}</a>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="widetable auto">
+      <table class="reftable paramtable">
+        <caption class="sr-only">{{ group.label }} parameters, what they are, how they
+          are calculated and why they matter</caption>
+        <thead>
+          <tr>
+            <th style="width:146px">Parameter</th>
+            <th style="width:88px">Direction</th>
+            <th>What it is</th>
+            <th>How it is calculated</th>
+            <th>Why it matters for selection</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for col in meta.columns.columns if col.group == group.id %}
+          {% set g = meta.columns.glossary.get(col.key) %}
+          <tr id="param-{{ col.key }}">
+            <td>
+              <strong>{{ col.label }}</strong>
+              {% if col.unit %}<span class="unit">{{ col.unit }}</span>{% endif %}
+              {# Whether a column is pending is per target, not global, so it is
+                 stated on the candidates table rather than here. #}
+              <span class="unit">{% if col.tier is none %}derived{% else %}Tier {{ col.tier }}{% endif %}</span>
+            </td>
+            <td>
+              {% if col.higher_is_better is none %}
+                <span class="chip">flag</span>
+              {% elif col.higher_is_better %}
+                <span class="chip good">higher is better</span>
+              {% else %}
+                <span class="chip warn">lower is better</span>
+              {% endif %}
+            </td>
+            <td class="wrap">{{ g.plain if g else col.help }}</td>
+            <td class="wrap">{{ g.how if g else '' }}</td>
+            <td class="wrap">
+              {{ g.why if g else '' }}
+              {% if g and g.src %}
+              <a class="srclink" href="#ref-{{ g.src }}">{{ g.src.replace('_', ' ') }}</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endfor %}
   </div>
 
@@ -528,23 +536,27 @@
   <div class="prose">
     <h2 id="provenance">Provenance</h2>
     {% if about.provenance %}
-    <table class="reftable">
-      <caption class="sr-only">Tool versions, database snapshot dates and run identifiers</caption>
-      <thead><tr><th>Key</th><th>Value</th></tr></thead>
-      <tbody>
-        {% for key, value in about.provenance.items() %}
-        <tr><td>{{ key.replace('_', ' ') }}</td><td class="wrap">{{ value }}</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="widetable auto">
+      <table class="reftable">
+        <caption class="sr-only">Tool versions, database snapshot dates and run identifiers</caption>
+        <thead><tr><th>Key</th><th>Value</th></tr></thead>
+        <tbody>
+          {% for key, value in about.provenance.items() %}
+          <tr><td>{{ key.replace('_', ' ') }}</td><td class="wrap">{{ value }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     {% else %}
-    <table class="reftable">
-      <tbody>
-        <tr><td>run id</td><td>{{ meta.run_id }}</td></tr>
-        <tr><td>built at</td><td>{{ meta.built_at }}</td></tr>
-        <tr><td>git sha</td><td>{{ meta.git_sha or 'not recorded' }}</td></tr>
-      </tbody>
-    </table>
+    <div class="widetable auto">
+      <table class="reftable">
+        <tbody>
+          <tr><td>run id</td><td>{{ meta.run_id }}</td></tr>
+          <tr><td>built at</td><td>{{ meta.built_at }}</td></tr>
+          <tr><td>git sha</td><td>{{ meta.git_sha or 'not recorded' }}</td></tr>
+        </tbody>
+      </table>
+    </div>
     {% endif %}
 
     <h2 id="limitations">Limitations</h2>
@@ -564,6 +576,35 @@
             between targets.</li>
         {% endif %}
       </ul>
+
+      {# Spec 0.2 names the Aggrescan3D fallback and says to note the missing
+         term here. Generalised: every optional component whose column came out
+         empty is listed, generated from the tables by build_db so this cannot
+         drift from what the drawer shows. #}
+      {% if about.not_run %}
+      <h3 style="margin-top:14px" id="notrun">Components that did not run</h3>
+      <p style="margin:0 0 8px;font-size:12px;color:var(--ink-2)">
+        These are named in the build spec and are not in this build. Their columns
+        are null for every candidate and read "not in this build" in the drawer:
+        not measured, rather than measured and poor.
+      </p>
+      <div class="widetable auto">
+        <table class="reftable">
+          <caption class="sr-only">Named components that produced no values, and what each absence costs</caption>
+          <thead><tr><th>Component</th><th>Axis</th><th>Why it is absent</th><th>What the absence costs</th></tr></thead>
+          <tbody>
+            {% for comp in about.not_run %}
+            <tr>
+              <td><strong>{{ comp.name }}</strong></td>
+              <td>{{ comp.axis }}</td>
+              <td class="wrap">{{ comp.why }}</td>
+              <td class="wrap">{{ comp.effect }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
 
       <h3 style="margin-top:14px">Defects in the upstream columns</h3>
       <ul style="margin:0">

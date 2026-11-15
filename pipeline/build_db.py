@@ -356,6 +356,60 @@ def controls_bundle(conn) -> dict:
                 "published nanobody benchmark."}
 
 
+def components_not_run(conn) -> list[dict]:
+    """The optional components whose column came out empty, read from the data.
+
+    Spec 0.2 requires the missing Aggrescan3D term to be named on the About tab,
+    and the same reasoning covers anything else that left its column null: a row
+    that reads "pending" in the drawer has to be explained somewhere, or a reader
+    cannot tell whether the tool ran and found nothing or never ran at all. This
+    is computed from the tables rather than kept as a hand-written list, so the
+    tab cannot claim a cross-check that a later run quietly stopped producing,
+    and an entry disappears by itself once the component is installed.
+    """
+    optional = [
+        dict(name="Aggrescan3D", table="structures", column="aggrescan3d",
+             axis="expression",
+             why="Its standalone is Python 2.7 only and its licence is "
+                 "contradictory: the repository file says MIT, the PyPI metadata "
+                 "says free for non-commercial users. A non-commercial term is "
+                 "incompatible with this build's licence-clean requirement "
+                 "(DECISIONS 18).",
+             effect="The aggregation side of the expression axis rests on the SWI "
+                    "and Protein-Sol formulae alone, which are sequence-based. "
+                    "Nothing in this build scores aggregation propensity off the "
+                    "structure."),
+        dict(name="TemStaPro", table="thermostability", column="temstapro",
+             axis="thermostability",
+             why="It is a script repository with no installable package, and it "
+                 "needs a cached ProtT5 checkpoint. Neither the clone at "
+                 "tools/TemStaPro nor the weights are present on the build "
+                 "machine (DECISIONS 67).",
+             effect="The predicted Tm has no second opinion. Where the "
+                    "thermostability model is extrapolating, the only warning is "
+                    "its own error bar, and that error bar is wide: see the "
+                    "shortlist stability measurement on the Control set tab."),
+        dict(name="ThermoMPNN", table="thermostability", column="thermompnn_ddg",
+             axis="thermostability",
+             why="Its licence was checked as the spec requires and is permissive "
+                 "(MIT, Kuhlman-Lab/ThermoMPNN), so the axis was not dropped on "
+                 "licence grounds. It was simply never wired into the pipeline, "
+                 "and the structural stability term was not built (DECISIONS 67).",
+             effect="Thermostability is predicted from sequence only. No per-"
+                    "mutation ddG term enters any axis."),
+    ]
+    out = []
+    for comp in optional:
+        row = conn.execute(
+            f"SELECT COUNT(*) AS n, COUNT({comp['column']}) AS filled "
+            f"FROM {comp['table']}").fetchone()
+        if row["filled"]:
+            continue
+        out.append({k: v for k, v in comp.items()
+                    if k not in ("table", "column")} | {"rows": row["n"]})
+    return out
+
+
 def about_bundle(conn) -> dict:
     refs = [dict(r) for r in conn.execute(
         'SELECT * FROM "references" ORDER BY sort_order, key')]
@@ -383,7 +437,8 @@ def about_bundle(conn) -> dict:
         "they agree with the recomputed counts for about 91 percent of rows.",
     ]
     return {"references": refs, "provenance": prov, "limitations": limitations,
-            "upstream_defects": upstream_defects}
+            "upstream_defects": upstream_defects,
+            "not_run": components_not_run(conn)}
 
 
 def main() -> int:

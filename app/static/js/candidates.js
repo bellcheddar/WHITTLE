@@ -1133,11 +1133,21 @@
       <div class="trule"><i style="width:${width}%"></i></div>${flag}</div>`;
   }
 
+  /* A column that was never computed is not the same as a column still to
+     come. `pending` is what a row says while a tier is still running; the three
+     components below are named in the build spec and are not in this build at
+     all, so they say so and the About tab says why, rather than leaving a
+     reader to wait for a value that is never going to arrive. Both read in the
+     muted style: neither is a measurement. */
+  const NOT_RUN = 'not in this build';
+  const notRun = (v) => (v === null || v === undefined ? NOT_RUN : v);
+
   function kvTable(pairs) {
     return '<table class="kv"><tbody>' + pairs.map(([key, value, title]) => {
       const pending = value === null || value === undefined || value === '';
+      const absent = pending || value === NOT_RUN;
       return `<tr><th scope="row"${title ? ` title="${W.escape(title)}"` : ''}>`
-        + `${W.escape(key)}</th><td class="${pending ? 'pending' : ''}">`
+        + `${W.escape(key)}</th><td class="${absent ? 'pending' : ''}">`
         + `${pending ? 'pending' : W.escape(value)}</td></tr>`;
     }).join('') + '</tbody></table>';
   }
@@ -1666,7 +1676,9 @@
         'An estimate from the WHITTLE model, not a measurement.'],
       ['Distance to nearest training neighbour', d.train_nn_distance,
         'A large distance means the model is extrapolating and the error bar widens.'],
-      ['TemStaPro cross-check', d.temstapro],
+      ['TemStaPro cross-check', notRun(d.temstapro),
+        'TemStaPro is not installed in this build, so the predicted Tm has no '
+        + 'second opinion. See the About tab, components that did not run.'],
       ['Upstream Tm', d.upstream_tm_pred === null ? null
         : `${d.upstream_tm_pred.toFixed(1)} deg C (uncalibrated)`,
         'From the source files. Its range reaches 101 deg C, which is not a value '
@@ -1685,7 +1697,9 @@
       ['TNP metrics outside the clinical-stage range', d.tnp_flags],
       ['SWI solubility', d.swi],
       ['Protein-Sol solubility', d.protein_sol],
-      ['Aggrescan3D', d.aggrescan3d],
+      ['Aggrescan3D', notRun(d.aggrescan3d),
+        'Dropped on licence grounds, so aggregation propensity is scored from '
+        + 'sequence only, by SWI and Protein-Sol. See the About tab.'],
       ['Nativeness, pseudo-perplexity', d.nativeness_ppl],
       ['OASis humanness', d.oasis_humanness],
       ['Net charge at pH 7.4', d.net_charge_74],
@@ -1694,14 +1708,30 @@
     if (d.cofolds && d.cofolds.length) {
       sections.push('<h3 style="font-size:11px;text-transform:uppercase;'
         + 'letter-spacing:.07em;color:var(--ink-3);margin:16px 0 6px">Co-folding, per seed</h3>');
-      sections.push('<table class="kv"><thead><tr><th>Seed</th><th>ipTM</th>'
-        + '<th>pTM</th><th>dG</th><th>Subunits</th><th>Nb pLDDT</th>'
-        + '<th>Ag pLDDT</th></tr></thead><tbody>'
-        + d.cofolds.map((f) => `<tr><td>${f.seed}</td><td>${W.fmt(f.iptm, 3)}</td>`
-          + `<td>${W.fmt(f.ptm, 3)}</td><td>${W.fmt(f.prodigy_dg, 2)}</td>`
-          + `<td>${f.n_subunits_contacted ?? ''}</td>`
-          + `<td>${W.fmt(f.nanobody_plddt, 1)}</td>`
-          + `<td>${W.fmt(f.antigen_plddt, 1)}</td></tr>`).join('')
+      /* Seven numeric columns, so this is laid out as a data table rather
+         than through `.kv`, which is built for two columns and a 46 per cent
+         row header. A missing seed value prints a dash: in a right-aligned
+         column an empty cell and a zero look alike. */
+      const cell = (value, dp) => {
+        const text = W.fmt(value, dp);
+        return text === '' ? '<span class="pending">-</span>' : text;
+      };
+      sections.push('<table class="kv seeds">'
+        + '<caption class="sr-only">Co-folding metrics for each diffusion seed'
+        + '</caption>'
+        + '<colgroup><col style="width:10%"><col style="width:14%">'
+        + '<col style="width:14%"><col style="width:16%"><col style="width:15%">'
+        + '<col style="width:15.5%"><col style="width:15.5%"></colgroup>'
+        + '<thead><tr><th scope="col">Seed</th><th scope="col">ipTM</th>'
+        + '<th scope="col">pTM</th><th scope="col">dG<span>kcal/mol</span></th>'
+        + '<th scope="col">Subunits<span>contacted</span></th>'
+        + '<th scope="col">Nb<span>pLDDT</span></th>'
+        + '<th scope="col">Antigen<span>pLDDT</span></th></tr></thead><tbody>'
+        + d.cofolds.map((f) => `<tr><td>${f.seed}</td><td>${cell(f.iptm, 3)}</td>`
+          + `<td>${cell(f.ptm, 3)}</td><td>${cell(f.prodigy_dg, 2)}</td>`
+          + `<td>${cell(f.n_subunits_contacted, 0)}</td>`
+          + `<td>${cell(f.nanobody_plddt, 1)}</td>`
+          + `<td>${cell(f.antigen_plddt, 1)}</td></tr>`).join('')
         + '</tbody></table>');
       /* The two pLDDT columns are shown together on purpose. The nanobody
          figure is the largest candidate-minus-shuffle difference anywhere in

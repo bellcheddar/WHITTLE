@@ -2208,3 +2208,28 @@ through to the drawer.
 - 2026-11-14 22:16 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
 - 2026-11-14 22:16 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
 - 2026-11-14 22:16 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 12:15 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:15 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:15 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:15 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:15 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:15 build-db: 15 bundles, 3620 kB total
+- 2026-11-15 12:16 qc_pareto: EGFR 500 rows, stored front 13, independent front 13, AGREE
+- 2026-11-15 12:16 qc_pareto: EGFR thermo percentile differs from a Tm-only percentile by at most 72.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 12:16 qc_pareto: GLP1R 500 rows, stored front 15, independent front 15, AGREE
+- 2026-11-15 12:16 qc_pareto: GLP1R thermo percentile differs from a Tm-only percentile by at most 69.8 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 12:16 qc_pareto: PRLR 500 rows, stored front 19, independent front 19, AGREE
+- 2026-11-15 12:16 qc_pareto: PRLR thermo percentile differs from a Tm-only percentile by at most 54.1 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 12:16 qc_pareto: TL1A 500 rows, stored front 25, independent front 25, AGREE
+- 2026-11-15 12:16 qc_pareto: TL1A thermo percentile differs from a Tm-only percentile by at most 78.2 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 12:16 qc_pareto: TNFa 500 rows, stored front 21, independent front 21, AGREE
+- 2026-11-15 12:16 qc_pareto: TNFa thermo percentile differs from a Tm-only percentile by at most 73.3 points (the axis blends other terms, so a gap is expected; a gap near 100 would mean the wrong population)
+- 2026-11-15 12:17 render_diagram: app/static/img/workflow.svg written, 100 kB, 7 reference anchors, 31 label boxes widened for Inter
+- 2026-11-15 12:25 qc: recorded phone_width = PASS (Headless Chrome at 390 and 360 CSS px, every tab, drawer open on the structure and the metrics panels: document scrollWidth equals innerWidth on all ten combinations, so no page scrolls sideways. Measured after a fix, not before: at 390px /controls reached scrollWidth 925 and /about 533, because ten reference tables were written without the scroll container the parameter glossary already used. The nine-column shortlist stability table was the widest at 892px. Wide tables now scroll inside their own card.)
+- 2026-11-15 12:25 build-db: EGFR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:25 build-db: GLP1R bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:25 build-db: PRLR bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:25 build-db: TL1A bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:25 build-db: TNFa bundle, 500 rows, 48 columns with data, 1 pending
+- 2026-11-15 12:25 build-db: 15 bundles, 3621 kB total
+- 2026-11-15 12:25 findings: FINDINGS.md written, 161 lines

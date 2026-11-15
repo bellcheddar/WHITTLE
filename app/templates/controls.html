@@ -88,39 +88,41 @@
   <p style="margin:0 0 10px;font-size:12.5px;color:var(--ink-2);max-width:900px">
     {{ boundary.finding }}
   </p>
-  <table class="reftable">
-    <caption class="sr-only">Shortlist boundary and reweighting stability per target</caption>
-    <thead>
-      <tr>
-        <th>Target</th><th>Best</th><th>Rank {{ boundary.shortlist_per_target or 24 }}</th>
-        <th>Rank {{ (boundary.shortlist_per_target or 24) + 1 }}</th><th>Median</th>
-        <th>Gap at the cut</th><th>On the front</th>
-        <th>Firm under every weighting</th><th>Contested band reaches</th>
-        {% for axis in reweight.untestable_axes_dropped or [] %}
-        <th>Without {{ axis }}</th>
+  <div class="widetable auto">
+    <table class="reftable">
+      <caption class="sr-only">Shortlist boundary and reweighting stability per target</caption>
+      <thead>
+        <tr>
+          <th>Target</th><th>Best</th><th>Rank {{ boundary.shortlist_per_target or 24 }}</th>
+          <th>Rank {{ (boundary.shortlist_per_target or 24) + 1 }}</th><th>Median</th>
+          <th>Gap at the cut</th><th>On the front</th>
+          <th>Firm under every weighting</th><th>Contested band reaches</th>
+          {% for axis in reweight.untestable_axes_dropped or [] %}
+          <th>Without {{ axis }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for target, row in boundary.per_target.items() %}
+        {% set re = (reweight.per_target or {}).get(target) or {} %}
+        <tr>
+          <td><strong>{{ target }}</strong></td>
+          <td>{{ '%.3f'|format(row.d_first) }}</td>
+          <td>{{ '%.3f'|format(row.d_last) }}</td>
+          <td>{{ '%.3f'|format(row.d_next) }}</td>
+          <td>{{ '%.3f'|format(row.d_median) }}</td>
+          <td>{{ '%.4f'|format(row.gap) }}</td>
+          <td>{{ row.on_front }} of {{ boundary.shortlist_per_target or 24 }}</td>
+          <td>{{ re.firm if re.firm is not none else '-' }} of {{ boundary.shortlist_per_target or 24 }}</td>
+          <td>rank {{ re.band_last_rank or row.band_last_rank }}</td>
+          {% for axis in reweight.untestable_axes_dropped or [] %}
+          <td>{{ (re.dropped or {}).get(axis, '-') }} of {{ boundary.shortlist_per_target or 24 }}</td>
+          {% endfor %}
+        </tr>
         {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for target, row in boundary.per_target.items() %}
-      {% set re = (reweight.per_target or {}).get(target) or {} %}
-      <tr>
-        <td><strong>{{ target }}</strong></td>
-        <td>{{ '%.3f'|format(row.d_first) }}</td>
-        <td>{{ '%.3f'|format(row.d_last) }}</td>
-        <td>{{ '%.3f'|format(row.d_next) }}</td>
-        <td>{{ '%.3f'|format(row.d_median) }}</td>
-        <td>{{ '%.4f'|format(row.gap) }}</td>
-        <td>{{ row.on_front }} of {{ boundary.shortlist_per_target or 24 }}</td>
-        <td>{{ re.firm if re.firm is not none else '-' }} of {{ boundary.shortlist_per_target or 24 }}</td>
-        <td>rank {{ re.band_last_rank or row.band_last_rank }}</td>
-        {% for axis in reweight.untestable_axes_dropped or [] %}
-        <td>{{ (re.dropped or {}).get(axis, '-') }} of {{ boundary.shortlist_per_target or 24 }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
   <p style="margin:10px 0 0;font-size:12.5px;color:var(--ink-2);max-width:900px">
     {{ reweight.finding }}
   </p>
@@ -134,27 +136,29 @@
     <p style="margin:0 0 10px;font-size:12.5px;color:var(--ink-2);max-width:900px">
       {{ tmunc.finding }}
     </p>
-    <table class="reftable">
-      <caption class="sr-only">Shortlist membership when the predicted Tm is redrawn from its error bar</caption>
-      <thead>
-        <tr><th>Target</th><th>Kept of {{ boundary.shortlist_per_target or 24 }}, mean</th>
-          <th>Worst draw</th><th>In every draw</th><th>Ever shortlisted</th>
-          <th>Predicted Tm IQR</th><th>Median error bar</th></tr>
-      </thead>
-      <tbody>
-        {% for target, row in tmunc.per_target.items() %}
-        <tr>
-          <td><strong>{{ target }}</strong></td>
-          <td>{{ row.mean_kept }}</td>
-          <td>{{ row.min_kept }}</td>
-          <td>{{ row.always_in }}</td>
-          <td>{{ row.ever_in }} of {{ row.n_competing }}</td>
-          <td>{{ row.tm_iqr }} &deg;C</td>
-          <td>&plusmn;{{ row.median_tm_err }} &deg;C</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="widetable auto">
+      <table class="reftable">
+        <caption class="sr-only">Shortlist membership when the predicted Tm is redrawn from its error bar</caption>
+        <thead>
+          <tr><th>Target</th><th>Kept of {{ boundary.shortlist_per_target or 24 }}, mean</th>
+            <th>Worst draw</th><th>In every draw</th><th>Ever shortlisted</th>
+            <th>Predicted Tm IQR</th><th>Median error bar</th></tr>
+        </thead>
+        <tbody>
+          {% for target, row in tmunc.per_target.items() %}
+          <tr>
+            <td><strong>{{ target }}</strong></td>
+            <td>{{ row.mean_kept }}</td>
+            <td>{{ row.min_kept }}</td>
+            <td>{{ row.always_in }}</td>
+            <td>{{ row.ever_in }} of {{ row.n_competing }}</td>
+            <td>{{ row.tm_iqr }} &deg;C</td>
+            <td>&plusmn;{{ row.median_tm_err }} &deg;C</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     <p class="caption" style="margin-top:8px">
       {% set tmfirst = tmunc.per_target.values() | list | first %}
       {{ tmfirst.draws }} draws, seeded so the
@@ -181,35 +185,37 @@
     <h2 id="qchead">QC panel</h2>
     <span class="hint">every check this build runs, with the number that decided it</span>
   </div>
-  <table class="reftable" id="qctable">
-    <caption class="sr-only">Quality-control checks and their results</caption>
-    <thead><tr><th>Check</th><th>Result</th><th>What decided it</th></tr></thead>
-    <tbody>
-      {% for check in qc.checks or [] %}
-      <tr data-key="{{ check.key }}">
-        <td>{{ check.key.replace('_', ' ') }}</td>
-        <td>
-          {%- if check.passed is none -%}
-            <span class="chip">pending</span>
-          {%- elif check.passed -%}
-            <span class="chip good">pass</span>
-          {%- else -%}
-            <span class="chip poor">attention</span>
-          {%- endif -%}
-        </td>
-        <td class="wrap qcvalue" style="max-width:640px;font-size:11.5px;color:var(--ink-2)">
-          {%- if check.value is string -%}{{ check.value }}{%- else -%}
-          <span class="qcjson" hidden>{{ check.value | tojson }}</span>
-          <span class="qcrendered">summarising</span>
-          {%- endif -%}
-        </td>
-      </tr>
-      {% endfor %}
-      {% if not qc.checks %}
-      <tr><td colspan="3" style="color:var(--ink-3)">No checks recorded yet.</td></tr>
-      {% endif %}
-    </tbody>
-  </table>
+  <div class="widetable auto">
+    <table class="reftable" id="qctable">
+      <caption class="sr-only">Quality-control checks and their results</caption>
+      <thead><tr><th>Check</th><th>Result</th><th>What decided it</th></tr></thead>
+      <tbody>
+        {% for check in qc.checks or [] %}
+        <tr data-key="{{ check.key }}">
+          <td>{{ check.key.replace('_', ' ') }}</td>
+          <td>
+            {%- if check.passed is none -%}
+              <span class="chip">pending</span>
+            {%- elif check.passed -%}
+              <span class="chip good">pass</span>
+            {%- else -%}
+              <span class="chip poor">attention</span>
+            {%- endif -%}
+          </td>
+          <td class="wrap qcvalue" style="max-width:640px;font-size:11.5px;color:var(--ink-2)">
+            {%- if check.value is string -%}{{ check.value }}{%- else -%}
+            <span class="qcjson" hidden>{{ check.value | tojson }}</span>
+            <span class="qcrendered">summarising</span>
+            {%- endif -%}
+          </td>
+        </tr>
+        {% endfor %}
+        {% if not qc.checks %}
+        <tr><td colspan="3" style="color:var(--ink-3)">No checks recorded yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
   <p style="font-size:11px;color:var(--ink-3);margin:10px 0 0">
     A check marked for attention is not necessarily a failure. Where the spec
     expects a finding rather than a pass, the finding is what is reported.

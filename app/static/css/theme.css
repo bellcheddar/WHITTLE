@@ -776,6 +776,57 @@ label.gname { cursor: pointer; }
 }
 .kv td.pending { color: var(--ink-3); font-style: normal; }
 
+/* The per-seed co-folding table: seven numeric columns inside a 620px drawer.
+   `.kv` is built for two columns with a 46 per cent row header, so it gave the
+   first column nearly half the width and squeezed the other six, and its
+   `padding: 5px 0` leaves no horizontal gap at all, which ran "Subunits" into
+   "Nb pLDDT". Same ink, laid out as a data table: fixed columns from the
+   colgroup rather than from whichever seed produced the longest number,
+   figures right-aligned on tabular numerals so the decimal points line up down
+   each column, and the unit under the heading rather than in every cell. */
+.kv.seeds { table-layout: fixed; font-variant-numeric: tabular-nums; }
+.kv.seeds th,
+.kv.seeds td {
+  width: auto;
+  text-align: right;
+  vertical-align: bottom;
+  padding: 4px 0 4px 10px;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.kv.seeds thead th {
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink-3);
+  letter-spacing: .02em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 5px;
+}
+/* The unit sits on its own line under the heading, so the heading row is two
+   lines deep for every column rather than only the ones that happen to wrap. */
+.kv.seeds thead th span {
+  display: block;
+  font-weight: 400;
+  font-size: 9.5px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  opacity: .8;
+}
+.kv.seeds thead th:not(:has(span))::after {
+  content: "\00a0";
+  display: block;
+  font-size: 9.5px;
+  line-height: 1.3;
+}
+.kv.seeds th:first-child,
+.kv.seeds td:first-child { text-align: left; padding-left: 0; }
+.kv.seeds tbody td { color: var(--ink); }
+.kv.seeds tbody tr:last-child td { border-bottom: 0; }
+.kv.seeds tbody td .pending { color: var(--ink-3); }
+
 .seqblock {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 11.5px;

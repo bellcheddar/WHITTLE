@@ -206,7 +206,7 @@ COLUMNS: list[dict] = [
               "Wide means the model is extrapolating."),
     dict(key="temstapro", label="TemStaPro", group="thermo", unit="0-1", kind="num",
          tier=1, default=False, decimals=3, higher_is_better=True,
-         help="Independent thermostability cross-check. Reported, not blended in."),
+         help="Independent thermostability cross-check. Reported, not blended in. Not run in this build, so the column is empty: the About tab says why."),
     dict(key="upstream_tm_pred", label="Tm (upstream)", group="thermo", unit="deg C",
          kind="num", tier=0, default=False, decimals=1, higher_is_better=None,
          help="The Tm column from the source files. Uncalibrated: its range reaches "
@@ -695,7 +695,9 @@ GLOSSARY: dict[str, dict] = {
     "temstapro": G(plain="A second, independent opinion on thermostability from a "
                          "published tool.",
                    how="TemStaPro, a protein language model classifier, run on "
-                       "the sequence.",
+                       "the sequence. It did not run in this build: the clone "
+                       "and its ProtT5 weights are not on the build machine, "
+                       "so every row is empty.",
                    why="It is reported beside our own model rather than blended "
                        "into it, so that agreement is visible as agreement. Two "
                        "models trained on overlapping data agreeing is weaker "
